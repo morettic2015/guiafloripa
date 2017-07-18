@@ -1,159 +1,127 @@
 <!DOCTYPE html>
 <!--
     @Copyright http://morettic.com.br
-    @PROGRAMMER Luis Augusto Machado Moretto - projetos@morettic.com.br
+    @DEV Luis Augusto Machado Moretto - projetos@morettic.com.br
     @UIX João Guilherme de Oliveira - jgoliveira78@gmail.com
-    @Parceria GuiaFloripa
+    @Parceria GuiaFloripa.com.br
 -->
 <html>
 
-<head>
-    <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
-    <meta name="format-detection" content="telephone=yes">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-    <link rel="stylesheet" type="text/css" href="js/jquery-1.5.0.mobile.min.css">
-    <title>Guia Floripa Eventos</title>
-</head>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
+        <meta name="format-detection" content="telephone=yes">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="js/jquery-1.5.0.mobile.min.css">
+        <title>Guia Floripa Eventos</title>
+    </head>
 
-<body>
-    <!-- jquery mobile page 1 -->
-    <div data-role="page" id="page1">
-        <div data-role="header" data-position="fixed" style="background: white;">
-            <center>
-                <img src="img/header.png" />
-            </center>
-            <a href="index.html" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
-        </div>
-
-        <div role="main" class="ui-content" id="map-canvas" data-position="fixed">
-            <!-- Maps loads Here -->
-        </div>
-        <!-- end of page 1 content -->
-
-        <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #647f9c;">
-            <center>
-                <fieldset data-role="controlgroup" data-type="horizontal">
-                    <div class="ui-grid-c">
-                        <div class="ui-block-a" style="margin: 0px; background: #647f9c;border:none;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                                 <img alt="Destaques" style="vertical-align:middle" src="img/destaque.png"/>
-                                 <input type="checkbox" name="checkbox-h-2d" id="checkbox-h-2d" >
-                            </label>
-                        </div>
-                        <div class="ui-block-b" style="margin: 0px; background: #647f9c;border:none;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                                 <input type="checkbox" name="checkbox-h-2b" id="checkbox-h-2b">
-                                 <img alt="Cinema" style="vertical-align:middle" src="img/cinema.png"/>
-                                 </label>
-                        </div>
-                        <div class="ui-block-c" style="margin: 0px; background: #647f9c;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                                 <input type="checkbox" name="checkbox-h-2e" id="checkbox-h-2e">
-                                 <img alt="Esportes" style="vertical-align:middle" src="img/esportes.png"/>
-                                 </label>
-                        </div>
-                        <div class="ui-block-d" style="margin: 0px; background: #647f9c;border:none;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                                <input type="checkbox" name="checkbox-h-2c" id="checkbox-h-2c">
-                                <img alt="Cultura" style="vertical-align:middle" src="img/cultura.png"/>
+    <body>
+        <!-- jquery mobile page 1 -->
+        <div data-role="page" id="page1">
+            <div data-role="header" data-position="fixed" style="background: white;">
+                <center>
+                    <img src="img/header.png" />
+                </center>
+                <a href="index.html" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
+            </div>
+            <div role="main" class="ui-content" id="map-canvas" data-position="fixed" data-tap-toggle="false">
+                <!-- Maps loads Here -->
+            </div>
+            <!-- end of page 1 content -->
+            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #647f9c;" data-tap-toggle="false">
+                <center>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <div class="ui-grid-c">
+                            <div class="ui-block-a" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <img alt="Destaques" style="vertical-align:middle" src="img/destaque.png"/>
+                                    <input type="checkbox" name="checkbox-h-2d" id="checkbox-h-2d" >
                                 </label>
+                            </div>
+                            <div class="ui-block-b" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2b" id="checkbox-h-2b">
+                                    <img alt="Cinema" style="vertical-align:middle" src="img/cinema.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-c" style="margin: 0px; background: #647f9c;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2e" id="checkbox-h-2e">
+                                    <img alt="Esportes" style="vertical-align:middle" src="img/esportes.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-d" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2c" id="checkbox-h-2c">
+                                    <img alt="Cultura" style="vertical-align:middle" src="img/cultura.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-a" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
+                                    <img alt="Alimentação" style="vertical-align:middle" src="img/alimentacao.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-b" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
+                                    <img alt="Eventos" style="vertical-align:middle" src="img/eventos.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-c" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
+                                    <img alt="Infantil" style="vertical-align:middle" src="img/infantil.png"/>
+                                </label>
+                            </div>
+                            <div class="ui-block-d" style="margin: 0px; background: #647f9c;border:none;">
+                                <label style="margin: 0px; background: #647f9c;border:none;">
+                                    <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
+                                    <img alt="Lazer" style="vertical-align:middle" src="img/lazer.png"/>
+                                </label>
+                            </div>
                         </div>
-                        <div class="ui-block-a" style="margin: 0px; background: #647f9c;border:none;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                        <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
-                       <img alt="Alimentação" style="vertical-align:middle" src="img/alimentacao.png"/>
-                       </label>
-                        </div>
-                        <div class="ui-block-b" style="margin: 0px; background: #647f9c;border:none;">
-                               <label style="margin: 0px; background: #647f9c;border:none;">
-                        <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
-                       <img alt="Eventos" style="vertical-align:middle" src="img/eventos.png"/>
-                       </label>
-                        </div>
-                        <div class="ui-block-c" style="margin: 0px; background: #647f9c;border:none;">
-                               <label style="margin: 0px; background: #647f9c;border:none;">
-                        <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
-                       <img alt="Infantil" style="vertical-align:middle" src="img/infantil.png"/>
-                       </label>
-                        </div>
-                        <div class="ui-block-d" style="margin: 0px; background: #647f9c;border:none;">
-                            <label style="margin: 0px; background: #647f9c;border:none;">
-                        <input type="checkbox" name="checkbox-h-2a" id="checkbox-h-2a">
-                       <img alt="Lazer" style="vertical-align:middle" src="img/lazer.png"/>
-                       </label>
-                        </div>
+                    </fieldset>
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <a href="#" class="ui-btn ui-icon-clock ui-btn-icon-left" style="background: #454545 ; color: #ffffff; background-color: #454545;">Hoje</a>
+                        <a href="#popupLogin" data-rel="popup" data-position-to="window" style="background: #454545 ; color: #ffffff; background-color: #454545;"
+                           class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-calendar ui-btn-icon-left ui-btn-a" data-transition="pop">Datas</a>
+                        <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #454545 ; color: #ffffff; background-color: #454545;">Buscar</a>
+                    </fieldset>
+                </center>
+            </div>
+            <!-- Dates -->
+            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
+                <form>
+                    <div style="padding:10px 20px;">
+                        <h3>Data dos eventos</h3>
+                        <label for="dtinicio" class="ui-hidden-accessible">Data inicio:</label>
+                        <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
+                        <label for="dtfim" class="ui-hidden-accessible">Data fim:</label>
+                        <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
+                        <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Aplicar</button>
                     </div>
-                </fieldset>
-                <fieldset data-role="controlgroup" data-type="horizontal">
-                    <a href="#" class="ui-btn ui-icon-clock ui-btn-icon-left" style="background: #454545 ; color: #ffffff; background-color: #454545;">Hoje</a>
-                    <a href="#popupLogin" data-rel="popup" data-position-to="window" style="background: #454545 ; color: #ffffff; background-color: #454545;"
-                        class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-calendar ui-btn-icon-left ui-btn-a" data-transition="pop">Datas</a>
-                    <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #454545 ; color: #ffffff; background-color: #454545;">Buscar</a>
-                </fieldset>
-            </center>
+                </form>
+            </div>
+
+            <!-- end page 1 footer -->
         </div>
-        <!-- Dates -->
-        <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
-            <form>
-                <div style="padding:10px 20px;">
-                    <h3>Data dos eventos</h3>
-                    <label for="dtinicio" class="ui-hidden-accessible">Data inicio:</label>
-                    <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
-                    <label for="dtfim" class="ui-hidden-accessible">Data fim:</label>
-                    <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
-                    <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Aplicar</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- end page 1 footer -->
-    </div>
-    <!-- end page 1 -->
-
-    <!-- jquery mobile page 2 -->
-    <div data-role="page" id="page2">
-        <div data-role="header">
-            <h1>Page 2</h1>
-        </div>
-
-        <div role="main" class="ui-content">
-            <h4>Page 2 content goes here</h4>
-            <a href="#page1">Goto page1</a>
-        </div>
-        <!-- end of page 2 content -->
-
-        <div data-role="footer" data-position="fixed">
-            <h4>Page 2 Footer</h4>
-        </div>
-        <!-- end page 2 footer -->
-    </div>
-    <!-- end page 2 -->
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
-    <script type="text/javascript" id="jqm-trans-disable">
-        /* For having a faster transition */
-        $(document).on("mobileinit", function () {
-            $.mobile.defaultPageTransition = "none";
-            $.mobile.defaultDialogTransition = "none";
-        });
-    </script>
-    <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
-
-    <script type="text/javascript" src="js/index.js"></script>
-    <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
-    <script type="text/javascript" src="js/Toast.js"></script>
-
-</body>
+        <!-- end page 1 -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
+        <script type="text/javascript" id="jqm-trans-disable">
+            /* For having a faster transition */
+            $(document).on("mobileinit", function() {
+                $.mobile.defaultPageTransition = "none";
+                $.mobile.defaultDialogTransition = "none";
+            });
+        </script>
+        <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
+        <script type="text/javascript" src="js/Toast.js"></script>
+    </body>
 
 </html>
