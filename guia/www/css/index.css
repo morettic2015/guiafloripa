@@ -26,29 +26,29 @@
 
 /* un-checked */
 .ui-checkbox label.ui-checkbox-off {
-    background: #647f9c !important;
+    background: #f1f1f1 !important;
     border: 0px;;
     margin: 0px;
 }
 .ui-checkbox-off:after {
-    background-color: #647f9c !important;
-    border: 0px;
-    margin: 0px;
+    background-color: #f1f1f1 !important;
+    border: 1px;
+    margin: 1px;
 
 }
 
 .ui-checkbox-on:after {
-    background-color: #454545 !important;
+    background-color: #9b9b9b !important;
     border: 1px;
-    margin: 0px;
-    border-radius: 25px;
+    margin: 1px;
+    // border-radius: 25px !important;
 }
 /* checked */
 .ui-checkbox label.ui-checkbox-on {
-    background: #454545 !important;
+    background: #9b9b9b !important;
     border: 1px;
-    margin: 0px;
-    border-radius: 25px;
+    margin: 1px;
+    // border-radius: 25px !important;
 }
 
 

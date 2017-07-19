@@ -25,7 +25,8 @@ var app = {
 
         //Init Map Utils
         mapUtils = new MapUtils();
-
+        //INit map Slider
+        mapUtils.initSliderMenu();
 
         navigator.geolocation.getCurrentPosition(function(position) {
 
@@ -92,6 +93,7 @@ var MapUtils = function() {
     }
 
     this.sucessLoad = function(position) {
+
         lat = position.coords.latitude;
         lng = position.coords.longitude;
         var myLatlng = new google.maps.LatLng(lat, lng);
@@ -120,12 +122,12 @@ var MapUtils = function() {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: "Hello World!",
+                    title: lEventos[i].idType,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        size: new google.maps.Size(63, 96), // size
+                        //size: new google.maps.Size(24, 13), // size
                         origin: new google.maps.Point(0, 0), // origin
                         anchor: new google.maps.Point(0, 0) // anchor
                     },
@@ -151,7 +153,9 @@ var MapUtils = function() {
 
         });
     }
-
+    /**
+     * @Calculate distance from two diferent coordinates in KM
+     * */
     this.calculateDistance = function(lat1, long1, lat2, long2) {
 
         //radians
@@ -181,20 +185,126 @@ var MapUtils = function() {
 
         return (Math.sqrt((x * x) + (y * y) + (z * z)) / 10) + " KM";
     }
-
+    /**
+     * @ Map Style
+     * */
     this.getMapStyle = function() {
-        return [{"featureType": "all", "elementType": "all", "stylers": [{"saturation": -100}, {"lightness": -30}, {"hue": "#ff0000"}]}, {"featureType": "all", "elementType": "labels.text.fill", "stylers": [{"color": "#ffffff"}]}, {"featureType": "all", "elementType": "labels.text.stroke", "stylers": [{"color": "#353535"}]}, {"featureType": "landscape", "elementType": "geometry", "stylers": [{"color": "#656565"}]}, {"featureType": "poi", "elementType": "geometry.fill", "stylers": [{"color": "#505050"}]}, {"featureType": "poi", "elementType": "geometry.stroke", "stylers": [{"color": "#808080"}]}, {"featureType": "road", "elementType": "geometry", "stylers": [{"color": "#454545"}]}, {"featureType": "transit", "elementType": "labels", "stylers": [{"hue": "#007bff"}, {"saturation": 100}, {"lightness": -40}, {"invert_lightness": true}, {"gamma": 1.5}]}, {"featureType": "water", "elementType": "geometry.fill", "stylers": [{"color": "#647f9c"}]}];
+        return [
+            {
+                "featureType": "administrative",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#f2f2f2"
+                    },
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "simplified"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "saturation": -100
+                    },
+                    {
+                        "lightness": 45
+                    },
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "hue": "#ff0000"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#b4d4e1"
+                    },
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            }
+        ];
     }
+    /**
+     * @Welcome message
+     * */
     this.showWelcome = function() {
         this.showMessage("Bem vindo ao APP do Guiafloripa. Pesquise os eventos perto de você!", "#454545");
     }
-
+    /**
+     * @GPS Exception
+     * */
     this.showNoGPS = function() {
         this.showMessage("Por favor ative sua WIFI/4G e GPS para visualizar o mapa!", "#FF00FF");
         setTimeout(cordova.plugins.diagnostic.switchToLocationSettings(), 3000);
     }
 
-
+    /**
+     * @Messagem Manager method
+     * */
     this.showMessage = function(msg, corDialog) {
         window.plugins.toast.showWithOptions({
             message: msg,
@@ -205,10 +315,20 @@ var MapUtils = function() {
                 backgroundColor: corDialog, // make sure you use #RRGGBB. Default #333333
                 textColor: '#FFFF00', // Ditto. Default #FFFFFF
                 textSize: 20.5, // Default is approx. 13.
-                cornerRadius: 16, // minimum is 0 (square). iOS default 20, Android default 100
+                cornerRadius: 5, // minimum is 0 (square). iOS default 20, Android default 100
                 horizontalPadding: 20, // iOS default 16, Android default 50
                 verticalPadding: 16 // iOS default 12, Android default 30
             }
         });
+    }
+    this.initSliderMenu = function() {
+        $("#flexiselDemo1").flexisel({
+            visibleItems: 1,
+            clone: false,
+        });
+    }
+
+    this.setBorderStyle = function(element) {
+        element.style.border = "thick solid black";
     }
 }
