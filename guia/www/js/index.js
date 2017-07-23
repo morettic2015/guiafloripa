@@ -323,12 +323,13 @@ var MapUtils = function() {
     }
     this.initSliderMenu = function() {
         $("#flexiselDemo1").flexisel({
-            visibleItems: 1,
+            visibleItems: 3,
             clone: false,
         });
     }
 
-    this.setBorderStyle = function(element) {
-        element.style.border = "thick solid black";
+    this.setBorderStyle = function(element, name) {
+        res = element.src.split("_");
+        element.src = res[1] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
     }
 }
