@@ -10,17 +10,19 @@ var lat;
 var lng;
 var mapUtils;
 var lEventos;
+var directionsService;
+var directionsDisplay;
 var markers = new Array();
 var app = {
     // Application Constructor
-    initialize: function() {
+    initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     },
     // deviceready Event Handler
     //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
-    onDeviceReady: function() {
+    onDeviceReady: function () {
         this.receivedEvent('deviceready');
 
         //Init Map Utils
@@ -28,22 +30,22 @@ var app = {
         //INit map Slider
         mapUtils.initSliderMenu();
 
-        navigator.geolocation.getCurrentPosition(function(position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
 
             //Init Show info;
             mapUtils.showWelcome();
 
             //Loads Map
             mapUtils.sucessLoad(position);
-        }, function(e) {
+        }, function (e) {
             //No GPS or WIFI!
             mapUtils.showNoGPS();
-        }, {timeout: 5000})
+        }, { timeout: 5000 })
 
 
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
+    receivedEvent: function (id) {
         var parentElement = document.getElementById(id);
 
 
@@ -58,9 +60,9 @@ app.initialize();
  * @Classe Utilitiaria do APP
  * @Morettic.com.br
  */
-var MapUtils = function() {
-
-    this.getIcon = function(id) {
+var MapUtils = function () {
+    //Get Pin Type Based on TYPE from Marker
+    this.getIcon = function (id) {
         icon = null;
         mId = parseInt(id);
         switch (mId) {
@@ -92,22 +94,31 @@ var MapUtils = function() {
         return icon;
     }
 
-    this.sucessLoad = function(position) {
-
+    this.sucessLoad = function (position) {
+        //Init directions service
+        directionsService = new google.maps.DirectionsService();
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        //Set Coordinates
         lat = position.coords.latitude;
         lng = position.coords.longitude;
+        //Init my post
         var myLatlng = new google.maps.LatLng(lat, lng);
+        //Set map options
         var mapOptions = {
-            zoom: 14,
+            zoom: 11,
             center: myLatlng,
             styles: this.getMapStyle(),
             mapTypeControl: false,
             disableDefaultUI: true
         }
+        //Init Map from HTML Canvas
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        directionsDisplay.setMap(map);
+        //Hide A- B Markers from directions
+        directionsDisplay.setOptions({ suppressMarkers: true });
 
         //Requisição ao server side
-        $.get("https://guiafloripa.morettic.com.br/busca/", function(data, status) {
+        $.get("https://guiafloripa.morettic.com.br/busca/", function (data, status) {
             //alert("Data: " + data + "\nStatus: " + status);
             //Lista de eventos
             lEventos = data.e;
@@ -135,28 +146,51 @@ var MapUtils = function() {
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
                  new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                  new google.maps.LatLng(lat, lng));*/
-                google.maps.event.addListener(markers[i], 'click', function() {
+                google.maps.event.addListener(markers[i], 'click', function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
                     var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    infowindow.setContent("<img width='60' src='"
-                            + lEventos[this.indice].deLogo
-                            + "'/>"
-                            + lEventos[this.indice].deDetail
-                            + "<br>"
-                            + dist);
+                    var content = '<li data-role="divider"> (' + lEventos[this.indice].idType + ')</li>';
+                    content += '<li><a href="#" onclick="viewPet(' + i + ')"><img src="' + lEventos[this.indice].deDetail
+                        + '" width="60"><h2>' 
+                        + lEventos[this.indice].idType
+                        + '</h2><p>' 
+                        + lEventos[this.indice].deDetail
+                        + '<br>Distância:' 
+                        + dist;
+                    + '</p> </a></li>';
+
+                   /* infowindow.setContent("<img width='60' src='"
+                        + lEventos[this.indice].deLogo
+                        + "'/>"
+                        + lEventos[this.indice].deDetail
+                        + "<br>"
+                        + dist);*/
+                    infowindow.setContent(content);
                     infowindow.open(map, this);
+                    mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
                 });
 
             }
+
+            posFinal = markers.length - 1;
+            markers[posFinal] = new google.maps.Marker({
+                //alert()
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+                title: "Você",
+                indice: posFinal,
+                animation: google.maps.Animation.BOUNCE,
+
+            });
 
         });
     }
     /**
      * @Calculate distance from two diferent coordinates in KM
      * */
-    this.calculateDistance = function(lat1, long1, lat2, long2) {
+    this.calculateDistance = function (lat1, long1, lat2, long2) {
 
         //radians
         lat1 = (lat1 * 2.0 * Math.PI) / 60.0 / 360.0;
@@ -188,7 +222,7 @@ var MapUtils = function() {
     /**
      * @ Map Style
      * */
-    this.getMapStyle = function() {
+    this.getMapStyle = function () {
         return [
             {
                 "featureType": "administrative",
@@ -291,13 +325,13 @@ var MapUtils = function() {
     /**
      * @Welcome message
      * */
-    this.showWelcome = function() {
+    this.showWelcome = function () {
         this.showMessage("Bem vindo ao APP do Guiafloripa. Pesquise os eventos perto de você!", "#454545");
     }
     /**
      * @GPS Exception
      * */
-    this.showNoGPS = function() {
+    this.showNoGPS = function () {
         this.showMessage("Por favor ative sua WIFI/4G e GPS para visualizar o mapa!", "#FF00FF");
         setTimeout(cordova.plugins.diagnostic.switchToLocationSettings(), 3000);
     }
@@ -305,7 +339,7 @@ var MapUtils = function() {
     /**
      * @Messagem Manager method
      * */
-    this.showMessage = function(msg, corDialog) {
+    this.showMessage = function (msg, corDialog) {
         window.plugins.toast.showWithOptions({
             message: msg,
             duration: 6000, // 2000 ms
@@ -321,15 +355,40 @@ var MapUtils = function() {
             }
         });
     }
-    this.initSliderMenu = function() {
+    this.initSliderMenu = function () {
         $("#flexiselDemo1").flexisel({
             visibleItems: 3,
             clone: false,
         });
     }
 
-    this.setBorderStyle = function(element, name) {
+    this.setBorderStyle = function (element, name) {
         res = element.src.split("_");
-        element.src = res[1] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
+        pos = res.length - 1;
+        element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
+    }
+
+    this.showDistance = function (pLat, pLng, oLat, oLng) {
+        var start = new google.maps.LatLng(oLat, oLng);
+        //var end = new google.maps.LatLng(38.334818, -181.884886);
+        var end = new google.maps.LatLng(pLat, pLng);
+
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(start);
+        bounds.extend(end);
+        map.fitBounds(bounds);
+        var request = {
+            origin: start,
+            destination: end,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+                directionsDisplay.setMap(map);
+            } else {
+                console.log("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+            }
+        });
     }
 }
