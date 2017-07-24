@@ -15,18 +15,26 @@
                 "API_KEY_FOR_ANDROID": "AIzaSyAkDJkZg4Y5Yo3Fpeh-REWIQMVvULWEZkM"
             },
             "cordova-plugin-x-toast": {},
-            "cordova.plugins.diagnostic": {}
+            "cordova.plugins.diagnostic": {},
+            "cordova-plugin-admob-simple": {},
+            "onesignal-cordova-plugin": {}
         }
     },
     "dependencies": {
+        "cordova-admob-sdklibs": "^2.1.4",
         "cordova-android": "^6.2.3",
         "cordova-browser": "~4.1.0",
+        "cordova-plugin-admob-simple": "^3.3.4",
         "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-geolocation": "^2.4.3",
         "cordova-plugin-googlemaps": "^1.4.1",
         "cordova-plugin-splashscreen": "^4.0.3",
         "cordova-plugin-whitelist": "1",
         "cordova-plugin-x-toast": "^2.6.0",
-        "cordova.plugins.diagnostic": "^3.6.5"
+        "cordova.plugins.diagnostic": "^3.6.5",
+        "onesignal-cordova-plugin": "^2.1.2"
+    },
+    "devDependencies": {
+        "cordova-minify-v2": "0.0.3"
     }
 }

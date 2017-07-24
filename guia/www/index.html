@@ -7,112 +7,114 @@
 -->
 <html>
 
-    <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
-        <meta name="format-detection" content="telephone=yes">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
-        <link rel="stylesheet" type="text/css" href="css/flex.css">
-        <link rel="stylesheet" type="text/css" href="js/jquery-1.5.0.mobile.min.css">
-        <title>Guia Floripa Eventos</title>
-    </head>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/flex.css">
+    <link rel="stylesheet" type="text/css" href="js/jquery-1.5.0.mobile.min.css">
+    <title>Guia Floripa Eventos</title>
+</head>
 
-    <body>
-        <!-- jquery mobile page 1 -->
-        <div data-role="page" id="page1">
-            <div data-role="header" data-position="fixed" style="background: white;">
-                <center>
-                    <img src="img/header.png" />
-                </center>
-                <a href="index.html" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
-            </div>
-            <div role="main" class="ui-content" id="map-canvas" data-position="fixed" data-tap-toggle="false">
-                <!-- Maps loads Here -->
-            </div>
-            <!-- end of page 1 content -->
-            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
-                <center>
-                    <h1>Categorias</h1>
-                    <fieldset>
-                        <ul id="flexiselDemo1">
-                            <li>
-                                <img id="bt_0" alt="Destaques" src="img/destaque_on.png" onclick="mapUtils.setBorderStyle(this, 'destaque')"/>
-                                <h4>Destaques</h4>
-                            </li>
-                            <li>
-                                <img d="bt_1" alt="Cinema" src="img/cinema_on.png" onclick="mapUtils.setBorderStyle(this, 'cinema')"/>
-                                <h4>Cinema</h4>
-                            </li>
-                            <li>
-                                <img d="bt_2" alt="Esportes" src="img/esportes_on.png" onclick="mapUtils.setBorderStyle(this, 'esportes')"/>
-                                <h4>Esportes</h4>
-                            </li>
-                            <li>
-                                <img id="bt_3"  alt="Lazer" src="img/lazer_on.png" onclick="mapUtils.setBorderStyle(this, 'lazer')"/>
-                                <h4>Lazer</h4>
-                            </li>
-                            <li>
-                                <img d="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle(this, 'alimentacao')"/>
-                                <h4>Alimentação</h4>
-                            </li>
-                            <li>
-                                <img d="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil')"/>
-                                <h4>Infantil</h4>
-                            </li>
-                            <li>
-                                <img d="bt_6" alt="Eventos" src="img/eventos_on.png" onclick="mapUtils.setBorderStyle(this, 'eventos')"/>
-                                <h4>Eventos</h4>
-                            </li>
-                            <li>
-                                <img d="bt_7" alt="Cultura" src="img/cultura_on.png" onclick="mapUtils.setBorderStyle(this, 'cultura')"/>
-                                <h4>Cultura</h4>
-                            </li>
-                            <li>
-                                <img d="bt_8" alt="Turismo" src="img/hospedagem_on.png" onclick="mapUtils.setBorderStyle(this, 'hospedagem')"/>
-                                <h4>Turismo</h4>
-                            </li>
-                        </ul>
-                    </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <a href="#" class="ui-btn ui-icon-clock  ui-btn-b ui-btn-icon-left">Hoje</a>
-                        <a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-calendar ui-btn-icon-left ui-btn-b" data-transition="pop">Datas</a>
-                        <!--   <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #5caed0 ; color: #ffffff; background-color: #5caed0;">Buscar</a> -->
-                    </fieldset>
-                </center>
-            </div>
-            <!-- Dates -->
-            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
-                <form>
-                    <div style="padding:10px 20px;">
-                        <h3>Data dos eventos</h3>
-                        <label for="dtinicio" class="ui-hidden-accessible">Data inicio:</label>
-                        <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
-                        <label for="dtfim" class="ui-hidden-accessible">Data fim:</label>
-                        <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
-                        <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Aplicar</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- end page 1 footer -->
+<body>
+    <!-- jquery mobile page 1 -->
+    <div data-role="page" id="page1">
+        <div data-role="header" data-position="fixed" style="background: white;">
+            <center>
+                <img src="img/header.png" />
+            </center>
+            <a href="index.html" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
         </div>
-        <!-- end page 1 -->
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
-        <script type="text/javascript" id="jqm-trans-disable">
-                                    /* For having a faster transition */
-                                    $(document).on("mobileinit", function() {
-                                        $.mobile.defaultPageTransition = "none";
-                                        $.mobile.defaultDialogTransition = "none";
-                                    });
-        </script>
-        <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
-        <script type="text/javascript" src="js/Toast.js"></script>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <script type="text/javascript" src="js/jquery.flexisel.js"></script>
-    </body>
+        <div role="main" class="ui-content" id="map-canvas" data-position="fixed" data-tap-toggle="false">
+            <!-- Maps loads Here -->
+        </div>
+        <!-- end of page 1 content -->
+        <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
+            <center>
+                <h1>Categorias</h1>
+                <fieldset>
+                    <ul id="flexiselDemo1">
+                        <li>
+                            <img id="bt_0" alt="Destaques" src="img/destaque_on.png" onclick="mapUtils.setBorderStyle(this, 'destaque')" />
+                            <h4>Destaques</h4>
+                        </li>
+                        <li>
+                            <img d="bt_1" alt="Cinema" src="img/cinema_on.png" onclick="mapUtils.setBorderStyle(this, 'cinema')" />
+                            <h4>Cinema</h4>
+                        </li>
+                        <li>
+                            <img d="bt_2" alt="Esportes" src="img/esportes_on.png" onclick="mapUtils.setBorderStyle(this, 'esportes')" />
+                            <h4>Esportes</h4>
+                        </li>
+                        <li>
+                            <img id="bt_3" alt="Lazer" src="img/lazer_on.png" onclick="mapUtils.setBorderStyle(this, 'lazer')" />
+                            <h4>Lazer</h4>
+                        </li>
+                        <li>
+                            <img d="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle(this, 'alimentacao')" />
+                            <h4>Alimentação</h4>
+                        </li>
+                        <li>
+                            <img d="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil')" />
+                            <h4>Infantil</h4>
+                        </li>
+                        <li>
+                            <img d="bt_6" alt="Eventos" src="img/eventos_on.png" onclick="mapUtils.setBorderStyle(this, 'eventos')" />
+                            <h4>Eventos</h4>
+                        </li>
+                        <li>
+                            <img d="bt_7" alt="Cultura" src="img/cultura_on.png" onclick="mapUtils.setBorderStyle(this, 'cultura')" />
+                            <h4>Cultura</h4>
+                        </li>
+                        <li>
+                            <img d="bt_8" alt="Turismo" src="img/hospedagem_on.png" onclick="mapUtils.setBorderStyle(this, 'hospedagem')" />
+                            <h4>Turismo</h4>
+                        </li>
+                    </ul>
+                </fieldset>
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <a href="#" class="ui-btn ui-icon-clock  ui-btn-b ui-btn-icon-left">Hoje</a>
+                    <a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-calendar ui-btn-icon-left ui-btn-b"
+                        data-transition="pop">Datas</a>
+                    <!--   <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #5caed0 ; color: #ffffff; background-color: #5caed0;">Buscar</a> -->
+                </fieldset>
+            </center>
+        </div>
+        <!-- Dates -->
+        <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
+            <form>
+                <div style="padding:10px 20px;">
+                    <h3>Data dos eventos</h3>
+                    <label for="dtinicio" class="ui-hidden-accessible">Data inicio:</label>
+                    <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
+                    <label for="dtfim" class="ui-hidden-accessible">Data fim:</label>
+                    <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
+                    <button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Aplicar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- end page 1 footer -->
+    </div>
+    <!-- end page 1 -->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
+    <script type="text/javascript" id="jqm-trans-disable">
+        /* For having a faster transition */
+        $(document).on("mobileinit", function () {
+            $.mobile.defaultPageTransition = "none";
+            $.mobile.defaultDialogTransition = "none";
+        });
+    </script>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
+    <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
+    <script type="text/javascript" src="js/MapUtil.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/Toast.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.flexisel.js"></script>
+</body>
 
 </html>

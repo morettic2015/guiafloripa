@@ -56,5 +56,37 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-connectivity-monitor": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-connectivity-monitor"
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "cordova-plugin-admob-simple": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-admob-simple"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-admob-sdklibs": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-admob-sdklibs"
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "onesignal-cordova-plugin": {
+        "source": {
+            "type": "registry",
+            "id": "onesignal-cordova-plugin"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

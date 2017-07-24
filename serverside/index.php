@@ -27,7 +27,7 @@ $app->get('/busca/', function (Request $request, Response $response) use ($app) 
 });
 
 //Busca eventos de uma determinada data
-$app->get('/busca/{types}/{from}/{to}', function (Request $request, Response $response) use ($app) {
+$app->get('/filtro/{types}/{from}/{to}', function (Request $request, Response $response) use ($app) {
     $newResponse = $response->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
@@ -38,7 +38,8 @@ $app->get('/busca/{types}/{from}/{to}', function (Request $request, Response $re
     $data->from = $request->getAttribute('from');
     $data->to = $request->getAttribute('to');
     //Return Eventos by date interval
-    $eventos = GuiaController::getEventosDeHoje($data);
+    $data = GuiaController::findEventosByDateType($data->from,$data->to,$data->types) ;
+    
     //Response Busca Data
     return $newResponse->withJson($data, 201);
 });
