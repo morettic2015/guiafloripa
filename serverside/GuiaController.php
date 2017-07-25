@@ -64,7 +64,7 @@ class GuiaController extends stdClass {
         $query2 = "select * from viewEventPlaces where idType = ".$type
                     ." and DATE(dtFrom) >= '".$dtOrigem
                     ."' AND DATE(dtUntil)<= '".$dtFim."'";
-        if(empty($dtOrigem)||empty($dtFim)){
+        if(empty($dtOrigem)||empty($dtFim)||$dtOrigem=="-1"||$dtFim=="-1"){
             $eventos = DB::query($query); // misspelled SELECT
         }else{
             $eventos = DB::query($query2); // misspelled SELECT
