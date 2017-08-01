@@ -456,7 +456,7 @@ var MapUtils = function () {
      * @GPS Exception
      * */
     this.showNoGPS = function () {
-        this.showMessage("Por favor ative sua WIFI/4G e GPS para visualizar o mapa!", "#FF00FF");
+        window.location.href="gps.html";
         setTimeout(cordova.plugins.diagnostic.switchToLocationSettings(), 3000);
     }
 

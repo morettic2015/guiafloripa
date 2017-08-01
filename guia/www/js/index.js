@@ -11,13 +11,26 @@ var app = {
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     },
+    //OnDevice Offline
+    isOffline: function () {
+        //navigator.splashscreen.show();
+        //alert('OFFLINE');
+        var networkState = navigator.connection.type;
+        alert(networkState);
+        if (networkState === Connection.NONE) {
+            window.location.href = "offline.html";
+        }
+    },
+
     // deviceready Event Handler
     //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
         this.receivedEvent('deviceready');
+        //document.addEventListener("offline", this.onOffline(), false);
 
+        this.isOffline();
         //Init Map Utils
         mapUtils = new MapUtils();
         //INit map Slider

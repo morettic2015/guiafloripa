@@ -31,6 +31,9 @@
         },
         "onesignal-cordova-plugin": {
             "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
         }
     },
     "dependent_plugins": {
