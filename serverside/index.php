@@ -8,6 +8,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 require './vendor/autoload.php';
 require 'GuiaController.php';
 
+
 //Init Objects
 $app = new \Slim\App;
 //$app->view(new \JsonApiView());
@@ -42,6 +43,30 @@ $app->get('/filtro/{types}/{from}/{to}', function (Request $request, Response $r
     
     //Response Busca Data
     return $newResponse->withJson($data, 201);
+});
+//Busca eventos de uma determinada data
+$app->get('/synchronize', function (Request $request, Response $response) use ($app) {
+     $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    require 'GuiaSynchronize.php';
+    $data = GuiaSynchronize::getCinemas();
+    return $newResponse->withJson($data, 201);
+    //Response Busca Data
+    //echo "ISSA";
+});
+//Busca eventos de uma determinada data
+$app->get('/synchronize_places', function (Request $request, Response $response) use ($app) {
+     $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    require 'GuiaSynchronize.php';
+    $data = GuiaSynchronize::getPlaces();
+    return $newResponse->withJson($data, 201);
+    //Response Busca Data
+    //echo "ISSA";
 });
 $app->run();
 
