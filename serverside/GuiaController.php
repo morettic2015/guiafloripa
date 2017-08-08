@@ -107,8 +107,8 @@ class GuiaController extends stdClass {
             DB::insertUpdate(
                     'Event', array(
                 'idEvent' => $obj->event_id, //primary key
-                'deEvent' => (strip_tags($obj->event_tit)),
-                'deDetail' => (strip_tags($obj->event_info)),
+                'deEvent' => ($obj->event_tit),
+                'deDetail' => ($obj->event_info),
                 'dtFrom' => $dtFrom,
                 'dtUntil' => $dtUntil,
                 'idPlaceOwner' => $obj->ID,
