@@ -13,4 +13,4 @@ require '../vendor/autoload.php';
  */
 include '../GuiaController.php';
 
-GuiaController::insertUpdateEvent("https://guiafloripa.morettic.com.br/destaque", 5);
+GuiaController::cronEventCategory("view_destaque_ids", 5);

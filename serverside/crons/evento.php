@@ -13,4 +13,6 @@ require '../vendor/autoload.php';
  */
 include '../GuiaController.php';
 
-GuiaController::insertUpdateEvent("https://guiafloripa.morettic.com.br/evento", 6);
+
+GuiaController::cronEventCategory("view_eventos_ids", 6);
+//GuiaController::insertUpdateEvent("https://guiafloripa.morettic.com.br/evento", 6);

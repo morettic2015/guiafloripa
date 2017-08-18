@@ -6,6 +6,7 @@ DB::$password = '#4ppgu14Fl0r1p4!';
 DB::$dbName = 'guiafloripa';
 DB::$host = 'guiafloripa.com.br';
 DB::$port = '3306';
+DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = array('Errors', 'static_error_handler');
 // use an object method as an error handler
 $my_object = new Errors();
@@ -63,53 +64,53 @@ class GuiaSynchronize extends stdClass {
       die();
       }
      */
+    /*
+      public static function getEventType($type) {
 
-    public static function getEventType($type) {
+      $yesterday = strtotime("today -1440min");
+      $timestamp = strtotime('today +14400min');
 
-        $yesterday = strtotime("today -400min");
-        $timestamp = strtotime('today +400min');
+      $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday  and event_dtend <= $timestamp  and  a.event_id in ( select object_id from $type) ";
 
-        $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday  and event_dtend <= $timestamp  and  a.event_id in ( select object_id from $type) ";
+      // echo $query;
+      //  die;
 
-        // echo $query;
-        //  die;
+      $mdb = new MeekroDB();
+      $mdb->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+      $eventos = $mdb->query($query); // misspelled SELECT
 
-        $mdb = new MeekroDB();
-        $mdb->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        $eventos = $mdb->query($query); // misspelled SELECT
+      /* echo "<pre>";
+      var_dump($eventos);die; */
 
-        /* echo "<pre>";
-          var_dump($eventos);die; */
+    //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
+    /*   $lEventos = Array();
 
-        //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
-        $lEventos = Array();
+      foreach ($eventos as $row) {
+      $eventRow = new stdClass();
+      //var_dump($row);die;
+      $eventRow->event_id = $row['event_id'];
+      $eventRow->event_tit = $row['event_tit'];
+      $eventRow->event_info = $row['event_info'];
+      $eventRow->event_dtend = $row['event_dtend'];
+      $eventRow->event_dtstart = $row['event_dtstart'];
+      $eventRow->event_id_place = $row['event_id_place'];
+      $eventRow->ID = $row['ID'];
+      $eventRow->tit = $row['tit'];
+      $eventRow->info = $row['info'];
+      $eventRow->endereco = $row['endereco'];
+      $eventRow->telefone = $row['telefone'];
+      $eventRow->cidade = $row['cidade'];
+      $eventRow->id_cn_filme = $row['id_cn_filme'];
+      $eventRow->email = $row['email'];
 
-        foreach ($eventos as $row) {
-            $eventRow = new stdClass();
-            //var_dump($row);die;
-            $eventRow->event_id = $row['event_id'];
-            $eventRow->event_tit = $row['event_tit'];
-            $eventRow->event_info = $row['event_info'];
-            $eventRow->event_dtend = $row['event_dtend'];
-            $eventRow->event_dtstart = $row['event_dtstart'];
-            $eventRow->event_id_place = $row['event_id_place'];
-            $eventRow->ID = $row['ID'];
-            $eventRow->tit = $row['tit'];
-            $eventRow->info = $row['info'];
-            $eventRow->endereco = $row['endereco'];
-            $eventRow->telefone = $row['telefone'];
-            $eventRow->cidade = $row['cidade'];
-            $eventRow->id_cn_filme = $row['id_cn_filme'];
-            $eventRow->email = $row['email'];
+      $eventRow->geo = GuiaSynchronize::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
 
-            $eventRow->geo = GuiaSynchronize::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
-
-            $lEventos[] = $eventRow;
-        }
-        DB::disconnect();
-        return $lEventos;
-        //var_dump($eventos);
-    }
+      $lEventos[] = $eventRow;
+      }
+      DB::disconnect();
+      return $lEventos;
+      //var_dump($eventos);
+      } */
 
     //1501729200 | 1503111600
     //1501902000

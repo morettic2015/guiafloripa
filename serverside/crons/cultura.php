@@ -13,4 +13,4 @@ require '../vendor/autoload.php';
  */
 include '../GuiaController.php';
 
-GuiaController::insertUpdateEvent("https://guiafloripa.morettic.com.br/cultura", 4);
+GuiaController::cronEventCategory("view_cultura_ids", 4);
