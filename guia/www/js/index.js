@@ -8,25 +8,24 @@
 
 var app = {
     // Application Constructor
-    initialize: function () {
+    initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     },
     //OnDevice Offline
-    isOffline: function () {
+    isOffline: function() {
         //navigator.splashscreen.show();
         //alert('OFFLINE');
         var networkState = navigator.connection.type;
-        alert(networkState);
+        //alert(networkState);
         if (networkState === Connection.NONE) {
             window.location.href = "offline.html";
         }
     },
-
     // deviceready Event Handler
     //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
-    onDeviceReady: function () {
+    onDeviceReady: function() {
         this.receivedEvent('deviceready');
         //document.addEventListener("offline", this.onOffline(), false);
 
@@ -38,21 +37,22 @@ var app = {
         //Init Ads
         mapUtils.initAds();
         //Init Geolocation
-        navigator.geolocation.getCurrentPosition(function (position) {
+        navigator.geolocation.getCurrentPosition(function(position) {
             //Init Show info;
             mapUtils.showWelcome();
             //Loads Map
             mapUtils.sucessLoad(position);
-        }, function (e) {
+            navigator.splashscreen.hide();//hide splash after map load
+        }, function(e) {
+            navigator.splashscreen.hide();//Hide Splash
             //No GPS or WIFI!
             mapUtils.showNoGPS();
-        }, { timeout: 5000 });
+        }, {timeout: 5000});
         //Init Push
         mapUtils.initPush();
-
     },
     // Update DOM on a Received Event
-    receivedEvent: function (id) {
+    receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
 
 

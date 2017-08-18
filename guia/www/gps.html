@@ -7,37 +7,44 @@
 -->
 <html>
 
-<head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
-    <meta name="format-detection" content="telephone=yes">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-    <style>
-        body {
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
+        <meta name="format-detection" content="telephone=yes">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <style>
+            body {
 
-	max-height: 100%;
-	background-color: #FFFFFF;
-        }
-    .Estilo1 {	font-size: 9px;
-	font-weight: bold;
-}
-    </style>
-    <title>Guia Floripa Eventos</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+                max-height: 100%;
+                background-color: #FFFFFF;
+            }
+            .Estilo1 {	font-size: 9px;
+                       font-weight: bold;
+            }
+        </style>
+        <title>Guia Floripa Eventos</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
 
-<body>
-    <p align="center">&nbsp;</p>
-    <p align="center"><img src="img/header.png" width="147" height="33"></p>
-    <h1 align="center">&nbsp;</h1>
-    <h1 align="center">&nbsp;</h1>
-    <h1 align="center">gps esta ativo? </h1>
-    <p align="center">Verifique se GPS está ativado. <br>
-    Utilizamos seu gps para calcular a distância dos eventos! </p>
-    <p align="center">&nbsp;</p>
-    <p align="center">&nbsp;</p>
-    <p align="center"><span class="Estilo1">Powered by</span><br>
-      <a href="https://morettic.com.br" target="_blank"><img src="img/morettic2.png" alt="Morettic" width="208" height="63" border="0"></a></p>
-</body>
-
+    <body>
+        <div data-role="page" id="page1"  style="background: white;">
+            <div data-role="header" data-position="fixed" style="background: white;">
+                <center>
+                    <img src="img/header.png" />
+                </center>
+            </div>
+            <div data-role="main" id="page1" data-theme="a" style="background-color: #FFFFFF">
+                <h1 align="center">gps esta ativo? </h1>
+                <p align="center">Verifique se GPS está ativado. <br>
+                    Utilizamos seu gps para calcular a distância dos eventos!
+                </p>
+                <p align="center"><img src="img/nogps.png" width="200"></p>
+            </div>
+            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
+                <p align="center"  style="background-color: #FFFFFF"><span class="Estilo1">Powered by</span><br>
+                    <a href="https://morettic.com.br" target="_blank"><img src="img/morettic2.png" width="208" height="63" border="0"></a>
+                </p>
+            </div>
+        </div>
+    </body>
 </html>

@@ -10,9 +10,11 @@
     <content src="index.html" />
     <preference name="Fullscreen" value="true" />
     <preference name="Orientation" value="portrait" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="android-minSdkVersion" value="18" />
     <access origin="*" />
     <icon platform="android" src="www/img/icone.png" />
-    <preference name="android-minSdkVersion" value="18" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
