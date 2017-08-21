@@ -31,7 +31,7 @@
                 <!-- Maps loads Here -->
             </div>
             <!-- end of page 1 content -->
-            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 47%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
+            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 40%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
                 <center>
                     <h1>Categorias</h1>
                     <fieldset>
@@ -69,45 +69,49 @@
                                 <h4>Cultura</h4>
                             </li>
                             <li>
-                                <img d="bt_8" alt="Turismo" src="img/hospedagem_on.png" onclick="mapUtils.setBorderStyle(this, 'hospedagem', 9)" />
-                                <h4>Hospedagem</h4>
+                                <img d="bt_8" alt="Gratuito" src="img/gratuito_on.png" onclick="mapUtils.setBorderStyle(this, 'gratuito', 9)" />
+                                <h4>Gratuito</h4>
                             </li>
                         </ul>
                     </fieldset>
                     <fieldset data-role="controlgroup" data-type="horizontal">
-                        <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-icon-clock  ui-btn-b ui-btn-icon-left">Hoje</a>
-                        <a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-calendar ui-btn-icon-left ui-btn-b"
+                        <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-icon-clock  ui-btn-a ui-btn-icon-left">Hoje</a>
+                        <a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-calendar ui-btn-icon-left ui-btn-a"
                            data-transition="pop">Datas</a>
                         <!--   <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #5caed0 ; color: #ffffff; background-color: #5caed0;">Buscar</a> -->
                     </fieldset>
                 </center>
             </div>
             <!-- Painel de configurações do radar -->
-            <div data-role="popup" id="popupInfo" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" >
+            <div data-role="popup" id="popupInfo" data-theme="a" class="ui-corner-all"  data-dismissible="true" >
+                <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Radar</h3>
-                    <p>Receba notificações de eventos perto de você.</p>
+                    <p>Receba notificações de eventos perto de você pelo APP</p>
                     <form>
+                        <label for="checkPushOn">Ativar radar:</label>
+                        <input type="checkbox" data-role="flipswitch" name="checkPushOn" id="checkPushOn" data-on-text="ON" data-off-text="OFF" >
+                        <label for="txtNomeProfile">Nome:</label>
+                        <input type="text" name="txtNomeProfile" id="txtNomeProfile" placeholder="Meu nome" value="" data-mini="true">
                         <label for="txtEmailProfile">Email:</label>
-                        <input type="email" name="txtEmailProfile" id="textinput-5" placeholder="email@mail.com.br" value="" data-mini="true">
-                        <label for="flip-checkbox-1">Ativar radar:</label>
-                        <input type="checkbox" data-role="flipswitch" name="flip-checkbox-1" id="flip-checkbox-1" data-on-text="ON" data-off-text="OFF" >
+                        <input type="email" name="txtEmailProfile" id="txtEmailProfile" placeholder="email@mail.com.br" value="" data-mini="true">
                         <label for="slider-1">Distância (KM)</label>
                         <input type="range" name="slider-1" id="slider-1" min="3" max="21" value="10" data-highlight="true">
-                        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check">Aplicar</a>
+                        <a href="javascript:profileUtil.saveProfile()"  class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check">Aplicar</a>
                     </form>
                 </div>
             </div>
 
             <!-- Dates Filter-->
             <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" >
+                <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Data dos eventos</h3>
-                    <label for="dtinicio" class="ui-hidden-accessible">Data inicio:</label>
+                    <label for="dtinicio">Data inicio:</label>
                     <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
-                    <label for="dtfim" class="ui-hidden-accessible">Data fim:</label>
+                    <label for="dtfim">Data fim:</label>
                     <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
-                    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" data-rel="back">Aplicar</a>
+                    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" data-rel="back">Aplicar</a>
                 </div>
             </div>
 
@@ -126,8 +130,10 @@
         <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
         <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
         <script type="text/javascript" src="js/MapUtil.js"></script>
+        <script type="text/javascript" src="js/ProfileUtil.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/Toast.js"></script>
+        <script type="text/javascript" src="js/markerclusterer.js"></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/jquery.flexisel.js"></script>
     </body>

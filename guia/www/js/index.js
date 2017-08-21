@@ -50,6 +50,8 @@ var app = {
         }, {timeout: 5000});
         //Init Push
         mapUtils.initPush();
+        //Init profile data
+        profileUtil.initProfile();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

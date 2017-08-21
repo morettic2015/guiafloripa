@@ -150,9 +150,12 @@ var MapUtils = function() {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-
+            // mapUtils.clusterOption(map, markers);
         });
     }
+
+
+
     /**
      * @ Call to show only today events
      */
@@ -224,7 +227,7 @@ var MapUtils = function() {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-
+            //mapUtils.clusterOption(map, markers);
         });
     }
     /**
@@ -322,7 +325,7 @@ var MapUtils = function() {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-
+            //mapUtils.clusterOption(map, markers);
         });
     }
     /**
@@ -523,6 +526,13 @@ var MapUtils = function() {
                 .startInit("c452ff74-3bc4-44ca-a015-bfdaf0779354")
                 .handleNotificationOpened(notificationOpenedCallback)
                 .endInit();
+        //Save userId and pushToken on Database (localstorage)
+        window.plugins.OneSignal.getIds(function(ids) {
+            console.log('getIds: ' + JSON.stringify(ids));
+            //alert("userId = " + ids.userId + ", pushToken = " + ids.pushToken);
+            localStorage.setItem("pushToken", ids.pushToken);
+            localStorage.setItem("userId", ids.userId);
+        });
     }
     /**
      * @ Calculate Distance from two points
@@ -607,6 +617,14 @@ var MapUtils = function() {
                     timeout: 30000,
                     enableHighAccuracy: true
                 });
+    }
+
+    this.clusterOption = function(map, markers) {
+        var voptions = {
+            imagePath: 'img/m'
+        };
+
+        var markerCluster = new MarkerClusterer(map, markers, voptions);
     }
 }
 
