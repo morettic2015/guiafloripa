@@ -1,0 +1,7 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "sergeytsalkov/meekrodb": "*",
+        "monolog/monolog":"*"
+    }
+}
