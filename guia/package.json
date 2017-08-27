@@ -24,7 +24,7 @@
     "dependencies": {
         "cordova-admob-sdklibs": "^2.1.4",
         "cordova-android": "^6.2.3",
-        "cordova-browser": "~4.1.0",
+        "cordova-browser": "^4.1.0",
         "cordova-plugin-admob-simple": "^3.3.4",
         "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-geolocation": "^2.4.3",

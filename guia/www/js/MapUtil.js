@@ -19,9 +19,9 @@ var markers = new Array();
 var notificationOpenedCallback;
 var watcherPosition = null;
 
-var MapUtils = function() {
+var MapUtils = function () {
     //Get Pin Type Based on TYPE from Marker
-    this.getIcon = function(id) {
+    this.getIcon = function (id) {
         icon = null;
         mId = parseInt(id);
         switch (mId) {
@@ -58,7 +58,7 @@ var MapUtils = function() {
     /**
      * Remove all markers from map
      */
-    this.clearAllPinsFromMap = function() {
+    this.clearAllPinsFromMap = function () {
         for (i = 0; i < markers.length; i++) {
             markers[i].setMap(null);
         }
@@ -70,7 +70,7 @@ var MapUtils = function() {
     }
 
 
-    this.createInfoWindowDef = function() {
+    this.createInfoWindowDef = function () {
         return new google.maps.InfoWindow({
             content: "holding...",
             maxHeight: 200,
@@ -78,11 +78,11 @@ var MapUtils = function() {
         });
     }
 
-    this.requestPin = function(pinType, dtInit, dtFim) {
+    this.requestPin = function (pinType, dtInit, dtFim) {
         //Requisição ao server side
         mapUtils.clearAllPinsFromMap();
         var url1 = "https://guiafloripa.morettic.com.br/filtro/" + pinType + "/" + dtInit + "/" + dtFim;
-        $.get(url1, function(data, status) {
+        $.get(url1, function (data, status) {
             //alert("Data: " + data + "\nStatus: " + status);
             //Lista de eventos
             lEventos = data.e;
@@ -111,31 +111,20 @@ var MapUtils = function() {
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
                  new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                  new google.maps.LatLng(lat, lng));*/
-                google.maps.event.addListener(markers[i], 'click', function() {
+                google.maps.event.addListener(markers[i], 'click', function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
                     var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    var content = '<h1>' + lEventos[this.indice].deEvent + '</h1><br>';
-
-                    if (lEventos[this.indice].deLogo !== "default") {
-                        content += '<center><img src="' + lEventos[this.indice].deLogo
-                                + '" width="60"></center>'
-                    }
-                    content += '<p>'
-                            + lEventos[this.indice].deDetail
-                            + '<br><b>Distância:</b>'
-                            + dist;
-                    +'</p> </a></li>';
-
-                    /* infowindow.setContent("<img width='60' src='"
-                     + lEventos[this.indice].deLogo
-                     + "'/>"
-                     + lEventos[this.indice].deDetail
-                     + "<br>"
-                     + dist);*/
-                    infowindow.setContent(content);
-                    infowindow.open(map, this);
+                    InfoWindowT(lEventos[this.indice].deEvent,
+                            lEventos[this.indice].deDetail,
+                            lEventos[this.indice].deAddress,
+                            lEventos[this.indice].dtUntil,
+                            lEventos[this.indice].dtFrom,
+                            dist,
+                            lEventos[this.indice].nrPhone,
+                            "image",
+                            lEventos[this.indice].nmPlace);
                     mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
                 });
 
@@ -159,9 +148,9 @@ var MapUtils = function() {
     /**
      * @ Call to show only today events
      */
-    this.showWhatsGoingOn = function() {
+    this.showWhatsGoingOn = function () {
         this.clearAllPinsFromMap();
-        $.get("https://guiafloripa.morettic.com.br/busca/", function(data, status) {
+        $.get("https://guiafloripa.morettic.com.br/busca/", function (data, status) {
             //alert("Data: " + data + "\nStatus: " + status);
             //Lista de eventos
             lEventos = data.e;
@@ -188,32 +177,24 @@ var MapUtils = function() {
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
                  new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                  new google.maps.LatLng(lat, lng));*/
-                google.maps.event.addListener(markers[i], 'click', function() {
+                google.maps.event.addListener(markers[i], 'click', function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
                     var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    var content = '<h1>' + lEventos[this.indice].deEvent + '</h1><br>';
-
-                    if (lEventos[this.indice].deLogo !== "default") {
-                        content += '<center><img src="' + lEventos[this.indice].deLogo
-                                + '" width="60"></center>'
-                    }
-                    content += '<p>'
-                            + lEventos[this.indice].deDetail
-                            + '<br><b>Distância:</b>'
-                            + dist;
-                    +'</p> </a></li>';
-
-                    /* infowindow.setContent("<img width='60' src='"
-                     + lEventos[this.indice].deLogo
-                     + "'/>"
-                     + lEventos[this.indice].deDetail
-                     + "<br>"
-                     + dist);*/
-                    infowindow.setContent(content);
-                    infowindow.open(map, this);
+                    InfoWindowT(lEventos[this.indice].deEvent,
+                            lEventos[this.indice].deDetail,
+                            lEventos[this.indice].deAddress,
+                            lEventos[this.indice].dtUntil,
+                            lEventos[this.indice].dtFrom,
+                            dist,
+                            lEventos[this.indice].nrPhone,
+                            "image",
+                            lEventos[this.indice].nmPlace);
                     mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+
+
+
                 });
 
             }
@@ -233,7 +214,7 @@ var MapUtils = function() {
     /**
      * @Called on load to show today events
      */
-    this.sucessLoad = function(position) {
+    this.sucessLoad = function (position) {
         //Init directions service
         directionsService = new google.maps.DirectionsService();
         directionsDisplay = new google.maps.DirectionsRenderer();
@@ -259,7 +240,7 @@ var MapUtils = function() {
         directionsDisplay.setOptions({suppressMarkers: true});
 
         //Requisição ao server side
-        $.get("https://guiafloripa.morettic.com.br/busca/", function(data, status) {
+        $.get("https://guiafloripa.morettic.com.br/busca/", function (data, status) {
             //alert("Data: " + data + "\nStatus: " + status);
             //Lista de eventos
             lEventos = data.e;
@@ -286,31 +267,24 @@ var MapUtils = function() {
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
                  new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                  new google.maps.LatLng(lat, lng));*/
-                google.maps.event.addListener(markers[i], 'click', function() {
+                google.maps.event.addListener(markers[i], 'click', function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
                     var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    var content = '<h1>' + lEventos[this.indice].deEvent + '</h1><br>';
 
-                    if (lEventos[this.indice].deLogo !== "default") {
-                        content += '<center><img src="' + lEventos[this.indice].deLogo
-                                + '" width="60"></center>'
-                    }
-                    content += '<p>'
-                            + lEventos[this.indice].deDetail
-                            + '<br><b>Distância:</b>'
-                            + dist;
-                    +'</p> </a></li>';
+                    InfoWindowT(lEventos[this.indice].deEvent,
+                            lEventos[this.indice].deDetail,
+                            lEventos[this.indice].deAddress,
+                            lEventos[this.indice].dtUntil,
+                            lEventos[this.indice].dtFrom,
+                            dist,
+                            lEventos[this.indice].nrPhone,
+                            "image",
+                            lEventos[this.indice].nmPlace);
 
-                    /* infowindow.setContent("<img width='60' src='"
-                     + lEventos[this.indice].deLogo
-                     + "'/>"
-                     + lEventos[this.indice].deDetail
-                     + "<br>"
-                     + dist);*/
-                    infowindow.setContent(content);
-                    infowindow.open(map, this);
+                    //infowindow.setContent(content);
+                    // infowindow.open(map, this);
                     mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
                 });
 
@@ -331,7 +305,7 @@ var MapUtils = function() {
     /**
      * @Calculate distance from two diferent coordinates in KM
      * */
-    this.calculateDistance = function(lat1, long1, lat2, long2) {
+    this.calculateDistance = function (lat1, long1, lat2, long2) {
 
         //radians
         lat1 = (lat1 * 2.0 * Math.PI) / 60.0 / 360.0;
@@ -358,12 +332,12 @@ var MapUtils = function() {
         y -= (beta * cos * Math.sin(long2));
         z -= (beta * (1 - e) * Math.sin(lat2));
 
-        return (Math.sqrt((x * x) + (y * y) + (z * z)) / 10) + " KM";
+        return Math.round((Math.sqrt((x * x) + (y * y) + (z * z)) / 10)) + " KM";
     }
     /**
      * @ Map Style
      * */
-    this.getMapStyle = function() {
+    this.getMapStyle = function () {
         return [
             {
                 "featureType": "administrative",
@@ -466,13 +440,13 @@ var MapUtils = function() {
     /**
      * @Welcome message
      * */
-    this.showWelcome = function() {
+    this.showWelcome = function () {
         this.showMessage("Bem vindo ao APP do Guiafloripa. Pesquise os eventos perto de você!", "#454545");
     }
     /**
      * @GPS Exception
      * */
-    this.showNoGPS = function() {
+    this.showNoGPS = function () {
         window.location.href = "gps.html";
         setTimeout(cordova.plugins.diagnostic.switchToLocationSettings(), 3000);
     }
@@ -480,7 +454,7 @@ var MapUtils = function() {
     /**
      * @Messagem Manager method
      * */
-    this.showMessage = function(msg, corDialog) {
+    this.showMessage = function (msg, corDialog) {
         window.plugins.toast.showWithOptions({
             message: msg,
             duration: 6000, // 2000 ms
@@ -496,14 +470,14 @@ var MapUtils = function() {
             }
         });
     }
-    this.initSliderMenu = function() {
+    this.initSliderMenu = function () {
         $("#flexiselDemo1").flexisel({
             visibleItems: 3,
             clone: false,
         });
     }
 
-    this.setBorderStyle = function(element, name, id) {
+    this.setBorderStyle = function (element, name, id) {
         res = element.src.split("_");
         pos = res.length - 1;
         element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
@@ -517,8 +491,8 @@ var MapUtils = function() {
     /**
      * Init Push Notifications
      */
-    this.initPush = function() {
-        notificationOpenedCallback = function(jsonData) {
+    this.initPush = function () {
+        notificationOpenedCallback = function (jsonData) {
             console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
         };
 
@@ -527,7 +501,7 @@ var MapUtils = function() {
                 .handleNotificationOpened(notificationOpenedCallback)
                 .endInit();
         //Save userId and pushToken on Database (localstorage)
-        window.plugins.OneSignal.getIds(function(ids) {
+        window.plugins.OneSignal.getIds(function (ids) {
             console.log('getIds: ' + JSON.stringify(ids));
             //alert("userId = " + ids.userId + ", pushToken = " + ids.pushToken);
             localStorage.setItem("pushToken", ids.pushToken);
@@ -537,7 +511,7 @@ var MapUtils = function() {
     /**
      * @ Calculate Distance from two points
      * **/
-    this.showDistance = function(pLat, pLng, oLat, oLng) {
+    this.showDistance = function (pLat, pLng, oLat, oLng) {
         var start = new google.maps.LatLng(oLat, oLng);
         //var end = new google.maps.LatLng(38.334818, -181.884886);
         var end = new google.maps.LatLng(pLat, pLng);
@@ -551,7 +525,7 @@ var MapUtils = function() {
             destination: end,
             travelMode: google.maps.TravelMode.DRIVING
         };
-        directionsService.route(request, function(response, status) {
+        directionsService.route(request, function (response, status) {
             if (status == google.maps.DirectionsStatus.OK) {
                 directionsDisplay.setDirections(response);
                 directionsDisplay.setMap(map);
@@ -560,7 +534,7 @@ var MapUtils = function() {
             }
         });
     }
-    this.initAds = function() {
+    this.initAds = function () {
         if (window.plugins && window.plugins.AdMob) {
             var ad_units = {
                 ios: {
@@ -596,7 +570,7 @@ var MapUtils = function() {
         }
     }
 
-    this.finishGPSTimer = function() {
+    this.finishGPSTimer = function () {
         try {
             navigator.geolocation.clearWatch(watcherPosition);
         } catch (e) {
@@ -604,12 +578,12 @@ var MapUtils = function() {
         }
     }
     //
-    this.initGPSTimer = function() {
+    this.initGPSTimer = function () {
         watcherPosition = navigator.geolocation.watchPosition(
-                function(pos) {
+                function (pos) {
                     alert(pos.coords.latitude);
                 },
-                function(error) {
+                function (error) {
                     alert('code: ' + error.code + '\n' +
                             'message: ' + error.message + '\n');
                 },
@@ -619,7 +593,7 @@ var MapUtils = function() {
                 });
     }
 
-    this.clusterOption = function(map, markers) {
+    this.clusterOption = function (map, markers) {
         var voptions = {
             imagePath: 'img/m'
         };
@@ -627,4 +601,18 @@ var MapUtils = function() {
         var markerCluster = new MarkerClusterer(map, markers, voptions);
     }
 }
-
+/**
+ *  @Function to open InfoWindow from Map on POPUP format
+ * */
+function InfoWindowT(tit, desc, a, d, u, f, p, i, t) {
+    
+    $("#txtTitT").text(tit);
+    $("#txtDescT").html(desc);
+    $("#txtAddrT").text(a);
+    //$("#txtDateT").text("  "+d);
+    $("#txtDateT").text(d+" "+u);
+    $("#txtDistT").text(f);
+    $("#txtPhonT").text(p===null?"n/a":p);
+    $("#txtPlaT").text(t); 
+    document.getElementById('btToolTip').click();
+}

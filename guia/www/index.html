@@ -41,11 +41,11 @@
                                 <h4>Destaques</h4>
                             </li>
                             <li>
-                                <img d="bt_1" alt="Cinema" src="img/cinema_on.png" onclick="mapUtils.setBorderStyle(this, 'cinema', 3)" />
+                                <img id="bt_1" alt="Cinema" src="img/cinema_on.png" onclick="mapUtils.setBorderStyle(this, 'cinema', 3)" />
                                 <h4>Cinema</h4>
                             </li>
                             <li>
-                                <img d="bt_2" alt="Esportes" src="img/esportes_on.png" onclick="mapUtils.setBorderStyle(this, 'esportes', 8)" />
+                                <img id="bt_2" alt="Esportes" src="img/esportes_on.png" onclick="mapUtils.setBorderStyle(this, 'esportes', 8)" />
                                 <h4>Esportes</h4>
                             </li>
                             <li>
@@ -53,23 +53,23 @@
                                 <h4>Lazer</h4>
                             </li>
                             <li>
-                                <img d="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle(this, 'alimentacao', 1)" />
+                                <img id="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle(this, 'alimentacao', 1)" />
                                 <h4>Alimentação</h4>
                             </li>
                             <li>
-                                <img d="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil', 2)" />
+                                <img id="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil', 2)" />
                                 <h4>Infantil</h4>
                             </li>
                             <li>
-                                <img d="bt_6" alt="Eventos" src="img/eventos_on.png" onclick="mapUtils.setBorderStyle(this, 'eventos', 6)" />
+                                <img id="bt_6" alt="Eventos" src="img/eventos_on.png" onclick="mapUtils.setBorderStyle(this, 'eventos', 6)" />
                                 <h4>Eventos</h4>
                             </li>
                             <li>
-                                <img d="bt_7" alt="Cultura" src="img/cultura_on.png" onclick="mapUtils.setBorderStyle(this, 'cultura', 4)" />
+                                <img id="bt_7" alt="Cultura" src="img/cultura_on.png" onclick="mapUtils.setBorderStyle(this, 'cultura', 4)" />
                                 <h4>Cultura</h4>
                             </li>
                             <li>
-                                <img d="bt_8" alt="Gratuito" src="img/gratuito_on.png" onclick="mapUtils.setBorderStyle(this, 'gratuito', 9)" />
+                                <img id="bt_8" alt="Gratuito" src="img/gratuito_on.png" onclick="mapUtils.setBorderStyle(this, 'gratuito', 9)" />
                                 <h4>Gratuito</h4>
                             </li>
                         </ul>
@@ -83,7 +83,7 @@
                 </center>
             </div>
             <!-- Painel de configurações do radar -->
-            <div data-role="popup" id="popupInfo" data-theme="a" class="ui-corner-all"  data-dismissible="true" >
+            <div data-role="popup" id="popupInfo" data-transition="flip" data-theme="a" class="ui-corner-all"  data-dismissible="true" >
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Radar</h3>
@@ -101,9 +101,26 @@
                     </form>
                 </div>
             </div>
+            <!-- Tooltips-->
+            <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" >
+                <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+                <div style="padding:10px 20px;">
+                    <h5 id="txtTitT">Tit</h5>
+                    <h6 id="txtPlaT"></h6>
+                  <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
+                    <a id="txtDateT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a>
+                    <br>
+                    <a id="txtDistT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-navigation ui-mini"></a>
+                    <a id="txtPhonT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-phone ui-mini"></a>
+                    <h6>Endereço</h6>
+                    <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                    <h6>O que há?</h6>
+                    <p data-theme="a" id="txtDescT" style="font-size: 9px"></p>
 
+                </div>
+            </div>
             <!-- Dates Filter-->
-            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" >
+            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true" >
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Data dos eventos</h3>
@@ -114,7 +131,7 @@
                     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" data-rel="back">Aplicar</a>
                 </div>
             </div>
-
+            <a href="#popupToolTips" id="btToolTip" data-rel="popup" data-position-to="window" style="display: none" data-transition="pop"></a>
             <!-- end page 1 footer -->
         </div>
         <!-- end page 1 -->
@@ -122,7 +139,7 @@
         <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
         <script type="text/javascript" id="jqm-trans-disable">
                             /* For having a faster transition */
-                            $(document).on("mobileinit", function() {
+                            $(document).on("mobileinit", function () {
                                 $.mobile.defaultPageTransition = "none";
                                 $.mobile.defaultDialogTransition = "none";
                             });
@@ -136,11 +153,10 @@
         <script type="text/javascript" src="js/markerclusterer.js"></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/jquery.flexisel.js"></script>
-    </body>
-    <script>
-                            (function(w, d, t, u, n, a, m) {
+        <script>
+                            (function (w, d, t, u, n, a, m) {
                                 w['MauticTrackingObject'] = n;
-                                w[n] = w[n] || function() {
+                                w[n] = w[n] || function () {
                                     (w[n].q = w[n].q || []).push(arguments)
                                 }, a = d.createElement(t),
                                         m = d.getElementsByTagName(t)[0];
@@ -150,5 +166,7 @@
                             })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
 
                             mt('send', 'pageview');
-    </script>
+        </script>
+    </body>
+
 </html>
