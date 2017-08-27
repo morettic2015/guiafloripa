@@ -34,6 +34,7 @@ class GuiaController extends stdClass {
             $std->nrPhone = $row['nrPhone'];
             $std->deLogo = $img;
             $std->deAddress = ($row['deAddress']);
+            $std->nmPlace = ($row['nmPlace']);
             $std->deEvent = ($row['deEvent']);
             $std->deDetail = ($row['deDetail']);
             $std->dtFrom = $row['dtFrom'];
@@ -322,6 +323,7 @@ class GuiaController extends stdClass {
             $std->deEvent = $row['deEvent'];
             $std->deDetail = $row['deDetail'];
             $std->dtFrom = $row['dtFrom'];
+            $std->nmPlace = ($row['nmPlace']);
             $std->dtUntil = $row['dtUntil'];
             $std->idType = $row['idType'];
             $std->nrCep = $row['nrCep'];
