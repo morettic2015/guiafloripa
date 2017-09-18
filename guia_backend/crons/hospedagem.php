@@ -16,7 +16,7 @@ require '../vendor/autoload.php';
 include '../GuiaController.php';
 
 
-GuiaController::cronEventCategory("view_esportes_ids", 8);
+GuiaController::cronEventCategory("view_hospedagem", 8);
 
 
 //7 lazer

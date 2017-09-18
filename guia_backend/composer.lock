@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecd3d094253af78f91ff66e178c0cc42",
+    "content-hash": "67d453676d63acafdd30813d864718ed",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -36,6 +36,42 @@
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
             "time": "2017-02-14T19:40:03+00:00"
+        },
+        {
+            "name": "mautic/api-library",
+            "version": "2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mautic/api-library.git",
+                "reference": "ea49a7e50cce3b59f85f2794c366c44e622e80f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mautic/api-library/zipball/ea49a7e50cce3b59f85f2794c366c44e622e80f1",
+                "reference": "ea49a7e50cce3b59f85f2794c366c44e622e80f1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3.7",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8|~5.0",
+                "raveren/kint": "~0.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mautic\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Mautic API Connector Library",
+            "time": "2017-02-15T08:14:30+00:00"
         },
         {
             "name": "monolog/monolog",

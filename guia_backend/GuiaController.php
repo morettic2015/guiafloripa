@@ -12,6 +12,8 @@ DB::$error_handler = 'my_error_handler';
 
 class GuiaController extends stdClass {
 
+    //public static function
+    
     /**
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */

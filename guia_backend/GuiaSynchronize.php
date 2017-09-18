@@ -43,75 +43,7 @@ class GuiaSynchronize extends stdClass {
         return $geo;
     }
 
-    /*
-      public static function getPlaces() {
-      echo "<pre>";
-      $query = "show tables";
-
-      $mdb = new MeekroDB();
-      $mdb->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-      $eventos = $mdb->query($query); // misspelled SELECT
-      foreach ($eventos as $row) {
-      echo "\n" . $row['Tables_in_guiafloripa'];
-      $o = $mdb->query("desc " . $row['Tables_in_guiafloripa']);
-
-      var_dump($row);
-      var_dump($o);
-      }
-      /* echo "<pre>";
-      var_dump($eventos);die; */
-    /*    DB::disconnect();
-      die();
-      }
-     */
-    /*
-      public static function getEventType($type) {
-
-      $yesterday = strtotime("today -1440min");
-      $timestamp = strtotime('today +14400min');
-
-      $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday  and event_dtend <= $timestamp  and  a.event_id in ( select object_id from $type) ";
-
-      // echo $query;
-      //  die;
-
-      $mdb = new MeekroDB();
-      $mdb->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-      $eventos = $mdb->query($query); // misspelled SELECT
-
-      /* echo "<pre>";
-      var_dump($eventos);die; */
-
-    //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
-    /*   $lEventos = Array();
-
-      foreach ($eventos as $row) {
-      $eventRow = new stdClass();
-      //var_dump($row);die;
-      $eventRow->event_id = $row['event_id'];
-      $eventRow->event_tit = $row['event_tit'];
-      $eventRow->event_info = $row['event_info'];
-      $eventRow->event_dtend = $row['event_dtend'];
-      $eventRow->event_dtstart = $row['event_dtstart'];
-      $eventRow->event_id_place = $row['event_id_place'];
-      $eventRow->ID = $row['ID'];
-      $eventRow->tit = $row['tit'];
-      $eventRow->info = $row['info'];
-      $eventRow->endereco = $row['endereco'];
-      $eventRow->telefone = $row['telefone'];
-      $eventRow->cidade = $row['cidade'];
-      $eventRow->id_cn_filme = $row['id_cn_filme'];
-      $eventRow->email = $row['email'];
-
-      $eventRow->geo = GuiaSynchronize::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
-
-      $lEventos[] = $eventRow;
-      }
-      DB::disconnect();
-      return $lEventos;
-      //var_dump($eventos);
-      } */
-
+   
     //1501729200 | 1503111600
     //1501902000
     public static function getCinemas() {
@@ -262,4 +194,44 @@ class GuiaSynchronize extends stdClass {
         //var_dump($eventos);
     }
 
+    /**
+     *  @Insert places and create custom cat
+     * */
+    public static final function updatePlacesByCategory($termName, $categoryId) {
+        DB::debugMode();
+        $conn = new MysqlDB();
+        $query = "select * from view_places_data where ID in (select object_id from view_tax_post_id where de_tax like '%$termName%')";
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $conn->execute($query); // misspelled SELECT
+        while ($row = $mdb->hasNext()) {
+
+            $obj = GuiaController::getLatLonFromAddress($row['post_title'] . ", " . $$row['post_title']);
+            $cep = "88000-000";
+            $cepvet = explode(",", $obj->formatted_address);
+//$vSize = count($cepvet);
+            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
+            $cep = empty($cep1) ? $cep : $cep1;
+
+            $dePlace = $row['post_content'];    
+            $nmPlace = $row['post_title'];
+//Insert Update Place
+            DB::insertUpdate(
+                    'Place', array(
+                'idPlace' => $row['ID'], //primary key
+                'nmPlace' => $nmPlace,
+                'nrPhone' => $row['tel'],
+                'deWebsite' => null,
+                'deAddress' => ($obj->formatted_address),
+                'deLogo' => 'default',
+                'dePlace' => $dePlace,
+                'deEmail' => $row['email'],
+                'nrLat' => $obj->lat,
+                'nrLng' => $obj->lng,
+                'nrCep' => $cep,
+                'idPlaceBranch' => null
+                    ), 'nmPlace=%s', $nmPlace, 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
+            DB::commit();
+            //GuiaController::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
+        }
+    }
 }
