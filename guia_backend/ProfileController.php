@@ -11,6 +11,7 @@
   $data->pushToken = $request->getAttribute('pushToken');
  */
 
+
 class ProfileController extends stdClass {
 
     public static function insertUpdateProfile($obj) {
@@ -33,8 +34,10 @@ class ProfileController extends stdClass {
             'userID' => $obj->userId,
             'pushToken' => $obj->pushToken
         ));
-
-
+        //Add contact to Mautic Integration
+        $rt->contactID = LeadController::createContact($obj->name, null, $obj->email);
+        //Add Lead to Segment
+        $rt->segmentID = LeadController::addContactToSegment($rt->contactID);
         return $rt;
     }
 

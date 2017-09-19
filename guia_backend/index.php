@@ -11,13 +11,17 @@ require './vendor/autoload.php';
 require 'GuiaController.php';
 require 'ProfileController.php';
 require 'PushController.php';
-
+require 'LeadController.php';
 
 /**
  *   @Services to supply mobile client
  *  */
 //Init Objects
-$app = new \Slim\App;
+$app = new \Slim\App([
+    'settings' => [
+        'displayErrorDetails' => true
+    ]
+        ]);
 
 //$app->view(new \JsonApiView());
 //$app->add(new \JsonApiMiddleware());
@@ -88,6 +92,11 @@ $app->get('/push/', function (Request $request, Response $response) use ($app) {
     $data = PushController::dailyNotification();
     logActions("PUSH");
     return $newResponse->withJson($data, 201);
+});
+
+$app->get('/comer_beber/', function (Request $request, Response $response) use ($app) {
+    GuiaController::updatePlacesByCategory("view_comer_beber",1);
+    die;
 });
 
 $app->run();

@@ -11,9 +11,8 @@ DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'my_error_handler';
 
 class GuiaController extends stdClass {
-
     //public static function
-    
+
     /**
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */
@@ -112,13 +111,20 @@ class GuiaController extends stdClass {
     }
 
     public static function getLatLonFromAddress($address) {
-        $content = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o');
+        $url = "http://dev.virtualearth.net/REST/v1/Locations?q=". urlencode($address)."&key=890Qc3i1ozx24NzBIVqb~_rQckxzVlKYKLkNyEhjlcA~Apy5uU2wxXOal0ax-_XB20zMhSaNqQdI07gK5vq2D-Pedil14SRuV7qQYXKrQ0QK";
+        $content = file_get_contents($url);
+        echo $url;
         $json = json_decode($content);
+        var_dump($json);die;
 //echo "<pre>";
         $geo = new stdClass();
-        $geo->formatted_address = $json->results[0]->formatted_address;
-        $geo->lat = $json->results[0]->geometry->location->lat;
-        $geo->lng = $json->results[0]->geometry->location->lng;
+        $geo->formatted_address = $json[0]->address->road
+                .','.$json[0]->address->suburb
+                .','.$json[0]->address->city
+                .','.$json[0]->address->state
+                .','.$json[0]->address->country;
+        $geo->lat = $json[0]->lat;
+        $geo->lng = $json[0]->lon;
 
 
         return $geo;
@@ -350,6 +356,55 @@ class GuiaController extends stdClass {
 //Close Connection
         DB::disconnect();
         return $stdGuia;
+    }
+
+    /**
+     *  @Insert places and create custom cat by View
+     * */
+    public static final function updatePlacesByCategory($view,$id) {
+       echo "<pre>";
+        DB::debugMode();
+        $conn = new MysqlDB();
+        $query = "select * from $view where endereco is not null order by ID desc";
+        // echo $query;die;
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $conn->execute($query); // misspelled SELECT
+        while ($row = $conn->hasNext()) {
+            //var_dump($row);
+            
+            $obj = GuiaController::getLatLonFromAddress($row['endereco'].','.$row['cidade']);
+           // if(is_null($obj->lat))
+             //   continue;
+
+            var_dump($obj); echo "ADDSSRE";
+            $cep = "88000-000";
+            $cepvet = explode(",", $obj->formatted_address);
+//$vSize = count($cepvet);
+            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
+            $cep = empty($cep1) ? $cep : $cep1;
+
+            $dePlace = $row['post_excerpt'];
+            $nmPlace = $row['post_title'];
+//Insert Update Place
+          /*  DB::insertUpdate(
+                    'Place', array(
+                'idPlace' => $row['ID'], //primary key
+                'nmPlace' => $nmPlace,
+                'nrPhone' => $row['tel'],
+                'deWebsite' => null,
+                'deAddress' => ($obj->formatted_address),
+                'deLogo' => $row['logo'],
+                'dePlace' => $dePlace,
+                'deEmail' => $row['email'],
+                'nrLat' => $obj->lat,
+                'nrLng' => $obj->lng,
+                'nrCep' => $cep,
+                'idPlaceBranch' => null
+                    ), 'nmPlace=%s', $nmPlace, 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
+            DB::commit();
+            die();*/
+            //GuiaController::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);*/
+        }
     }
 
 }

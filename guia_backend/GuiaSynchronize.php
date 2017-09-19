@@ -30,7 +30,7 @@ class Errors {
 
 class GuiaSynchronize extends stdClass {
 
-    public static function getLatLonFromAddress($address) {
+/*    public static function getLatLonFromAddress($address) {
         $content = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($address) . '&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o');
         $json = json_decode($content);
         //echo "<pre>";
@@ -41,7 +41,7 @@ class GuiaSynchronize extends stdClass {
 
 
         return $geo;
-    }
+    }*/
 
    
     //1501729200 | 1503111600
@@ -90,7 +90,7 @@ class GuiaSynchronize extends stdClass {
             $eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
-            $eventRow->geo = GuiaSynchronize::getLatLonFromAddress($eventRow->addressID);
+            $eventRow->geo = GuiaController::getLatLonFromAddress($eventRow->addressID);
 
             $cinemas[] = $eventRow;
         }
@@ -185,7 +185,7 @@ class GuiaSynchronize extends stdClass {
             $eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
-            $eventRow->geo = GuiaSynchronize::getLatLonFromAddress($eventRow->addressID);
+            $eventRow->geo = GuiaController::getLatLonFromAddress($eventRow->addressID);
 
             $cinemas[] = $eventRow;
         }
@@ -194,44 +194,4 @@ class GuiaSynchronize extends stdClass {
         //var_dump($eventos);
     }
 
-    /**
-     *  @Insert places and create custom cat
-     * */
-    public static final function updatePlacesByCategory($termName, $categoryId) {
-        DB::debugMode();
-        $conn = new MysqlDB();
-        $query = "select * from view_places_data where ID in (select object_id from view_tax_post_id where de_tax like '%$termName%')";
-        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        $conn->execute($query); // misspelled SELECT
-        while ($row = $mdb->hasNext()) {
-
-            $obj = GuiaController::getLatLonFromAddress($row['post_title'] . ", " . $$row['post_title']);
-            $cep = "88000-000";
-            $cepvet = explode(",", $obj->formatted_address);
-//$vSize = count($cepvet);
-            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
-            $cep = empty($cep1) ? $cep : $cep1;
-
-            $dePlace = $row['post_content'];    
-            $nmPlace = $row['post_title'];
-//Insert Update Place
-            DB::insertUpdate(
-                    'Place', array(
-                'idPlace' => $row['ID'], //primary key
-                'nmPlace' => $nmPlace,
-                'nrPhone' => $row['tel'],
-                'deWebsite' => null,
-                'deAddress' => ($obj->formatted_address),
-                'deLogo' => 'default',
-                'dePlace' => $dePlace,
-                'deEmail' => $row['email'],
-                'nrLat' => $obj->lat,
-                'nrLng' => $obj->lng,
-                'nrCep' => $cep,
-                'idPlaceBranch' => null
-                    ), 'nmPlace=%s', $nmPlace, 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
-            DB::commit();
-            //GuiaController::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
-        }
-    }
 }
