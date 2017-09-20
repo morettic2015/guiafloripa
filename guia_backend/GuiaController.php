@@ -23,7 +23,7 @@ class GuiaController extends stdClass {
         //Find places with the given ID (category)
         $query = "SELECT * FROM guiafloripa_app.Place where idPlace in (select fkIdPlace from PlaceType where fkIdType = " . $std->types . ")";
         $places = DB::query($query);
-
+        $tp = $std->types;
         foreach ($places as $row) {
             $std = new stdClass();
             $std->nrPhone = $row['nrPhone'];
@@ -34,7 +34,7 @@ class GuiaController extends stdClass {
             $std->dtFrom = $row['dtFrom'];
             $std->nmPlace = ($row['nmPlace']);
             //$std->dtUntil = $row['dtUntil'];
-            $std->idType = $std->types;
+            $std->idType = $tp;
             $std->nrCep = $row['nrCep'];
             $std->nrLat = $row['nrLat'];
             $std->nrLng = $row['nrLng'];
