@@ -55,7 +55,7 @@ class MysqlDB {
         //var_dump($this->link);
         $this->stmt = $this->link->query($query);
         //var_dump($this->stmt);
-        echo $query;
+      //  echo $query;
         /*  $this->connect();
           $this->resultado = mysqli_query($this->link, $query);
           return $this->resultado; */

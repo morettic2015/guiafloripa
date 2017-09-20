@@ -14,7 +14,7 @@ require '../vendor/autoload.php';
  *
  */
 include '../GuiaController.php';
-
+include '../GeocoderController.php';
 
 GuiaController::cronEventCategory("view_infantil_ids", 2);
 

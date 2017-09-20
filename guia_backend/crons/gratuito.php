@@ -14,6 +14,7 @@ require '../vendor/autoload.php';
  *
  */
 include '../GuiaController.php';
+include '../GeocoderController.php';
 
 
 GuiaController::cronEventCategory("view_gratuitos_ids", 9);

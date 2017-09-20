@@ -47,7 +47,7 @@ class LeadController extends stdClass {
             'firstname' => $first,
             'lastname' => $last,
             'email' => $email,
-            'ipAddress' => $_SERVER['REMOTE_ADDR']
+            'ipAddress' => get_client_ip()
         );
         //var_dump($data);
 

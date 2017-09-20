@@ -12,6 +12,7 @@ require '../vendor/autoload.php';
  * and open the template in the editor.
  */
 include '../GuiaController.php';
+include '../GeocoderController.php';
 
 
 GuiaController::cronEventCategory("view_eventos_ids", 6);

@@ -1,5 +1,6 @@
 <?php
 
+
 include 'Mysql.class.php';
 //Database configuration
 DB::$user = 'guia';
@@ -11,7 +12,40 @@ DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = 'my_error_handler';
 
 class GuiaController extends stdClass {
-    //public static function
+
+    /**
+     * @Search for Places by Type
+     */
+    public static function getPlacesByType($std) {
+        //DB::debugMode();
+        $stdGuia = new stdClass();
+        $stdGuia->e = array();
+        //Find places with the given ID (category)
+        $query = "SELECT * FROM guiafloripa_app.Place where idPlace in (select fkIdPlace from PlaceType where fkIdType = " . $std->types . ")";
+        $places = DB::query($query);
+
+        foreach ($places as $row) {
+            $std = new stdClass();
+            $std->nrPhone = $row['nrPhone'];
+            $std->deLogo = $row['deLogo'];
+            $std->deAddress = $row['deAddress'];
+            //$std->deEvent = $row['deEvent'];
+            $std->dePlace = $row['dePlace'];
+            $std->dtFrom = $row['dtFrom'];
+            $std->nmPlace = ($row['nmPlace']);
+            //$std->dtUntil = $row['dtUntil'];
+            $std->idType = $std->types;
+            $std->nrCep = $row['nrCep'];
+            $std->nrLat = $row['nrLat'];
+            $std->nrLng = $row['nrLng'];
+            //Adiciona to array
+            $stdGuia->e[] = $std;
+        }
+        //Close connection
+        DB::disconnect();
+        //Return Std Object to be Serialized to JSON
+        return $stdGuia;
+    }
 
     /**
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
@@ -22,9 +56,7 @@ class GuiaController extends stdClass {
 
         $query = "select * from viewEventPlaces where dtUntil >= '$today'";
         $eventos = DB::query($query); // misspelled SELECTvardump(
-// var_dump($eventos);
-// die;
-//Return Object
+        //Return Object
         $stdGuia = new stdClass();
         $stdGuia->e = [];
         foreach ($eventos as $row) {
@@ -45,14 +77,14 @@ class GuiaController extends stdClass {
             $std->nrLat = $row['nrLat'];
             $std->nrLng = $row['nrLng'];
             $std->deImg = $row['deImg'];
-//Adiciona
+            //Adiciona
             $stdGuia->e[] = $std;
         }
-//get types descriptions
+        //get types descriptions
         $query = "SELECT * FROM Type;";
-//RUn qyery
+        //RUn qyery
         $types = DB::query($query); // misspelled SELECT
-//Prepare another return
+        //Prepare another return
         $stdGuia->t = [];
         foreach ($types as $row) {
             $std = new stdClass();
@@ -60,7 +92,7 @@ class GuiaController extends stdClass {
             $std->deType = $row['deType'];
             $stdGuia->t[] = $std;
         }
-//Close Connection
+        //Close Connection
         DB::disconnect();
         return $stdGuia;
     }
@@ -74,19 +106,13 @@ class GuiaController extends stdClass {
         $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday  and event_dtend <= $timestamp  and  a.event_id in ( select object_id from $type) ";
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
-//
-        //
         echo "Init List ";
         echo "<pre>";
-//var_dump($eventos);
-// die();
-//https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
         $lEventos = Array();
 
         while ($row = $conn->hasNext()) {
             var_dump($row);
             $eventRow = new stdClass();
-//var_dump($row);die;
             $eventRow->event_id = $row['event_id'];
             $eventRow->event_tit = $row['event_tit'];
             $eventRow->event_info = $row['event_info'];
@@ -99,35 +125,12 @@ class GuiaController extends stdClass {
             $eventRow->endereco = $row['endereco'];
             $eventRow->telefone = $row['telefone'];
             $eventRow->cidade = $row['cidade'];
-//  $eventRow->id_cn_filme = $row['id_cn_filme'];
             $eventRow->email = $row['email'];
-            $eventRow->geo = GuiaController::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);
-            //$lEventos[] = $eventRow;
+            $eventRow->geo = GeocoderController::geocodeQuery($eventRow->endereco . ", " . $eventRow->cidade);
             GuiaController::insertUpdateEvent($eventRow, $id);
         }
 
         $conn->closeConn();
-        //return $lEventos;
-    }
-
-    public static function getLatLonFromAddress($address) {
-        $url = "http://dev.virtualearth.net/REST/v1/Locations?q=". urlencode($address)."&key=890Qc3i1ozx24NzBIVqb~_rQckxzVlKYKLkNyEhjlcA~Apy5uU2wxXOal0ax-_XB20zMhSaNqQdI07gK5vq2D-Pedil14SRuV7qQYXKrQ0QK";
-        $content = file_get_contents($url);
-        echo $url;
-        $json = json_decode($content);
-        var_dump($json);die;
-//echo "<pre>";
-        $geo = new stdClass();
-        $geo->formatted_address = $json[0]->address->road
-                .','.$json[0]->address->suburb
-                .','.$json[0]->address->city
-                .','.$json[0]->address->state
-                .','.$json[0]->address->country;
-        $geo->lat = $json[0]->lat;
-        $geo->lng = $json[0]->lon;
-
-
-        return $geo;
     }
 
     /**
@@ -179,7 +182,7 @@ class GuiaController extends stdClass {
             $eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
-            $eventRow->geo = GuiaController::getLatLonFromAddress($eventRow->addressID);
+            $eventRow->geo = GeocoderController::geocodeQuery($eventRow->addressID);
             GuiaController::updateCinemaEvent($eventRow);
         }
         DB::disconnect();
@@ -361,49 +364,62 @@ class GuiaController extends stdClass {
     /**
      *  @Insert places and create custom cat by View
      * */
-    public static final function updatePlacesByCategory($view,$id) {
-       echo "<pre>";
+    public static final function updatePlacesByCategory($view, $typeID) {
+        echo "<pre>";
         DB::debugMode();
         $conn = new MysqlDB();
         $query = "select * from $view where endereco is not null order by ID desc";
-        // echo $query;die;
+        //echo $query;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
+        $i = 0;
+        //while ($row = $conn->hasNext()) {
         while ($row = $conn->hasNext()) {
-            //var_dump($row);
-            
-            $obj = GuiaController::getLatLonFromAddress($row['endereco'].','.$row['cidade']);
-           // if(is_null($obj->lat))
-             //   continue;
+            $obj = null;
+            try {
+                $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
 
-            var_dump($obj); echo "ADDSSRE";
-            $cep = "88000-000";
-            $cepvet = explode(",", $obj->formatted_address);
-//$vSize = count($cepvet);
-            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
-            $cep = empty($cep1) ? $cep : $cep1;
+                if (is_null($obj->lat))
+                    continue;
 
-            $dePlace = $row['post_excerpt'];
-            $nmPlace = $row['post_title'];
-//Insert Update Place
-          /*  DB::insertUpdate(
-                    'Place', array(
-                'idPlace' => $row['ID'], //primary key
-                'nmPlace' => $nmPlace,
-                'nrPhone' => $row['tel'],
-                'deWebsite' => null,
-                'deAddress' => ($obj->formatted_address),
-                'deLogo' => $row['logo'],
-                'dePlace' => $dePlace,
-                'deEmail' => $row['email'],
-                'nrLat' => $obj->lat,
-                'nrLng' => $obj->lng,
-                'nrCep' => $cep,
-                'idPlaceBranch' => null
-                    ), 'nmPlace=%s', $nmPlace, 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
-            DB::commit();
-            die();*/
-            //GuiaController::getLatLonFromAddress($eventRow->endereco . ", " . $eventRow->cidade);*/
+                //CEP FROM GEOLOCATION
+                $cep = $obj->cep == NULL ? "88000-000" : $obj->cep;
+                //Place Description
+                $dePlace = $row['post_excerpt'];
+                $nmPlace = $row['post_title'];
+                $email = strlen($row['email']) < 2 ? NULL : $row['email'];
+
+                //Insert Update Place
+                DB::insertUpdate(
+                        'Place', array(
+                    'idPlace' => $row['ID'], //primary key
+                    'nmPlace' => mb_convert_encoding($nmPlace, "utf8"),
+                    'nrPhone' => $row['tel'],
+                    'deWebsite' => null,
+                    'deAddress' => ($obj->formatted_address),
+                    'deLogo' => $row['logo'],
+                    'dePlace' => $dePlace,
+                    'deEmail' => $email,
+                    'nrLat' => $obj->lat,
+                    'nrLng' => $obj->lng,
+                    'nrCep' => $cep,
+                    'idPlaceBranch' => null
+                        ), 'deLogo=%s', $row['logo'], 'nmPlace=%s', mb_convert_encoding($nmPlace, "utf8"), 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
+                //Associate place with a given type
+                $query = "insert into PlaceType values($typeID," . $row['ID'] . ",now()) on duplicate key update lastUpdate = now();";
+                DB::query($query);
+                DB::affectedRows();
+                DB::commit();
+            } catch (Exception $ex) {
+                //var_dump($ex);
+                logActions($ex->getMessage());
+                logActions($ex->getCode());
+                logActions($ex->getFile());
+                logActions($ex->getLine());
+                logActions($ex->getTraceAsString());
+                logActions($ex);
+                continue;
+            }
         }
     }
 
@@ -416,5 +432,5 @@ class GuiaController extends stdClass {
 function my_error_handler($params) {
     echo "Error: " . $params['error'] . "<br>\n";
     echo "Query: " . $params['query'] . "<br>\n";
-    die; // don't want to keep going if a query broke
+    // die; // don't want to keep going if a query broke
 }
