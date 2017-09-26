@@ -161,6 +161,10 @@ $app->get('/sync_places_hostage/', function (Request $request, Response $respons
 $app->get('/sync_places_tourism/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_servico_turistico", 5);
 });
+/**
+ * @Cron Service once a week on tuesday 9 o clock
+ * @Sync service URLS
+ */
 $app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();
 });//Run Slim Microservice
