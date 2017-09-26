@@ -115,17 +115,69 @@ var MapUtils = function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
-                    var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    InfoWindowT(lEventos[this.indice].deEvent,
-                            lEventos[this.indice].deDetail,
-                            lEventos[this.indice].deAddress,
-                            lEventos[this.indice].dtUntil,
-                            lEventos[this.indice].dtFrom,
-                            dist,
-                            lEventos[this.indice].nrPhone,
-                            "image",
-                            lEventos[this.indice].nmPlace);
-                    mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+//                    var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+//                    var img = (lEventos[this.indice].deLogo === "default" || lEventos[this.indice].deLogo === "") ? lEventos[this.indice].deImg : lEventos[this.indice].deLogo;
+
+                    InfoWindowT(lEventos[this.indice], lat, lng);
+//                    mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                });
+
+            }
+
+            posFinal = markers.length;
+            markers[posFinal] = new google.maps.Marker({
+                //alert()
+                position: new google.maps.LatLng(lat, lng),
+                map: map,
+                title: "Você",
+                indice: posFinal,
+                animation: google.maps.Animation.BOUNCE,
+            });
+            // mapUtils.clusterOption(map, markers);
+        });
+    }
+
+    this.requestPlaces = function (pinType) {
+        //Requisição ao server side
+        mapUtils.clearAllPinsFromMap();
+        var url1 = "https://guiafloripa.morettic.com.br/estabelecimentos/" + pinType;
+        $.get(url1, function (data, status) {
+            //alert("Data: " + data + "\nStatus: " + status);
+            //Lista de eventos
+            lEventos = data.e;
+
+            mapUtils.showMessage("Total de resultados:" + lEventos.length, "#454545");
+
+            infowindow = mapUtils.createInfoWindowDef();
+
+            for (i = 0; i < lEventos.length; i++) {
+                icon = null;
+
+                markers[i] = new google.maps.Marker({
+                    //alert()
+                    position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
+                    map: map,
+                    title: lEventos[i].nmPlace,
+                    indice: i,
+                    animation: google.maps.Animation.BOUNCE,
+                    icon: {
+                        url: mapUtils.getIcon(lEventos[i].idType),
+                        //size: new google.maps.Size(24, 13), // size
+                        origin: new google.maps.Point(0, 0), // origin
+                        anchor: new google.maps.Point(0, 0) // anchor
+                    },
+                });
+                /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
+                 new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
+                 new google.maps.LatLng(lat, lng));*/
+                google.maps.event.addListener(markers[i], 'click', function () {
+                    // this.setMap(null);
+                    this.animation = null;
+                    this.setMap(map);
+                    //var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                    //var img = lEventos[this.indice].deLogo;
+                    InfoWindowT(lEventos[this.indice], lat, lng);
+                    //mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
                 });
 
             }
@@ -181,17 +233,11 @@ var MapUtils = function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
-                    var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    InfoWindowT(lEventos[this.indice].deEvent,
-                            lEventos[this.indice].deDetail,
-                            lEventos[this.indice].deAddress,
-                            lEventos[this.indice].dtUntil,
-                            lEventos[this.indice].dtFrom,
-                            dist,
-                            lEventos[this.indice].nrPhone,
-                            "image",
-                            lEventos[this.indice].nmPlace);
-                    mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                    // var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                    // var img = (lEventos[this.indice].deLogo === "default" || lEventos[this.indice].deLogo === "") ? lEventos[this.indice].deImg : lEventos[this.indice].deLogo;
+
+                    InfoWindowT(lEventos[this.indice], lat, lng);
+                    //mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
 
 
 
@@ -271,21 +317,13 @@ var MapUtils = function () {
                     // this.setMap(null);
                     this.animation = null;
                     this.setMap(map);
-                    var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-
-                    InfoWindowT(lEventos[this.indice].deEvent,
-                            lEventos[this.indice].deDetail,
-                            lEventos[this.indice].deAddress,
-                            lEventos[this.indice].dtUntil,
-                            lEventos[this.indice].dtFrom,
-                            dist,
-                            lEventos[this.indice].nrPhone,
-                            "image",
-                            lEventos[this.indice].nmPlace);
+                    //  var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                    //  var img = (lEventos[this.indice].deLogo === "default" || lEventos[this.indice].deLogo === "") ? lEventos[this.indice].deImg : lEventos[this.indice].deLogo;
+                    InfoWindowT(lEventos[this.indice], lat, lng);
 
                     //infowindow.setContent(content);
                     // infowindow.open(map, this);
-                    mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
+                    //mapUtils.showDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
                 });
 
             }
@@ -300,6 +338,7 @@ var MapUtils = function () {
                 animation: google.maps.Animation.BOUNCE,
             });
             //mapUtils.clusterOption(map, markers);
+            navigator.splashscreen.hide();//hide splash after map load
         });
     }
     /**
@@ -488,6 +527,13 @@ var MapUtils = function () {
         //alert(pdtFim);
         this.requestPin(id, pdtInit, pdtFim);
     }
+    this.setBorderStyle1 = function (element, name, id) {
+        res = element.src.split("_");
+        pos = res.length - 1;
+        element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
+        //alert(pdtFim);
+        this.requestPlaces(id);
+    }
     /**
      * Init Push Notifications
      */
@@ -602,17 +648,122 @@ var MapUtils = function () {
     }
 }
 /**
+ * 
+ *  
  *  @Function to open InfoWindow from Map on POPUP format
+ *  @Obj from response
+ *  @lat user lat
+ *  @lng user lon
  * */
-function InfoWindowT(tit, desc, a, d, u, f, p, i, t) {
-    
+function InfoWindowT(obj, lat, lng) {
+    var dist = mapUtils.calculateDistance(obj.nrLat, obj.nrLng, lat, lng);
+    var img = (obj.deLogo === "default" || obj.deLogo === "") ? obj.deImg : obj.deLogo;
+
+    $("#txtTitT").text(obj.deEvent);
+    //$("#txtTitT").text(obj.deEvent);
+    $("#txtDescT").html(obj.deDetail);
+    $("#txtPlaT").text(obj.nmPlace);
+    var tit = (obj.deEvent === null || obj.deEvent === undefined) ? obj.nmPlace : obj.deEvent;
     $("#txtTitT").text(tit);
-    $("#txtDescT").html(desc);
-    $("#txtAddrT").text(a);
-    //$("#txtDateT").text("  "+d);
-    $("#txtDateT").text(d+" "+u);
-    $("#txtDistT").text(f);
-    $("#txtPhonT").text(p===null?"n/a":p);
-    $("#txtPlaT").text(t); 
+    $("#txtAddrT").text(obj.deAddress);
+    $("#txtDateT").text(obj.dtFrom + " " + obj.dtUntil);
+    $("#txtDistT").text(dist);
+
+
+    //ate Null Hide IT
+    if (obj.dtUntil === null || obj.dtUntil === undefined) {
+        hideIt('txtDateT');
+    } else {
+        showIt('txtDateT');
+    }
+    //If phone is not null not undefined and not avaliable show it else hide
+    if (obj.nrPhone === null || obj.nrPhone === undefined || obj.nrPhone === "N/A") {
+        hideIt('txtPhonT');
+    } else {
+        showIt('txtPhonT');
+        $("#txtPhonT").text(obj.nrPhone);
+    }
+//Description null hide it
+    if (obj.nmPlace === null || obj.idType === "1" || obj.idType === "3" || obj.idType === "5" || obj.idType === "8") {
+        hideIt('txtPlaT')
+    } else {
+        showIt('txtPlaT');
+    }
+    if (obj.deDetail === null || obj.deDetail === undefined) {
+        hideIt('txtDescT')
+        hideIt('txtDescT1')
+    } else {
+        showIt('txtDescT');
+        showIt('txtDescT1');
+    }
+    if (img === "default" || img === "" || img === undefined || img === null) {
+        hideIt('deLogoPromo');
+    } else {
+        showIt('deLogoPromo');
+        document.getElementById('deLogoPromo').src = img;
+    }
+    //Cinema
+    if (obj.idType === "3") {
+        document.getElementById('txtDescT').style.visibility = 'visible';
+        document.getElementById('txtDescT').style.display = 'block';
+        var content = '<fieldset><ul id="flexiselCinema">';
+        for (i = 0; i < obj.movies.length; i++) {
+            mP = obj.movies[i];
+            //;
+            content += '<li>'
+                    + '<div class="ui-grid-a"><div class="ui-block-a" style="width: 30% !important;"><div class="ui-bar ui-bar-a" style="height:320px">'
+                    + '<img src="' + mP.deImg
+                    + '" style="border-radius: 50%;border-radius:1px" width="120">'
+                    + '<br>Datas'
+                    + '<br><h1>' + mP.dtFrom
+                    + '</h1><br><h1>' + mP.dtUntil
+                    + '</h1></div></div>'
+                    + '<div class="ui-block-b" style="width: 70% !important;"><div class="ui-bar ui-bar-a" style="height:320px;line-height: 100%;">'
+                    + '<br><h2>' + mP.deEvent + '</h2><br><h1>'
+                    //+ '<p style="font-weight:normal;color:#000000;letter-spacing:0.5pt;word-spacing:0.9pt;font-size:1.1em;text-align:left;line-height:1.1pt;">'
+                    + mP.deDetail                  
+                    + '</h1></div></div></li>';
+        }
+        content += "</ul></fieldset>";
+        $("#txtDescT").html(content);
+        $("#flexiselCinema").flexisel({
+            visibleItems: 1,
+            clone: true,
+            autoPlay: {
+                enable: false,
+                interval: 5000,
+                pauseOnHover: true
+            },
+            responsiveBreakpoints: {
+                portrait: {
+                    changePoint: 480,
+                    visibleItems: 1,
+                    itemsToScroll: 1
+                },
+                landscape: {
+                    changePoint: 640,
+                    visibleItems: 2,
+                    itemsToScroll: 2
+                },
+                tablet: {
+                    changePoint: 768,
+                    visibleItems: 3,
+                    itemsToScroll: 3
+                }
+            }
+        });
+    }
+    mapUtils.showDistance(obj.nrLat, obj.nrLng, lat, lng);
     document.getElementById('btToolTip').click();
+}
+
+
+function hideIt(e) {
+    document.getElementById(e).style.visibility = 'hidden';
+    document.getElementById(e).style.display = 'none';
+}
+
+function showIt(e) {
+    document.getElementById(e).style.visibility = 'visible';
+    document.getElementById(e).style.display = 'block';
 }

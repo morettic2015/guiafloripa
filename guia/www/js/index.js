@@ -42,7 +42,7 @@ var app = {
             mapUtils.showWelcome();
             //Loads Map
             mapUtils.sucessLoad(position);
-            navigator.splashscreen.hide();//hide splash after map load
+            
         }, function(e) {
             navigator.splashscreen.hide();//Hide Splash
             //No GPS or WIFI!
