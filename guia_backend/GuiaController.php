@@ -1,6 +1,5 @@
 <?php
 
-
 include 'Mysql.class.php';
 //Database configuration
 DB::$user = 'guia';
@@ -54,7 +53,7 @@ class GuiaController extends stdClass {
         $today = date("Y-m-d");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
-        $query = "select * from viewEventPlaces where dtUntil >= '$today'";
+        $query = "select * from viewEventPlaces where date(dtUntil) >= '$today'";
         $eventos = DB::query($query); // misspelled SELECTvardump(
         //Return Object
         $stdGuia = new stdClass();
@@ -92,6 +91,9 @@ class GuiaController extends stdClass {
             $std->deType = $row['deType'];
             $stdGuia->t[] = $std;
         }
+        //Merge array with Cinemas from today
+        $cine = CinemaController::loadCinemaPlaces(null,null);
+        $stdGuia->e = array_merge($stdGuia->e, $cine);
         //Close Connection
         DB::disconnect();
         return $stdGuia;

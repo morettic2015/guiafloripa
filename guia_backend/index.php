@@ -11,6 +11,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Controller;
 
 //Import Libs
 require './vendor/autoload.php';
@@ -19,6 +20,7 @@ require 'ProfileController.php';
 require 'PushController.php';
 require 'LeadController.php';
 require 'GeocoderController.php';
+require 'CinemaController.php';
 
 
 /**
@@ -92,7 +94,12 @@ $app->get('/filtro/{types}/{from}/{to}', function (Request $request, Response $r
     $data->from = $request->getAttribute('from');
     $data->to = $request->getAttribute('to');
     //Return Eventos by date interval
-    $data = GuiaController::findEventosByDateType($data->from, $data->to, $data->types);
+    if ($data->types == 3) {
+        $data = new stdClass();
+        $data->e = CinemaController::loadCinemaPlaces($data->from, $data->to);
+    } else {
+        $data = GuiaController::findEventosByDateType($data->from, $data->to, $data->types);
+    }
     logActions("FILTRO");
     //Response Busca Data
     return $newResponse->withJson($data, 201);
@@ -119,6 +126,7 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
     //Response Busca Data
     return $newResponse->withJson($data, 201);
 });
+
 /**
  * @Cron Run Once a Day 13:00 o Clock
  */
