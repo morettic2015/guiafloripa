@@ -95,7 +95,7 @@ $app->get('/filtro/{types}/{from}/{to}', function (Request $request, Response $r
     $data->to = $request->getAttribute('to');
     //Return Eventos by date interval
     if ($data->types == 3) {
-        $data = new stdClass();
+        //$data = new stdClass();
         $data->e = CinemaController::loadCinemaPlaces($data->from, $data->to);
     } else {
         $data = GuiaController::findEventosByDateType($data->from, $data->to, $data->types);
@@ -161,7 +161,9 @@ $app->get('/sync_places_hostage/', function (Request $request, Response $respons
 $app->get('/sync_places_tourism/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_servico_turistico", 5);
 });
-//Run Slim Microservice
+$app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
+    GuiaController::updateURLS();
+});//Run Slim Microservice
 $app->run();
 
 /**

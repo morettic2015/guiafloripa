@@ -13,11 +13,11 @@ class CinemaController {
      */
     public static final function loadCinemaPlaces($dtFrom, $dtUntil) {
         //DB::debugMode();
-        //e//cho "<pre>";
+        //echo "<pre>".$dtFrom. "---------".$dtUntil;
         $query = "SELECT * FROM viewCinemaPlaces where idPlace in (";
         $innerQuery = null;
         $ret = [];
-        if ($dtUntil!=="-1" && $dtFrom!=="-1"&!empty($dtUntil)) {
+        if ($dtUntil!=="-1" && $dtFrom!=="-1"&&!empty($dtUntil)) {
             $query .= "select distinct idPlaceOwner  FROM viewCinemaIDS where date(dtFrom) >= '$dtFrom' AND date(dtUntil)<= '$dtUntil ')";
             $innerQuery = " select * from Event where date(dtFrom) >= '$dtFrom'and date(dtUntil) <= '$dtUntil'";
         } else {
@@ -34,6 +34,7 @@ class CinemaController {
             $std->deAddress = $cine['deAddress'];
             $std->nmPlace = $cine['nmPlace'];
             $std->deEmail = $cine['deEmail'];
+            $std->deWebsite = $cine['deWebsite'];
             $std->idType = "3";
             $std->nrCep = $cine['cep'];
             $std->nrLat = $cine['lat'];
