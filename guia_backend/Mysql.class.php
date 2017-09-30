@@ -58,7 +58,7 @@ class MysqlDB {
       //  echo $query;
         /*  $this->connect();
           $this->resultado = mysqli_query($this->link, $query);
-          return $this->resultado; */
+          return$this->resultado; */
     }
 
     function closeConn() {

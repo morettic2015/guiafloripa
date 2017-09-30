@@ -11,7 +11,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Controller;
+//use Controller;
 
 //Import Libs
 require './vendor/autoload.php';
@@ -167,6 +167,9 @@ $app->get('/sync_places_tourism/', function (Request $request, Response $respons
  */
 $app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();
+});//Run Slim Microservice
+$app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
+    GuiaController::testCinemas();
 });//Run Slim Microservice
 $app->run();
 

@@ -30,7 +30,7 @@ class GuiaController extends stdClass {
             $std->deAddress = $row['deAddress'];
 //$std->deEvent = $row['deEvent'];
             $std->dePlace = $row['dePlace'];
-            $std->dtFrom = $row['dtFrom'];
+            //$std->dtFrom = $row['dtFrom'];
             $std->nmPlace = ($row['nmPlace']);
 //$std->dtUntil = $row['dtUntil'];
             $std->idType = $tp;
@@ -70,8 +70,8 @@ class GuiaController extends stdClass {
             $std->nmPlace = ($row['nmPlace']);
             $std->deEvent = ($row['deEvent']);
             $std->deDetail = ($row['deDetail']);
-            $std->dtFrom = $row['dtFrom'];
-            $std->dtUntil = $row['dtUntil'];
+            $std->dtFrom = removeOneDay($row['dtFrom']);
+            $std->dtUntil = removeOneDay($row['dtUntil']);
             $std->idType = $row['idType'];
             $std->nrCep = $row['nrCep'];
             $std->nrLat = $row['nrLat'];
@@ -119,8 +119,8 @@ class GuiaController extends stdClass {
     }
 
     public static function cronEventCategory($type, $id) {
-        $yesterday = strtotime("today -2000min");
-        $timestamp = strtotime('today +2000min');
+        $yesterday = strtotime("-1 week");
+        $timestamp = strtotime('+1 week');
 
         $conn = new MysqlDB();
 
@@ -153,6 +153,30 @@ class GuiaController extends stdClass {
 
         $conn->closeConn();
     }
+    
+    
+    public static  function testCinemas(){
+         $yesterday = strtotime("-1 week");
+        $timestamp = strtotime('tomorrow +12000min');
+
+//DB::debugMode();
+        $query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
+        echo $query;
+        $mdb = new MysqlDB();
+        $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $mdb->execute($query); // misspelled SELECT
+
+        echo "<pre>";
+        //  var_dump($eventos);die; */
+
+//https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
+        //$cinemas = Array();
+
+        while ($row = $mdb->hasNext()) {
+            $eventRow = new stdClass();
+            var_dump($row); //die;
+        }
+    }
 
     /**
      *  Insert or update Cinemas
@@ -160,25 +184,25 @@ class GuiaController extends stdClass {
     public static function cronCinemas() {
 
 
-        $yesterday = strtotime("-1 week");
-        $timestamp = strtotime('tomorrow +4000min');
+        $yesterday = strtotime("-2 week");
+        $timestamp = strtotime('+2 week');
 
 //DB::debugMode();
-        $query = "SELECT * from view_cinema where dtstart>= $yesterday and dtend<= $timestamp  order by post_title";
-
+        $query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
+        echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        $eventos = $mdb->execute($query); // misspelled SELECT
+        $mdb->execute($query); // misspelled SELECT
 
         /* echo "<pre>";
           var_dump($eventos);die; */
 
 //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
-        $cinemas = Array();
+        //$cinemas = Array();
 
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
-//var_dump($row);die;
+            var_dump($row); //die;
             $eventRow->dtstart = $row['dtstart'];
             $eventRow->dtend = $row['dtend'];
             $eventRow->titulo = utf8_encode($row['titulo']);
@@ -193,14 +217,14 @@ class GuiaController extends stdClass {
             $eventRow->id_cn_filme_post = $row['id_cn_filme_post'];
             $eventRow->id_cn_filme = $row['id_cn_filme'];
             $eventRow->id_wp_post = $row['id_wp_post'];
-            $eventRow->post_title = $row['post_title'];
+            $eventRow->post_title = utf8_encode($row['post_title']);
             $eventRow->state = $row['state'];
             $eventRow->city = $row['city'];
             $eventRow->addressID = $row['address'];
             $eventRow->post_content = $row['post_content'];
             $eventRow->outras_informacoes_clean = strip_tags($row['outras_informacoes']);
             $eventRow->outras_informacoes_html = $row['outras_informacoes'];
-            $eventRow->ID = $row['ID_POST_'];
+            @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
             $eventRow->geo = GeocoderController::geocodeQuery($eventRow->addressID);
@@ -282,7 +306,7 @@ class GuiaController extends stdClass {
         echo time() . "*********************************************\n";
         var_dump($obj);
 
-        if (is_null($obj->geo->lat)) {
+        if (is_null($obj->geo) || is_null($obj->geo->lat)) {
             return;
         }
         $cep = "88000-000";
@@ -355,9 +379,9 @@ class GuiaController extends stdClass {
             $std->deAddress = $row['deAddress'];
             $std->deEvent = $row['deEvent'];
             $std->deDetail = $row['deDetail'];
-            $std->dtFrom = $row['dtFrom'];
+            $std->dtFrom = removeOneDay($row['dtFrom']);
             $std->nmPlace = ($row['nmPlace']);
-            $std->dtUntil = $row['dtUntil'];
+            $std->dtUntil = removeOneDay($row['dtUntil']);
             $std->idType = $row['idType'];
             $std->nrCep = $row['nrCep'];
             $std->nrLat = $row['nrLat'];
@@ -434,6 +458,8 @@ class GuiaController extends stdClass {
                 DB::commit();
             } catch (Exception $ex) {
 //var_dump($ex);
+                
+                var_dump($row);
                 logActions($ex->getMessage());
                 logActions($ex->getCode());
                 logActions($ex->getFile());
@@ -455,4 +481,12 @@ function my_error_handler($params) {
     echo "Error: " . $params['error'] . "<br>\n";
     echo "Query: " . $params['query'] . "<br>\n";
 // die; // don't want to keep going if a query broke
+}
+
+function removeOneDay($date) {
+    //echo $date;die;
+    $date = new DateTime($date); // For today/now, don't pass an arg.
+    $date->modify("-1 day -3 hour");
+    //$date->modify("");
+    return $date->format("d/m/Y H:i");
 }
