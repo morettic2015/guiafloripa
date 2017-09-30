@@ -98,7 +98,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].idType,
+                    title: lEventos[i].nmPlace,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
@@ -216,7 +216,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].idType,
+                    title: lEventos[i].nmPlace,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
@@ -300,7 +300,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].idType,
+                    title: lEventos[i].nmPlace,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
@@ -517,6 +517,7 @@ var MapUtils = function () {
     }
 
     this.setBorderStyle = function (element, name, id) {
+        map.setZoom(10);
         res = element.src.split("_");
         pos = res.length - 1;
         element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
@@ -528,6 +529,7 @@ var MapUtils = function () {
         this.requestPin(id, pdtInit, pdtFim);
     }
     this.setBorderStyle1 = function (element, name, id) {
+        map.setZoom(10);
         res = element.src.split("_");
         pos = res.length - 1;
         element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
@@ -666,20 +668,32 @@ function InfoWindowT(obj, lat, lng) {
     var tit = (obj.deEvent === null || obj.deEvent === undefined) ? obj.nmPlace : obj.deEvent;
     $("#txtTitT").text(tit);
     $("#txtAddrT").text(obj.deAddress);
-    $("#txtDateT").text(obj.dtFrom + " " + obj.dtUntil);
+    var txtTmpData = obj.dtUntil == obj.dtFrom ? obj.dtUntil : obj.dtFrom + "-" + obj.dtUntil;
+    $("#txtDateT").text(txtTmpData);
     $("#txtDistT").text(dist);
 
+    if (obj.deWebsite === null || obj.deWebsite === undefined || obj.deWebsite === "N/A") {
+        hideIt('txtURLT');
+    } else {
+        showIt('txtURLT');
+        $("#txtURLT").attr("href", obj.deWebsite);
+        //$("#txtURLT").text("Website");
+    }
 
     //ate Null Hide IT
     if (obj.dtUntil === null || obj.dtUntil === undefined) {
         hideIt('txtDateT');
+        hideIt('txtDateT1');
     } else {
         showIt('txtDateT');
+        showIt('txtDateT1');
     }
     //If phone is not null not undefined and not avaliable show it else hide
     if (obj.nrPhone === null || obj.nrPhone === undefined || obj.nrPhone === "N/A") {
         hideIt('txtPhonT');
+        hideIt('txtPhonT1');
     } else {
+        showIt('txtPhonT1');
         showIt('txtPhonT');
         $("#txtPhonT").text(obj.nrPhone);
     }
@@ -689,16 +703,26 @@ function InfoWindowT(obj, lat, lng) {
     } else {
         showIt('txtPlaT');
     }
+    //
     if (obj.deDetail === null || obj.deDetail === undefined) {
-        hideIt('txtDescT')
-        hideIt('txtDescT1')
+        if (obj.dePlace === null || obj.dePlace === undefined) {
+            hideIt('txtDescT');
+            hideIt('txtDescT1');
+        } else {
+            showIt('txtDescT');
+            showIt('txtDescT1');
+            $("#txtDescT").html(obj.dePlace);
+        }
     } else {
         showIt('txtDescT');
         showIt('txtDescT1');
     }
+ 
     if (img === "default" || img === "" || img === undefined || img === null) {
         hideIt('deLogoPromo');
+        hideIt('divImagem');
     } else {
+        showIt('divImagem');
         showIt('deLogoPromo');
         document.getElementById('deLogoPromo').src = img;
     }
@@ -715,14 +739,14 @@ function InfoWindowT(obj, lat, lng) {
                     + '<img src="' + mP.deImg
                     + '" style="border-radius: 50%;border-radius:1px" width="120">'
                     + '<br>Datas'
-                    + '<br><h1>' + mP.dtFrom
-                    + '</h1><br><h1>' + mP.dtUntil
-                    + '</h1></div></div>'
+                    + '<div>' + mP.dtFrom
+                    + '</div><div>' + mP.dtUntil
+                    + '</div></div></div>'
                     + '<div class="ui-block-b" style="width: 70% !important;"><div class="ui-bar ui-bar-a" style="height:320px;line-height: 100%;">'
-                    + '<br><h2>' + mP.deEvent + '</h2><br><h1>'
-                    //+ '<p style="font-weight:normal;color:#000000;letter-spacing:0.5pt;word-spacing:0.9pt;font-size:1.1em;text-align:left;line-height:1.1pt;">'
-                    + mP.deDetail                  
-                    + '</h1></div></div></li>';
+                    + '<br><a href="#" class="ui-btn ui-mini"><small><small>' + mP.deEvent + '</small></small></a><br><h1>'
+                    + '<textarea class="txtCinema" readonly>'
+                    + mP.deDetail
+                    + '</textarea></div></div></li>';
         }
         content += "</ul></fieldset>";
         $("#txtDescT").html(content);
@@ -766,4 +790,14 @@ function hideIt(e) {
 function showIt(e) {
     document.getElementById(e).style.visibility = 'visible';
     document.getElementById(e).style.display = 'block';
+}
+
+function formatDate(data) {
+    var formattedDate = new Date(data);
+    var d = formattedDate.getDate();
+    var m = formattedDate.getMonth();
+    m += 1;  // JavaScript months are 0-11
+    var y = formattedDate.getFullYear();
+
+    return d + "/" + m + "/" + y + " " + formattedDate.getHours() + ":" + formattedDate.getMinutes();
 }

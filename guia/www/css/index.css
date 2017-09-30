@@ -175,3 +175,28 @@ h1 {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+.txtCinema{
+    font-style: italic;
+    padding: 0px 0px 0px 0px;
+    background: transparent;
+    outline: none;
+    border: none;
+    width: 30vh;
+    overflow: hidden;
+    resize: none;
+    display: inline-block;
+    min-height: 10px;
+    height: 60vh;
+}
+
+.containerImagem{
+  width:100%;
+  height:15vh;
+  max-width:400px;
+  align-items: center;
+  overflow:hidden;
+}
+.imgPopUp {
+  width:100%;
+};

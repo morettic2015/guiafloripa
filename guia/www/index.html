@@ -38,7 +38,7 @@
                     <fieldset>
                         <ul id="flexiselDemo1">
                             <li>
-                                <img id="bt_0" alt="Destaques" src="img/destaque_on.png" onclick="mapUtils.setBorderStyle1(this, 'destaque', 5)" />
+                                <img id="bt_0" alt="Destaques" src="img/turismo_on.png" onclick="mapUtils.setBorderStyle1(this, 'turismo', 5)" />
                                 <h5>Turismo</h5>
                             </li>
                             <li>
@@ -84,7 +84,7 @@
                 </center>
             </div>
             <!-- Painel de configurações do radar -->
-            <div data-role="popup" id="popupInfo" data-transition="flip" data-theme="a" class="ui-corner-all"  data-dismissible="true" >
+            <div data-role="popup" id="popupInfo" data-transition="slidefade" data-theme="b" data-dismissible="true"  style="max-width:400px !important;">
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Radar</h3>
@@ -104,20 +104,71 @@
             </div>
             <!-- Tooltips-->
             <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" data-position-to="origin">
+                <div data-role="header">
+                    <h5>
+                        <small>
+                            <small id="txtTitT">
+                                Page Title
+                            </small>
+                        </small>
+                    </h5>
+
+                </div>
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-                <div style="padding:10px 20px;">
-                    <h5 id="txtTitT">Tit</h5>
-                    <h6 id="txtPlaT"></h6>
-                    <img src="#" style="max-height: 150px;align-content: center" id="deLogoPromo"/>
-                    <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
-                    <a id="txtDateT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a>
-                    <a id="txtDistT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-navigation ui-mini"></a>
-                    <a id="txtPhonT" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-phone ui-mini"></a>
-                    <h6>Endereço</h6>
-                    <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" id="txtURLT" title="Website" class="ui-btn ui-mini ui-btn-icon-left ui-icon-navigation">
+                            <small>
+                                <small>
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
+                            <small>
+                                <small id="txtDistT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                </fieldset>
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" id="txtDateT1" class="ui-btn ui-mini ui-btn-icon-left ui-icon-calendar ">
+                            <small>
+                                <small id="txtDateT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#" id="txtPhonT1" class="ui-btn ui-mini ui-btn-icon-left ui-icon-phone">
+                            <small>
+                                <small id="txtPhonT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                </fieldset>
+
+
+
+                <h6 id="txtPlaT"></h6>
+                <div class="containerImagem" id="divImagem">
+                    <img src="#" style="max-height: 150px;align-content: center" id="deLogoPromo" class="imgPopUp"/>
+                </div>
+                
+                <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
+                <h6>Endereço</h6>
+                <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                <div data-role="footer" class="ui-bar">
                     <h6  id="txtDescT1">O que há?</h6>
                     <p data-theme="a" id="txtDescT" style="font-size: 9px"></p>
-
                 </div>
             </div>
             <!-- Dates Filter-->
