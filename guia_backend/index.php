@@ -11,8 +11,8 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-//use Controller;
 
+//use Controller;
 //Import Libs
 require './vendor/autoload.php';
 require 'GuiaController.php';
@@ -140,6 +140,16 @@ $app->get('/push/', function (Request $request, Response $response) use ($app) {
     logActions("PUSH");
     return $newResponse->withJson($data, 201);
 });
+//Send anunciantes for integration
+$app->get('/anunciantes/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = ProfileController::insertLeadAnunciantes();
+    logActions("LEADS ANUNCIANTES");
+    return $newResponse->withJson($data, 201);
+});
 /**
   @Cron Service runs every 3 days only
  * Sync Comer & Beber
@@ -167,10 +177,10 @@ $app->get('/sync_places_tourism/', function (Request $request, Response $respons
  */
 $app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();
-});//Run Slim Microservice
+}); //Run Slim Microservice
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
     GuiaController::testCinemas();
-});//Run Slim Microservice
+}); //Run Slim Microservice
 $app->run();
 
 /**

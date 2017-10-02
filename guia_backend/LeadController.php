@@ -8,6 +8,7 @@
 
 //const MAUTIC_PUBLIC_KEY = "545h4a5zslc0404cs0c08sw0w8oowokgs4gg8k8kgccs4wcgwg";
 const MAUTIC_SEGMENT_ID = 23;
+const MAUTIC_ANUNCUANTES_ID = 37;
 const MAUTIC_INSTANCE_URL = "https://inbound.citywatch.com.br";
 const MAUTIC_INSTANCE_API = "https://inbound.citywatch.com.br/api/";
 const MAUTIC_USER = "leadmobi";
@@ -24,6 +25,13 @@ use Mautic\MauticApi;
 $auth = null;
 
 class LeadController extends stdClass {
+
+    public static function addAnunciante($contactId) {
+        $con = LeadController::connectMautic();
+        $segmentApi = $con->api->newApi("segments", $con->auth, MAUTIC_INSTANCE_API);
+        $response = $segmentApi->addContact(MAUTIC_ANUNCUANTES_ID, $contactId);
+        return $response;
+    }
 
     /**
      * @Add Lead To Segment
@@ -80,4 +88,5 @@ class LeadController extends stdClass {
         //var_dump($api);
         return $ret;
     }
+
 }

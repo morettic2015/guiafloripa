@@ -11,8 +11,28 @@
   $data->pushToken = $request->getAttribute('pushToken');
  */
 
-
 class ProfileController extends stdClass {
+    /**
+     * @Add contacts to Mautic Anunciantes (segment)
+     */
+    public static final function insertLeadAnunciantes() {
+        $query = "select nmPlace, deEmail from Place where deEmail is not null and deEmail <> ' '";
+        $results = DB::query($query);
+        $lArray = [];
+        //Para cada 
+        $count = 0;
+        foreach ($results as $anunciante) {
+            //var_dump($anunciante);
+            $lArray[$count] = new stdClass();
+            $lArray[$count]->contactID = LeadController::createContact($anunciante['nmPlace'], null, $anunciante['deEmail']);
+            $lArray[$count]->lead = LeadController::addAnunciante($lArray[$count]->contactID);
+            $lArray[$count]->email = $anunciante['deEmail'];
+            $lArray[$count]->dePlace = $anunciante['nmPlace'];
+            $count++;
+        }
+
+        return $lArray;
+    }
 
     public static function insertUpdateProfile($obj) {
         $rt = new stdClass();

@@ -74,8 +74,8 @@ class GuiaController extends stdClass {
             $std->dtUntil = removeOneDay($row['dtUntil']);
             $std->idType = $row['idType'];
             $std->nrCep = $row['nrCep'];
-            $std->nrLat = $row['nrLat'];
-            $std->nrLng = $row['nrLng'];
+            $std->nrLat = offset($row['nrLat']);
+            $std->nrLng = offset($row['nrLng']);
             $std->deWebsite = $row['deWebsite'];
             $std->deImg = $row['deImg'];
 //Adiciona
@@ -153,10 +153,9 @@ class GuiaController extends stdClass {
 
         $conn->closeConn();
     }
-    
-    
-    public static  function testCinemas(){
-         $yesterday = strtotime("-1 week");
+
+    public static function testCinemas() {
+        $yesterday = strtotime("-1 week");
         $timestamp = strtotime('tomorrow +12000min');
 
 //DB::debugMode();
@@ -168,7 +167,6 @@ class GuiaController extends stdClass {
 
         echo "<pre>";
         //  var_dump($eventos);die; */
-
 //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
         //$cinemas = Array();
 
@@ -458,7 +456,7 @@ class GuiaController extends stdClass {
                 DB::commit();
             } catch (Exception $ex) {
 //var_dump($ex);
-                
+
                 var_dump($row);
                 logActions($ex->getMessage());
                 logActions($ex->getCode());
@@ -489,4 +487,9 @@ function removeOneDay($date) {
     $date->modify("-1 day -3 hour");
     //$date->modify("");
     return $date->format("d/m/Y H:i");
+}
+
+function offset($point) {
+    $offset = rand(0, 1004) / 10000000;
+    return floatval($point) + $offset;
 }
