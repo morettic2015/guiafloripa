@@ -18,6 +18,7 @@ var directionsDisplay;
 var markers = new Array();
 var notificationOpenedCallback;
 var watcherPosition = null;
+var markerCluster = null;
 
 var MapUtils = function () {
     //Get Pin Type Based on TYPE from Marker
@@ -133,7 +134,7 @@ var MapUtils = function () {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-            // mapUtils.clusterOption(map, markers);
+            mapUtils.clusterOption(map, markers);
         });
     }
 
@@ -191,11 +192,9 @@ var MapUtils = function () {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-            // mapUtils.clusterOption(map, markers);
+            mapUtils.clusterOption(map, markers);
         });
     }
-
-
 
     /**
      * @ Call to show only today events
@@ -254,7 +253,7 @@ var MapUtils = function () {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-            //mapUtils.clusterOption(map, markers);
+            mapUtils.clusterOption(map, markers);
         });
     }
     /**
@@ -337,7 +336,7 @@ var MapUtils = function () {
                 indice: posFinal,
                 animation: google.maps.Animation.BOUNCE,
             });
-            //mapUtils.clusterOption(map, markers);
+            mapUtils.clusterOption(map, markers);
             navigator.splashscreen.hide();//hide splash after map load
         });
     }
@@ -642,11 +641,17 @@ var MapUtils = function () {
     }
 
     this.clusterOption = function (map, markers) {
+       /* if (markerCluster !== null) {
+            //markerCluster.clearMarkers();
+            markerCluster.setMap(null);
+        }
         var voptions = {
-            imagePath: 'img/m'
+            imagePath: 'img/m',
+            maxZoom: 15,
+            zoomOnClick: false
         };
 
-        var markerCluster = new MarkerClusterer(map, markers, voptions);
+        markerCluster = new MarkerClusterer(map, markers, voptions);*/
     }
 }
 /**
@@ -717,7 +722,7 @@ function InfoWindowT(obj, lat, lng) {
         showIt('txtDescT');
         showIt('txtDescT1');
     }
- 
+
     if (img === "default" || img === "" || img === undefined || img === null) {
         hideIt('deLogoPromo');
         hideIt('divImagem');
@@ -734,7 +739,7 @@ function InfoWindowT(obj, lat, lng) {
         for (i = 0; i < obj.movies.length; i++) {
             mP = obj.movies[i];
             //;
-            content += '<li>'
+         /*   content += '<li>'
                     + '<div class="ui-grid-a"><div class="ui-block-a" style="width: 30% !important;"><div class="ui-bar ui-bar-a" style="height:320px">'
                     + '<img src="' + mP.deImg
                     + '" style="border-radius: 50%;border-radius:1px" width="120">'
@@ -746,7 +751,22 @@ function InfoWindowT(obj, lat, lng) {
                     + '<br><a href="#" class="ui-btn ui-mini"><small><small>' + mP.deEvent + '</small></small></a><br><h1>'
                     + '<textarea class="txtCinema" readonly>'
                     + mP.deDetail
-                    + '</textarea></div></div></li>';
+                    + '</textarea></div></div></li>';*/
+              content += '<li>'
+                    + '<div class="containerImagem" id="divImagem">'
+                    + '<img src="' + mP.deImg
+                    + '" style="max-height: 150px;align-content: center" class="imgPopUp">'
+                    + '</div>Datas'
+                    + '' + mP.dtFrom
+                    + '' + mP.dtUntil
+                    + ''
+                    + ''
+                    //+ '<h1>' + mP.deEvent + '</h1'
+                    + '<textarea class="txtCinema" readonly>'
+                    + mP.deEvent + 
+                    +"\n"
+                    + mP.deDetail
+                    + '</textarea></li>';
         }
         content += "</ul></fieldset>";
         $("#txtDescT").html(content);
