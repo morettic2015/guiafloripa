@@ -50,8 +50,8 @@ class CinemaController {
                 $std1->deEvent = $movie['deEvent'];
                 $std1->deDetail = strip_tags($movie['deDetail']);
                 $std1->deImg = $movie['deImg'];
-                $std1->dtFrom = $movie['dtFrom'];
-                $std1->dtUntil = $movie['dtUntil'];
+                $std1->dtFrom = formatCineDate($movie['dtFrom']);
+                $std1->dtUntil = formatCineDate($movie['dtUntil']);
                 $std->movies[] = $std1;
             }
             $ret[] = $std;

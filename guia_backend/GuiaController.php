@@ -493,3 +493,10 @@ function offset($point) {
     $offset = rand(0, 1004) / 10000000;
     return floatval($point) + $offset;
 }
+
+function formatCineDate($date) {
+    //echo $date;die;
+    $date = new DateTime($date); // For today/now, don't pass an arg.
+    //$date->modify("");
+    return $date->format("d/m/Y");
+}
