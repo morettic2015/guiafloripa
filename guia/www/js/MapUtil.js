@@ -641,18 +641,19 @@ var MapUtils = function () {
     }
 
     this.clusterOption = function (map, markers) {
-       /* if (markerCluster !== null) {
-            //markerCluster.clearMarkers();
-            markerCluster.setMap(null);
-        }
-        var voptions = {
-            imagePath: 'img/m',
-            maxZoom: 15,
-            zoomOnClick: false
-        };
-
-        markerCluster = new MarkerClusterer(map, markers, voptions);*/
+        /* if (markerCluster !== null) {
+         //markerCluster.clearMarkers();
+         markerCluster.setMap(null);
+         }
+         var voptions = {
+         imagePath: 'img/m',
+         maxZoom: 15,
+         zoomOnClick: false
+         };
+         
+         markerCluster = new MarkerClusterer(map, markers, voptions);*/
     }
+
 }
 /**
  * 
@@ -739,36 +740,36 @@ function InfoWindowT(obj, lat, lng) {
         for (i = 0; i < obj.movies.length; i++) {
             mP = obj.movies[i];
             //;
-         /*   content += '<li>'
-                    + '<div class="ui-grid-a"><div class="ui-block-a" style="width: 30% !important;"><div class="ui-bar ui-bar-a" style="height:320px">'
-                    + '<img src="' + mP.deImg
-                    + '" style="border-radius: 50%;border-radius:1px" width="120">'
-                    + '<br>Datas'
-                    + '<div>' + mP.dtFrom
-                    + '</div><div>' + mP.dtUntil
-                    + '</div></div></div>'
-                    + '<div class="ui-block-b" style="width: 70% !important;"><div class="ui-bar ui-bar-a" style="height:320px;line-height: 100%;">'
-                    + '<br><a href="#" class="ui-btn ui-mini"><small><small>' + mP.deEvent + '</small></small></a><br><h1>'
-                    + '<textarea class="txtCinema" readonly>'
-                    + mP.deDetail
-                    + '</textarea></div></div></li>';*/
-              content += '<li>'
+            /*   content += '<li>'
+             + '<div class="ui-grid-a"><div class="ui-block-a" style="width: 30% !important;"><div class="ui-bar ui-bar-a" style="height:320px">'
+             + '<img src="' + mP.deImg
+             + '" style="border-radius: 50%;border-radius:1px" width="120">'
+             + '<br>Datas'
+             + '<div>' + mP.dtFrom
+             + '</div><div>' + mP.dtUntil
+             + '</div></div></div>'
+             + '<div class="ui-block-b" style="width: 70% !important;"><div class="ui-bar ui-bar-a" style="height:320px;line-height: 100%;">'
+             + '<br><a href="#" class="ui-btn ui-mini"><small><small>' + mP.deEvent + '</small></small></a><br><h1>'
+             + '<textarea class="txtCinema" readonly>'
+             + mP.deDetail
+             + '</textarea></div></div></li>';*/
+            var id = 'txtId' + i;
+            content += '<li>'
                     + '<div class="containerImagem" id="divImagem">'
                     + '<img src="' + mP.deImg
                     + '" style="max-height: 150px;align-content: center" class="imgPopUp">'
-                    + '</div>Datas'
-                    + '' + mP.dtFrom
-                    + '' + mP.dtUntil
-                    + ''
-                    + ''
-                    //+ '<h1>' + mP.deEvent + '</h1'
-                    + '<textarea class="txtCinema" readonly>'
-                    + mP.deEvent + 
+                    + '</div>'
+                    + '<a class="ui-btn ui-mini ui-icon-calendar ui-btn-icon-left">' + mP.dtFrom + ' - ' + mP.dtUntil + '</a>'
+                    + '<textarea id=' + id + ' class="txtCinema" readonly>'
+                    + mP.deEvent +
                     +"\n"
                     + mP.deDetail
                     + '</textarea></li>';
         }
-        content += "</ul></fieldset>";
+        content += "</ul>"
+       // content += "<a class='ui-btn ui-icon-arrow-d ui-btn-icon-left ui-corner-all' onclick=scroolF('" + id + "')>Ler mais</a>"
+       // content += "<a class='ui-btn ui-icon-arrow-u ui-btn-icon-left ui-corner-all' onclick=scroolB('" + id + "')>Topo</a>"
+        content += "</fieldset>";
         $("#txtDescT").html(content);
         $("#flexiselCinema").flexisel({
             visibleItems: 1,

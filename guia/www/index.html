@@ -2,12 +2,13 @@
 <!--
     @Copyright http://morettic.com.br
     @DEV Luis Augusto Machado Moretto - projetos@morettic.com.br
-    @UIX JoÃ£o Guilherme de Oliveira - jgoliveira78@gmail.com
+    @UIX João Guilherme de Oliveira - jgoliveira78@gmail.com
     @Parceria GuiaFloripa.com.br
 -->
 <html>
 
     <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
         <meta name="format-detection" content="telephone=yes">
         <meta name="msapplication-tap-highlight" content="no">
@@ -26,7 +27,7 @@
                 <center>
                     <img src="img/header.png" />
                 </center>
-                <a href="#popupInfo" data-position-to="window" data-transition="pop" data-rel="popup" data-icon="bars" class="ui-btn-left" data-iconpos="notext">OpÃ§Ãµes</a>
+                <a href="#popupInfo" data-position-to="window" data-transition="pop" data-rel="popup" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
             </div>
             <div role="main" class="ui-content" id="map-canvas" data-position="fixed" data-tap-toggle="false">
                 <!-- Maps loads Here -->
@@ -54,8 +55,8 @@
                                 <h5>Lazer</h5>
                             </li>
                             <li>
-                                <img id="bt_4" alt="AlimentaÃ§Ã£o" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
-                                <h5>AlimentaÃ§Ã£o</h5>
+                                <img id="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
+                                <h5>Alimentação</h5>
                             </li>
                             <li>
                                 <img id="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil', 2)" />
@@ -83,12 +84,12 @@
                     </fieldset>
                 </center>
             </div>
-            <!-- Painel de configuraÃ§Ãµes do radar -->
+            <!-- Painel de configurações do radar -->
             <div data-role="popup" id="popupInfo" data-transition="slidefade" data-theme="b" data-dismissible="true"  style="max-width:400px !important;">
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Radar</h3>
-                    <p>Receba notificaÃ§Ãµes de eventos perto de vocÃª pelo APP</p>
+                    <p>Receba notificações de eventos perto de você pelo APP</p>
                     <form>
                         <label for="checkPushOn">Ativar radar:</label>
                         <input type="checkbox" data-role="flipswitch" name="checkPushOn" id="checkPushOn" data-on-text="ON" data-off-text="OFF" >
@@ -96,23 +97,16 @@
                         <input type="text" name="txtNomeProfile" id="txtNomeProfile" placeholder="Meu nome" value="" data-mini="true">
                         <label for="txtEmailProfile">Email:</label>
                         <input type="email" name="txtEmailProfile" id="txtEmailProfile" placeholder="email@mail.com.br" value="" data-mini="true">
-                        <label for="slider-1">DistÃ¢ncia (KM)</label>
+                        <label for="slider-1">Distância (KM)</label>
                         <input type="range" name="slider-1" id="slider-1" min="3" max="21" value="10" data-highlight="true">
                         <a href="javascript:profileUtil.saveProfile()"  class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check">Aplicar</a>
                     </form>
                 </div>
             </div>
             <!-- Tooltips-->
-            <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" data-position-to="origin">
-                <div data-role="header">
-                    <h5>
-                        <small>
-                            <small id="txtTitT">
-                                Page Title
-                            </small>
-                        </small>
-                    </h5>
-
+            <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" data-position-to="origin" style="max-width: 350px">
+                <div data-role="header" data-theme="b">
+                    <h3 id="txtTitT" style="font-size: 9px;margin-left: 5px;width: 95%"></h3>
                 </div>
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <fieldset class="ui-grid-a">
@@ -120,13 +114,13 @@
                         <a href="#" id="txtURLT" title="Website" class="ui-btn ui-mini ui-btn-icon-left ui-icon-navigation">
                             <small>
                                 <small>
-                                    http
+                                    Website
                                 </small>
                             </small>
                         </a>
                     </div>
                     <div class="ui-block-b">
-                        <a href="#" title="DistÃ¢ncia" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
+                        <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
                             <small>
                                 <small id="txtDistT">
                                     http
@@ -162,12 +156,12 @@
                 <div class="containerImagem" id="divImagem">
                     <img src="#" style="max-height: 150px;align-content: center" id="deLogoPromo" class="imgPopUp"/>
                 </div>
-                
+
                 <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
-                <h6>EndereÃ§o</h6>
+                <h6>Endereço</h6>
                 <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
                 <div data-role="footer" class="ui-bar">
-                    <h6  id="txtDescT1">O que hÃ¡?</h6>
+                    <h6  id="txtDescT1">O que há?</h6>
                     <p id="txtDescT" style="font-size: 9px"></p>
                 </div>
             </div>

@@ -177,26 +177,28 @@ h1 {
 }
 
 .txtCinema{
-    font-style: italic;
+    
     padding: 0px 0px 0px 0px;
     background: transparent;
     outline: none;
     border: none;
-    width: 30vh;
-    overflow: hidden;
-    resize: none;
+    font-size: 8.8pt;
+    width: 100%;
+   /* overflow: hidden;*/
+    /* resize: none; */
     display: inline-block;
-    min-height: 10px;
-    height: 60vh;
+    min-height: 35vh;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .containerImagem{
-  width:100%;
-  height:15vh;
-  max-width:400px;
-  align-items: center;
-  overflow:hidden;
+    max-width:100%;
+    height:18vh;
+    /* max-width:400px; */
+    align-items: center;
+    overflow:hidden;
 }
 .imgPopUp {
-  width:100%;
+    width:100%;
 };
