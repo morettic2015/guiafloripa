@@ -2,13 +2,13 @@
 <!--
     @Copyright http://morettic.com.br
     @DEV Luis Augusto Machado Moretto - projetos@morettic.com.br
-    @UIX João Guilherme de Oliveira - jgoliveira78@gmail.com
+    @UIX JoÃ£o Guilherme de Oliveira - jgoliveira78@gmail.com
     @Parceria GuiaFloripa.com.br
 -->
 <html>
 
     <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' https://* 'unsafe-inline'; font-src 'self' https://* 'unsafe-inline'; script-src 'self' https://* 'unsafe-inline' 'unsafe-eval';  media-src *;img-src 'self' https://* http://* data:;">
         <meta name="format-detection" content="telephone=yes">
         <meta name="msapplication-tap-highlight" content="no">
@@ -27,13 +27,14 @@
                 <center>
                     <img src="img/header.png" />
                 </center>
-                <a href="#popupInfo" data-position-to="window" data-transition="pop" data-rel="popup" data-icon="bars" class="ui-btn-left" data-iconpos="notext">Opções</a>
+                <a href="#popupInfo" data-position-to="window" data-transition="pop" data-rel="popup" data-icon="bars" class="ui-btn-left" data-iconpos="notext">OpÃ§Ãµes</a>
+                <a href="#popupSearchGuia" data-position-to="window" data-transition="pop" data-rel="popup" data-icon="search" class="ui-btn-right" data-iconpos="notext">OpÃ§Ãµes</a>
             </div>
             <div role="main" class="ui-content" id="map-canvas" data-position="fixed" data-tap-toggle="false">
                 <!-- Maps loads Here -->
             </div>
             <!-- end of page 1 content -->
-            <div data-role="footer" data-position="fixed" class="footerMenu" style=" height: 40%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
+            <div data-role="footer" data-position="fixed" style=" height: 30%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
                 <center>
                     <h1>Categorias</h1>
                     <fieldset>
@@ -55,8 +56,8 @@
                                 <h5>Lazer</h5>
                             </li>
                             <li>
-                                <img id="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
-                                <h5>Alimentação</h5>
+                                <img id="bt_4" alt="AlimentaÃ§Ã£o" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
+                                <h5>AlimentaÃ§Ã£o</h5>
                             </li>
                             <li>
                                 <img id="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil', 2)" />
@@ -76,20 +77,14 @@
                             </li>
                         </ul>
                     </fieldset>
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-icon-clock  ui-btn-a ui-btn-icon-left">Hoje</a>
-                        <a href="#popupLogin" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-calendar ui-btn-icon-left ui-btn-a"
-                           data-transition="pop">Datas</a>
-                        <!--   <a href="#" class="ui-btn ui-icon-check ui-btn-icon-left" style="background: #5caed0 ; color: #ffffff; background-color: #5caed0;">Buscar</a> -->
-                    </fieldset>
                 </center>
             </div>
-            <!-- Painel de configurações do radar -->
-            <div data-role="popup" id="popupInfo" data-transition="slidefade" data-theme="b" data-dismissible="true"  style="max-width:400px !important;">
+            <!-- Painel de configuraÃ§Ãµes do radar -->
+            <div data-role="popup" id="popupInfo" data-transition="slidefade" data-theme="a" data-dismissible="true"  style="max-width:350px !important;">
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
                     <h3>Radar</h3>
-                    <p>Receba notificações de eventos perto de você pelo APP</p>
+                    <p>Receba notifica&ccedil;&otilde;es de eventos perto de voc&ecirc; pelo APP</p>
                     <form>
                         <label for="checkPushOn">Ativar radar:</label>
                         <input type="checkbox" data-role="flipswitch" name="checkPushOn" id="checkPushOn" data-on-text="ON" data-off-text="OFF" >
@@ -97,7 +92,7 @@
                         <input type="text" name="txtNomeProfile" id="txtNomeProfile" placeholder="Meu nome" value="" data-mini="true">
                         <label for="txtEmailProfile">Email:</label>
                         <input type="email" name="txtEmailProfile" id="txtEmailProfile" placeholder="email@mail.com.br" value="" data-mini="true">
-                        <label for="slider-1">Distância (KM)</label>
+                        <label for="slider-1">Dist&acirc;ncia (KM)</label>
                         <input type="range" name="slider-1" id="slider-1" min="3" max="21" value="10" data-highlight="true">
                         <a href="javascript:profileUtil.saveProfile()"  class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check">Aplicar</a>
                     </form>
@@ -120,7 +115,7 @@
                         </a>
                     </div>
                     <div class="ui-block-b">
-                        <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
+                        <a href="#" title="DistÃ¢ncia" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
                             <small>
                                 <small id="txtDistT">
                                     http
@@ -158,23 +153,27 @@
                 </div>
 
                 <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
-                <h6>Endereço</h6>
+                <h6>EndereÃ§o</h6>
                 <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
                 <div data-role="footer" class="ui-bar">
-                    <h6  id="txtDescT1">O que há?</h6>
+                    <h6  id="txtDescT1">O que hÃ¡?</h6>
                     <p id="txtDescT" style="font-size: 9px"></p>
                 </div>
             </div>
             <!-- Dates Filter-->
-            <div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true" >
+            <div data-role="popup" id="popupSearchGuia" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true"  style="max-width: 350px">
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <div style="padding:10px 20px;">
-                    <h3>Data dos eventos</h3>
+                    <h3>Pesquisar</h3>
+                    <small>Selecione as datas</small>
                     <label for="dtinicio">Data inicio:</label>
                     <input type="date" name="dtinicio" id="dtinicio" value="" placeholder="Inicio" data-theme="a">
                     <label for="dtfim">Data fim:</label>
                     <input type="date" name="dtfim" id="dtfim" value="" placeholder="Fim" data-theme="a">
+                    <small>Confirme as datas e selecione uma categoria</small>
                     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" data-rel="back">Aplicar</a>
+                    <p>Ou veja o que esta acontecendo</p>
+                    <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-clock" data-rel="back">Na Semana</a>
                 </div>
             </div>
             <!-- end page 1 footer -->
@@ -183,11 +182,11 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
         <script type="text/javascript" id="jqm-trans-disable">
-                            /* For having a faster transition */
-                            $(document).on("mobileinit", function () {
-                                $.mobile.defaultPageTransition = "none";
-                                $.mobile.defaultDialogTransition = "none";
-                            });
+                        /* For having a faster transition */
+                        $(document).on("mobileinit", function () {
+                            $.mobile.defaultPageTransition = "none";
+                            $.mobile.defaultDialogTransition = "none";
+                        });
         </script>
         <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
         <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
@@ -199,18 +198,18 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/jquery.flexisel.js"></script>
         <script>
-                            (function (w, d, t, u, n, a, m) {
-                                w['MauticTrackingObject'] = n;
-                                w[n] = w[n] || function () {
-                                    (w[n].q = w[n].q || []).push(arguments)
-                                }, a = d.createElement(t),
-                                        m = d.getElementsByTagName(t)[0];
-                                a.async = 1;
-                                a.src = u;
-                                m.parentNode.insertBefore(a, m)
-                            })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
+                        (function (w, d, t, u, n, a, m) {
+                            w['MauticTrackingObject'] = n;
+                            w[n] = w[n] || function () {
+                                (w[n].q = w[n].q || []).push(arguments)
+                            }, a = d.createElement(t),
+                                    m = d.getElementsByTagName(t)[0];
+                            a.async = 1;
+                            a.src = u;
+                            m.parentNode.insertBefore(a, m)
+                        })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
 
-                            mt('send', 'pageview');
+                        mt('send', 'pageview');
         </script>
     </body>
 
