@@ -183,7 +183,7 @@ class GuiaController extends stdClass {
 
 
         $yesterday = strtotime("-2 week");
-        $timestamp = strtotime('+2 week');
+        $timestamp = strtotime('+4 week');
 
 //DB::debugMode();
         $query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
@@ -200,7 +200,7 @@ class GuiaController extends stdClass {
 
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
-            var_dump($row); //die;
+            //var_dump($row); //die;
             $eventRow->dtstart = $row['dtstart'];
             $eventRow->dtend = $row['dtend'];
             $eventRow->titulo = utf8_encode($row['titulo']);
@@ -225,48 +225,53 @@ class GuiaController extends stdClass {
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
-            $eventRow->geo = GeocoderController::geocodeQuery($eventRow->addressID);
+
             GuiaController::updateCinemaEvent($eventRow);
         }
         DB::disconnect();
     }
 
     public static function updateCinemaEvent($obj) {
-
+        DB::debugMode();
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
 
         echo time() . "*********************************************\n";
-        var_dump($obj);
+       // var_dump($obj);
 
-        if (is_null($obj->geo->lat)) {
-            return;
-        }
-        $cep = "88000-000";
-        $cepvet = explode(",", $obj->geo->formatted_address);
+        $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
+
+        $number_accounts = DB::queryFirstField($query);
+        if (!($number_accounts > 0)) {
+
+            $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
+            if (is_null($obj->geo->lat)) {
+                return;
+            }
+            $cep = "88000-000";
+            $cepvet = explode(",", $obj->geo->formatted_address);
 //$vSize = count($cepvet);
-        $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
-        $cep = empty($cep1) ? $cep : $cep1;
+            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
+            $cep = empty($cep1) ? $cep : $cep1;
 
 //Insert Update Place
-        DB::insertUpdate(
-                'Place', array(
-            'idPlace' => $obj->id_wp_post, //primary key
-            'nmPlace' => ($obj->post_title),
-            'nrPhone' => null,
-            'deWebsite' => null,
-            'deAddress' => ($obj->geo->formatted_address),
-            'deLogo' => 'default',
-            'dePlace' => ($obj->post_content),
-            'deEmail' => null,
-            'nrLat' => $obj->geo->lat,
-            'nrLng' => $obj->geo->lng,
-            'nrCep' => $cep,
-            'idPlaceBranch' => null
-                ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
-        DB::commit();
-
-
+            DB::insertUpdate(
+                    'Place', array(
+                'idPlace' => $obj->id_wp_post, //primary key
+                'nmPlace' => ($obj->post_title),
+                'nrPhone' => null,
+                'deWebsite' => null,
+                'deAddress' => ($obj->geo->formatted_address),
+                'deLogo' => 'default',
+                'dePlace' => ($obj->post_content),
+                'deEmail' => null,
+                'nrLat' => $obj->geo->lat,
+                'nrLng' => $obj->geo->lng,
+                'nrCep' => $cep,
+                'idPlaceBranch' => null
+                    ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
+            DB::commit();
+        }
 //insert update Cinema
 
         $dtFrom = gmdate("Y-m-d H:i:s", $obj->dtstart);
