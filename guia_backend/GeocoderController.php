@@ -41,7 +41,7 @@ class GeocoderController extends stdClass {
                     . ", " . $obj->getAdminLevels()->get(2)->getName()
                     . ", " . $obj->getAdminLevels()->first()->getName();
         } catch (Geocoder\Exception\CollectionIsEmpty $e) {
-            logActions($e->getMessage()
+         /*   logActions($e->getMessage()
                     . '/'
                     . $e->getMessage()
                     . '/'
@@ -49,7 +49,7 @@ class GeocoderController extends stdClass {
                     . '/'
                     . $e->getCode()
                     . '/'
-                    . $e->getFile());
+                    . $e->getFile());*/
             return null;
         } catch (Exception $e) {
             //echo "\n";

@@ -159,21 +159,35 @@ class GuiaController extends stdClass {
         $timestamp = strtotime('tomorrow +12000min');
 
 //DB::debugMode();
-        $query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
+        //$query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
+
+        $query = "select * from view_cinema where id_wp_post = 13534 and dtend < now() and titulo is not null";
         echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
+        //$row = $mdb->hasNext();
 
         echo "<pre>";
+        //var_dump($row);
         //  var_dump($eventos);die; */
 //https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
         //$cinemas = Array();
 
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
+            unset($row['post_content']);
+            unset($row['outras_informacoes']);
+            unset($row['salas_horarios']);
             var_dump($row); //die;
         }
+
+
+        /*  $mdb->query("select outras_informacoes,salas_horarios,titulo,titulo_original, ano_producao, duracao,  pais_origem, diretor,    elenco,    sinopse,    imagem_full FROM wp_cn_filme order by id_wp_cn_filme DESC LIMIT 200");
+          while ($row = $mdb->hasNext()) {
+          $eventRow = new stdClass();
+          var_dump($row); //die;
+          } */
     }
 
     /**
@@ -182,11 +196,13 @@ class GuiaController extends stdClass {
     public static function cronCinemas() {
 
 
-        $yesterday = strtotime("-2 week");
+        $yesterday = strtotime("-8 week");
         $timestamp = strtotime('+4 week');
 
+        $now = time();
+
 //DB::debugMode();
-        $query = "SELECT * from view_cinema where (dtstart between $yesterday and $timestamp) or (dtend between $yesterday and $timestamp)  order by post_title";
+        $query = "SELECT * from view_cinema where id_cn_filme is not null";
         echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
@@ -225,6 +241,8 @@ class GuiaController extends stdClass {
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
+            //  echo "<br>".utf8_encode($eventRow->titulo)."CHARSET...." . mb_detect_encoding($eventRow->titulo);
+            // echo "<br>".utf8_encode($eventRow->titulo_original)."CHARSET...." . mb_detect_encoding($eventRow->titulo_original);
 
             GuiaController::updateCinemaEvent($eventRow);
         }
@@ -232,16 +250,20 @@ class GuiaController extends stdClass {
     }
 
     public static function updateCinemaEvent($obj) {
-        DB::debugMode();
+        //DB::debugMode();
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
 
-        echo time() . "*********************************************\n";
-       // var_dump($obj);
+        //echo time() . "*********************************************\n";
+        // var_dump($obj);
 
         $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
 
         $number_accounts = DB::queryFirstField($query);
+        var_dump($number_accounts);
+        // echo $number_accounts === "1";
+        //  echo "Cinema exists?" . $number_accounts;
+
         if (!($number_accounts > 0)) {
 
             $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
@@ -273,21 +295,36 @@ class GuiaController extends stdClass {
             DB::commit();
         }
 //insert update Cinema
+        echo $obj->titulo_original;
+        //$encode = mb_detect_encoding($obj->titulo);
+        $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
+        $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
 
+        //echo $encode . "--------";
         $dtFrom = gmdate("Y-m-d H:i:s", $obj->dtstart);
         $dtUntil = gmdate("Y-m-d H:i:s", $obj->dtend);
         DB::insertUpdate(
                 'Event', array(
             'idEvent' => $obj->id_cn_filme, //primary key
-            'deEvent' => ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  "),
-            'deDetail' => ($obj->sinopse . "<br>Diretor:" . $obj->diretor . "<br>" . $obj->outras_informacoes_html . "<br>" . $obj->salas_horarios),
+            'deEvent' => $deEvent,
+            'deDetail' => $deDetail,
             'dtFrom' => $dtFrom,
             'dtUntil' => $dtUntil,
             'idPlaceOwner' => $obj->id_wp_post,
             'nrEdition' => '1',
             'deImg' => $obj->imagem_full,
             'idType' => 3
-                ), 'deImg=%s', $obj->imagem_full, 'deEvent=%s', ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  "), 'deDetail=%s', ($obj->sinopse . "<br>Diretor:" . $obj->diretor . "<br>" . $obj->outras_informacoes_html . "<br>" . $obj->salas_horarios), 'dtFrom', $dtFrom, 'dtUntil', $dtUntil, 'nrEdition=%s', '2');
+                ), 'deImg=%s', $obj->imagem_full, 'deEvent=%s', $deEvent, 'deDetail=%s', $deDetail, 'dtFrom', $dtFrom, 'dtUntil', $dtUntil, 'nrEdition=%s', '2');
+
+
+        DB::insertUpdate(
+                'SubCategory', array(
+            'fkPlace' => $obj->id_wp_post, //primary key
+            'fkEvent' => $obj->id_cn_filme,
+            'fkType' => 3,
+            'catInfo' => 'movie'
+                ), 'fkType=%s', 3
+        );
         DB::commit();
     }
 
@@ -350,6 +387,16 @@ class GuiaController extends stdClass {
             'idType' => $id
                 ), 'deEvent=%s', (strip_tags($obj->event_tit)), 'deDetail=%s', (strip_tags($obj->event_info)), 'dtFrom', $dtFrom, 'dtUntil', $dtUntil, 'nrEdition=%s', '2');
         DB::commit();
+
+        //Subcategory
+        DB::insertUpdate(
+                'SubCategory', array(
+            'fkPlace' => $obj->ID, //primary key
+            'fkEvent' => $obj->event_id,
+            'fkType' => $id,
+            'catInfo' => 'cat'
+                ), 'fkType=%s', $id
+        );
     }
 
     /*

@@ -179,7 +179,11 @@ $app->get('/sync_urls/', function (Request $request, Response $response) use ($a
     GuiaController::updateURLS();
 });
 $app->get('/sync_cinemas/', function (Request $request, Response $response) use ($app) {
+    //header("Content-type: text/html; charset=iso8859-1");
     GuiaController::cronCinemas();
+});
+$app->get('/sync_cult/', function (Request $request, Response $response) use ($app) {
+    GuiaController::cronEventCategory("view_cultura_ids", 4);      
 });
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
     GuiaController::testCinemas();
