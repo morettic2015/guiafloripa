@@ -202,17 +202,13 @@ class GuiaController extends stdClass {
         $now = time();
 
 //DB::debugMode();
-        $query = "SELECT * from view_cinema where id_cn_filme is not null";
-        echo $query;
+        $query = "SELECT * from view_cinema where id_cn_filme is not null order by dtstart,dtend asc";
+        //echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
 
-        /* echo "<pre>";
-          var_dump($eventos);die; */
-
-//https://maps.googleapis.com/maps/api/geocode/json?address=Rua%20Bocai%EF%BF%BDva,%202468%20-%20Centro&key=AIzaSyBszRC_PVudlS_S_O_ejw00pZ_fJFU3Q0o
-        //$cinemas = Array();
+        echo "<pre>";
 
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
@@ -240,13 +236,16 @@ class GuiaController extends stdClass {
             $eventRow->outras_informacoes_html = $row['outras_informacoes'];
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
-
+            //var_dump($eventRow);
             //  echo "<br>".utf8_encode($eventRow->titulo)."CHARSET...." . mb_detect_encoding($eventRow->titulo);
             // echo "<br>".utf8_encode($eventRow->titulo_original)."CHARSET...." . mb_detect_encoding($eventRow->titulo_original);
 
             GuiaController::updateCinemaEvent($eventRow);
+            $encode = mb_detect_encoding($eventRow->titulo);
+            echo date('d/m/Y', $eventRow->dtstart) . ',' . $eventRow->dtstart . "," . date('d/m/Y', $eventRow->dtend) . ',' . $eventRow->dtend . "," . mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
         }
         DB::disconnect();
+        $mdb->closeConn();
     }
 
     public static function updateCinemaEvent($obj) {
@@ -256,6 +255,8 @@ class GuiaController extends stdClass {
 
         //echo time() . "*********************************************\n";
         // var_dump($obj);
+        if (is_null($obj->id_wp_post))
+            return;
 
         $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
 
@@ -264,7 +265,7 @@ class GuiaController extends stdClass {
         // echo $number_accounts === "1";
         //  echo "Cinema exists?" . $number_accounts;
 
-        if (!($number_accounts > 0)) {
+        if (!($number_accounts[0] > 0)) {
 
             $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
             if (is_null($obj->geo->lat)) {
@@ -295,14 +296,15 @@ class GuiaController extends stdClass {
             DB::commit();
         }
 //insert update Cinema
-        echo $obj->titulo_original;
+        echo $obj->titulo_original . " --";
+
         //$encode = mb_detect_encoding($obj->titulo);
         $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
         $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
 
         //echo $encode . "--------";
-        $dtFrom = gmdate("Y-m-d H:i:s", $obj->dtstart);
-        $dtUntil = gmdate("Y-m-d H:i:s", $obj->dtend);
+        $dtFrom = date("Y-m-d H:i:s", $obj->dtstart);
+        $dtUntil = date("Y-m-d H:i:s", $obj->dtend);
         DB::insertUpdate(
                 'Event', array(
             'idEvent' => $obj->id_cn_filme, //primary key
@@ -314,17 +316,18 @@ class GuiaController extends stdClass {
             'nrEdition' => '1',
             'deImg' => $obj->imagem_full,
             'idType' => 3
-                ), 'deImg=%s', $obj->imagem_full, 'deEvent=%s', $deEvent, 'deDetail=%s', $deDetail, 'dtFrom', $dtFrom, 'dtUntil', $dtUntil, 'nrEdition=%s', '2');
+        ));
 
-
+        DB::debugMode();
         DB::insertUpdate(
                 'SubCategory', array(
             'fkPlace' => $obj->id_wp_post, //primary key
             'fkEvent' => $obj->id_cn_filme,
             'fkType' => 3,
+            'dtStart' => $dtFrom,
+            'dtEnd' => $dtUntil,
             'catInfo' => 'movie'
-                ), 'fkType=%s', 3
-        );
+        ));
         DB::commit();
     }
 
@@ -370,11 +373,13 @@ class GuiaController extends stdClass {
             'nrLng' => $obj->geo->lng,
             'nrCep' => $cep,
             'idPlaceBranch' => null
-                ), 'nmPlace=%s', $obj->tit, 'nrPhone=%s', $obj->telefone, 'deWebsite', null, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->info), 'deEmail=%s', $obj->email, 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
+        ));
         DB::commit();
 //Insert update Event
-        $dtFrom = gmdate("Y-m-d H:i:s", $obj->event_dtstart);
-        $dtUntil = gmdate("Y-m-d H:i:s", $obj->event_dtend);
+        $dtFrom = date("Y-m-d H:i:s", $obj->event_dtstart);
+        $dtUntil = date("Y-m-d H:i:s", $obj->event_dtend);
+        //$dtFrom = gmdate("Y-m-d H:i:s", );
+        //$dtUntil = gmdate("Y-m-d H:i:s", );
         DB::insertUpdate(
                 'Event', array(
             'idEvent' => $obj->event_id, //primary key
@@ -385,7 +390,7 @@ class GuiaController extends stdClass {
             'idPlaceOwner' => $obj->ID,
             'nrEdition' => '1',
             'idType' => $id
-                ), 'deEvent=%s', (strip_tags($obj->event_tit)), 'deDetail=%s', (strip_tags($obj->event_info)), 'dtFrom', $dtFrom, 'dtUntil', $dtUntil, 'nrEdition=%s', '2');
+        ));
         DB::commit();
 
         //Subcategory
@@ -394,9 +399,10 @@ class GuiaController extends stdClass {
             'fkPlace' => $obj->ID, //primary key
             'fkEvent' => $obj->event_id,
             'fkType' => $id,
-            'catInfo' => 'cat'
-                ), 'fkType=%s', $id
-        );
+            'catInfo' => 'cat',
+            'dtStart' => $dtFrom,
+            'dtEnd' => $dtUntil
+        ));
     }
 
     /*
@@ -536,7 +542,7 @@ function my_error_handler($params) {
 function removeOneDay($date) {
     //echo $date;die;
     $date = new DateTime($date); // For today/now, don't pass an arg.
-    $date->modify("-1 day -3 hour");
+    //$date->modify("-1 day -3 hour");
     //$date->modify("");
     return $date->format("d/m/Y H:i");
 }

@@ -19,11 +19,11 @@ class CinemaController {
         $ret = [];
         if ($dtUntil!=="-1" && $dtFrom!=="-1"&&!empty($dtUntil)) {
             $query .= "select distinct idPlaceOwner  FROM viewCinemaIDS where date(dtFrom) >= '$dtFrom' AND date(dtUntil)<= '$dtUntil ')";
-            $innerQuery = " select * from Event where date(dtFrom) >= '$dtFrom'and date(dtUntil) <= '$dtUntil'";
+            $innerQuery = " select * from viewMovieTheater where date(dtFrom) >= '$dtFrom'and date(dtUntil) <= '$dtUntil'";
         } else {
             $today = date("Y-m-d");
             $query .= "select distinct idPlaceOwner FROM viewCinemaIDS where date(dtUntil) >= '$today')";
-            $innerQuery = " select * from Event where date(dtUntil) >= '$today'";
+            $innerQuery = " select * from viewMovieTheater where date(dtUntil) >= '$today'";
         }
         $cinemas = DB::query($query);
         foreach ($cinemas as $cine) {
@@ -41,7 +41,7 @@ class CinemaController {
             $std->nrLng = $cine['lng'];
             $std->movies = [];
 
-
+            //echo $innerQuery . " AND idPlaceOwner = " . $cine['idPlace'];
             $filmes = DB::query($innerQuery . " AND idPlaceOwner = " . $cine['idPlace']);
             foreach ($filmes as $movie) {
                 //   var_dump($movie);

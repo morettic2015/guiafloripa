@@ -179,11 +179,15 @@ $app->get('/sync_urls/', function (Request $request, Response $response) use ($a
     GuiaController::updateURLS();
 });
 $app->get('/sync_cinemas/', function (Request $request, Response $response) use ($app) {
-    //header("Content-type: text/html; charset=iso8859-1");
+    //header("Content-type: text/html; charset=iso");
     GuiaController::cronCinemas();
 });
-$app->get('/sync_cult/', function (Request $request, Response $response) use ($app) {
-    GuiaController::cronEventCategory("view_cultura_ids", 4);      
+$app->get('/sync_events/', function (Request $request, Response $response) use ($app) {
+    GuiaController::cronEventCategory("view_cultura_ids", 4);
+    GuiaController::cronEventCategory("view_gratuitos_ids", 9);
+    GuiaController::cronEventCategory("view_infantil_ids", 2);
+    GuiaController::cronEventCategory("view_lazer_ids", 7);
+    GuiaController::cronEventCategory("view_eventos_ids", 6);
 });
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
     GuiaController::testCinemas();
