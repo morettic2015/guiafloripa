@@ -3,19 +3,22 @@
 
 Guia Floripa APP Backend
 
-## Installation
+https://app.guiafloripa.com.br
 
-1) Restore Database
-2) Install SlimFramework + Mysql
-3) Run Composer
+## About
 
-## Usage
+Webservices for GUiafloripa APP Events
 
-Webservices
+Download: https://play.google.com/store/apps/details?id=br.com.morettic.guiafloripa.CityWatch
+
+## How it Woks
+
+Extract Events from Remote Wordpress Database and Create Structured Information on Schema for JSON Export.
 
 ## Author
 
 https://morettic.com.br
+
 https://experienciasdigitais.com.br
 
 ## Version
