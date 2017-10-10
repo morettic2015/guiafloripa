@@ -56,8 +56,8 @@
                                 <h5>Lazer</h5>
                             </li>
                             <li>
-                                <img id="bt_4" alt="Alimentação" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
-                                <h5>Alimentação</h5>
+                                <img id="bt_4" alt="Comer & Beber" src="img/alimentacao_on.png" onclick="mapUtils.setBorderStyle1(this, 'alimentacao', 1)" />
+                                <h5>Comer&Beber</h5>
                             </li>
                             <li>
                                 <img id="bt_5" alt="Infantil" src="img/infantil_on.png" onclick="mapUtils.setBorderStyle(this, 'infantil', 2)" />
@@ -153,11 +153,11 @@
                 </div>
 
                 <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
-                <h6>Endereço</h6>
-                <p data-theme="a" id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                <h6  id="txtDescT1">O que h&aacute;?</h6>
+                <p id="txtDescT" style="font-size: 11px"></p>
                 <div data-role="footer" class="ui-bar">
-                    <h6  id="txtDescT1">O que há?</h6>
-                    <p id="txtDescT" style="font-size: 9px"></p>
+                    <b>Endereço</b><p id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                    <a href="#" onclick="shareObj.initShare('Compartilhe com seus amigos!','GuiaFloripa APP')" data-position-to="window" data-transition="pop" data-theme="b" data-rel="popup" data-icon="action" class="ui-btn-right" data-iconpos="notext">Opções</a>
                 </div>
             </div>
             <!-- Dates Filter-->
@@ -191,6 +191,7 @@
         <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
         <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
         <script type="text/javascript" src="js/MapUtil.js"></script>
+        <script type="text/javascript" src="js/SocialShare.js"></script>
         <script type="text/javascript" src="js/ProfileUtil.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/Toast.js"></script>

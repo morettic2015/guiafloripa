@@ -104,9 +104,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        //size: new google.maps.Size(24, 13), // size
+                        size: new google.maps.Size(40, 64), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
+                        anchor: new google.maps.Point(0, 64) // anchor
                     },
                 });
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -163,9 +163,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        //size: new google.maps.Size(24, 13), // size
+                        size: new google.maps.Size(40, 64), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
+                        anchor: new google.maps.Point(0, 64) // anchor
                     },
                 });
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -220,9 +220,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        //size: new google.maps.Size(24, 13), // size
+                        size: new google.maps.Size(40, 64), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
+                        anchor: new google.maps.Point(0, 64) // anchor
                     },
                 });
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -304,9 +304,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        //size: new google.maps.Size(24, 13), // size
+                        size: new google.maps.Size(40, 64), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
+                        anchor: new google.maps.Point(0, 64) // anchor
                     },
                 });
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -674,7 +674,7 @@ function InfoWindowT(obj, lat, lng) {
     var tit = (obj.deEvent === null || obj.deEvent === undefined) ? obj.nmPlace : obj.deEvent;
     $("#txtTitT").text(tit);
     $("#txtAddrT").text(obj.deAddress);
-    var txtTmpData = obj.dtUntil == obj.dtFrom ? obj.dtUntil : obj.dtFrom + "-" + obj.dtUntil;
+    var txtTmpData = obj.printDate;//obj.dtUntil == obj.dtFrom ? obj.dtUntil : obj.dtFrom + "-" + obj.dtUntil;
     $("#txtDateT").text(txtTmpData);
     $("#txtDistT").text(dist);
 
@@ -767,8 +767,8 @@ function InfoWindowT(obj, lat, lng) {
                     + '</textarea></li>';
         }
         content += "</ul>"
-       // content += "<a class='ui-btn ui-icon-arrow-d ui-btn-icon-left ui-corner-all' onclick=scroolF('" + id + "')>Ler mais</a>"
-       // content += "<a class='ui-btn ui-icon-arrow-u ui-btn-icon-left ui-corner-all' onclick=scroolB('" + id + "')>Topo</a>"
+        // content += "<a class='ui-btn ui-icon-arrow-d ui-btn-icon-left ui-corner-all' onclick=scroolF('" + id + "')>Ler mais</a>"
+        // content += "<a class='ui-btn ui-icon-arrow-u ui-btn-icon-left ui-corner-all' onclick=scroolB('" + id + "')>Topo</a>"
         content += "</fieldset>";
         $("#txtDescT").html(content);
         $("#flexiselCinema").flexisel({
