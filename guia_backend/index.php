@@ -156,6 +156,7 @@ $app->get('/anunciantes/', function (Request $request, Response $response) use (
  * */
 $app->get('/sync_places_food/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_comer_beber", 1);
+    logActions("SYNC PLACES FOOD");
 });
 /**
   @Cron Service runs every 3 days only
@@ -163,6 +164,7 @@ $app->get('/sync_places_food/', function (Request $request, Response $response) 
  * */
 $app->get('/sync_places_hostage/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_hospedagem", 8);
+    logActions("SYNC PLACES HOTEL");
 });
 /**
   @Cron Service runs every 3 days only
@@ -170,6 +172,7 @@ $app->get('/sync_places_hostage/', function (Request $request, Response $respons
  * */
 $app->get('/sync_places_tourism/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_servico_turistico", 5);
+    logActions("SYNC PLACES TOURISM");
 });
 /**
  * @Cron Service once a week on tuesday 9 o clock
@@ -177,18 +180,30 @@ $app->get('/sync_places_tourism/', function (Request $request, Response $respons
  */
 $app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();
+    logActions("URL UPDATE");
 });
+/**
+ * @Cron Manual Sync. Not called by Crontab -e
+ */
 $app->get('/sync_cinemas/', function (Request $request, Response $response) use ($app) {
     //header("Content-type: text/html; charset=iso");
     GuiaController::cronCinemas();
+    logActions("CRON CINEMA");
 });
+/**
+ * @Cron Manual Sync. Not called by Crontab -e
+ */
 $app->get('/sync_events/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_cultura_ids", 4);
     GuiaController::cronEventCategory("view_gratuitos_ids", 9);
     GuiaController::cronEventCategory("view_infantil_ids", 2);
     GuiaController::cronEventCategory("view_lazer_ids", 7);
     GuiaController::cronEventCategory("view_eventos_ids", 6);
+    logActions("EVENTS");
 });
+/**
+ * @Test purpouse
+ */
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
     GuiaController::testCinemas();
 }); //Run Slim Microservice

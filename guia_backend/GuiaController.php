@@ -52,9 +52,11 @@ class GuiaController extends stdClass {
      */
     public static function getEventosDeHoje() {
         $today = date("Y-m-d");
+        $time = strtotime($today) + 86400;
+        $tomorrow = date('Y-m-d', $time);
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
-        $query = "select * from viewEventPlaces where date(dtUntil) >= '$today'";
+        $query = "select * from viewEventPlaces where date(dtFrom) >= '$today' and date(dtUntil) <= '$tomorrow'";
         $eventos = DB::query($query); // misspelled SELECTvardump(
 //Return Object
         $stdGuia = new stdClass();
@@ -78,6 +80,7 @@ class GuiaController extends stdClass {
             $std->nrLng = offset($row['nrLng']);
             $std->deWebsite = $row['deWebsite'];
             $std->deImg = $row['deImg'];
+            $std->printDate = printEventDate($row['dtFrom'], $row['dtUntil']);
 //Adiciona
             $stdGuia->e[] = $std;
         }
@@ -133,22 +136,26 @@ class GuiaController extends stdClass {
 
         while ($row = $conn->hasNext()) {
             var_dump($row);
-            $eventRow = new stdClass();
-            $eventRow->event_id = $row['event_id'];
-            $eventRow->event_tit = $row['event_tit'];
-            $eventRow->event_info = $row['event_info'];
-            $eventRow->event_dtend = $row['event_dtend'];
-            $eventRow->event_dtstart = $row['event_dtstart'];
-            $eventRow->event_id_place = $row['event_id_place'];
-            $eventRow->ID = $row['ID'];
-            $eventRow->tit = $row['tit'];
-            $eventRow->info = $row['info'];
-            $eventRow->endereco = $row['endereco'];
-            $eventRow->telefone = $row['telefone'];
-            $eventRow->cidade = $row['cidade'];
-            $eventRow->email = $row['email'];
-            $eventRow->geo = GeocoderController::geocodeQuery($eventRow->endereco . ", " . $eventRow->cidade);
-            GuiaController::insertUpdateEvent($eventRow, $id);
+            try {
+                $eventRow = new stdClass();
+                $eventRow->event_id = $row['event_id'];
+                $eventRow->event_tit = $row['event_tit'];
+                $eventRow->event_info = $row['event_info'];
+                $eventRow->event_dtend = $row['event_dtend'];
+                $eventRow->event_dtstart = $row['event_dtstart'];
+                $eventRow->event_id_place = $row['event_id_place'];
+                $eventRow->ID = $row['ID'];
+                $eventRow->tit = $row['tit'];
+                $eventRow->info = $row['info'];
+                $eventRow->endereco = $row['endereco'];
+                $eventRow->telefone = $row['telefone'];
+                $eventRow->cidade = $row['cidade'];
+                $eventRow->email = $row['email'];
+                $eventRow->geo = GeocoderController::geocodeQuery($eventRow->endereco . ", " . $eventRow->cidade);
+                GuiaController::insertUpdateEvent($eventRow, $id);
+            } catch (Exception $e) {
+                var_dump($e);
+            }
         }
 
         $conn->closeConn();
@@ -411,11 +418,12 @@ class GuiaController extends stdClass {
 
     public static function findEventosByDateType($dtOrigem, $dtFim, $type) {
         $today = date("Y-m-d");
-
+        $time = strtotime($today) + 86400;
+        $tomorrow = date('Y-m-d', $time);
 //If date is empty or another shit
-        $query = "select * from viewEventPlaces where dtUntil >= '$today' and idType = " . $type;
+        $query = "select * from viewEventPlaceType where dtFrom >= '$today' and idType = " . $type;
 //
-        $query2 = "select * from viewEventPlaces where idType = " . $type
+        $query2 = "select * from viewEventPlaceType where idType = " . $type
                 . " and DATE(dtFrom) >= '" . $dtOrigem
                 . "' AND DATE(dtUntil)<= '" . $dtFim . "'";
         if (empty($dtOrigem) || empty($dtFim) || $dtOrigem == "-1" || $dtFim == "-1") {
@@ -443,6 +451,7 @@ class GuiaController extends stdClass {
             $std->nrLat = $row['nrLat'];
             $std->nrLng = $row['nrLng'];
             $std->deImg = $row['deImg'];
+            $std->printDate = printEventDate($row['dtFrom'], $row['dtUntil']);
 //Adiciona
             $stdGuia->e[] = $std;
         }
@@ -557,4 +566,22 @@ function formatCineDate($date) {
     $date = new DateTime($date); // For today/now, don't pass an arg.
     //$date->modify("");
     return $date->format("d/m/Y");
+}
+
+function printEventDate($dtFrom, $dtUntil) {
+    //echo $date;die;
+    $date1 = new DateTime($dtFrom); // For today/now, don't pass an arg.
+    $date2 = new DateTime($dtUntil);
+    $dt1 = $date1->format("d/m/Y");
+    $dt2 = $date2->format("d/m/Y");
+
+    $datePrint = "";
+
+    if ($dt1 === $dt2) {
+        $datePrint = $date1->format("d/m") . " " . $date1->format("H:i") . "-" . $date2->format("H:i");
+    } else {
+        $datePrint = $date1->format("d/m") . " - " . $date2->format("d/m") . " " . $date1->format("H:i") . "-" . $date2->format("H:i");
+    }
+
+    return $datePrint;
 }
