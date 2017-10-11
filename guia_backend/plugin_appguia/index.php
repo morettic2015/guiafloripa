@@ -4,8 +4,8 @@
  * @Plugin Name: Guiafloripa APP REDIRECT 
  * @Description: <p>PLUGIN REDIRECT DO APP GUIA - <b>www.experienciasdigitais.com.br</b>. <br>Utilize o Shorcode [guia_app]</p>
  * @author Luis Augusto Machado Moretto <projetos@morettic.com.br>
-
  * */
+
 /* Start Adding Functions Below this Line */
 const DEFAULT_VIEW_URL = "htps://app.guiafloripa.com.br";
 /**
@@ -19,12 +19,12 @@ function guia_app_redirect() {
     }
     echo "<h1>Redirecionando</h1>";
     echo "<h4>Caso a página não redirecione clique no link abaixo</h4>";
-    echo "<small><a href='$permaLink' target='_blank'>$permaLink</a></small>";
+    echo "<small><a href='$permaLink' target='_blank'>#$permaLink#</a></small>";
     //sleep(0.1);
     echo "<script>this.location.href='" . $permaLink . "';</script>";
     exit;
 }
-
+//Register Shortcode on Wordpress
 add_shortcode('guia_app', 'guia_app_redirect');
 
 /* Stop Adding Functions Below this Line */

@@ -1,11 +1,18 @@
 <?php
 
 /**
- * @App.Guiafloripa.com.br
+ * App de eventos Geolocalizados em Floripa.
+ * 
+ * www.guiafloripa.com.br
+ * 
+ * @site https://app.guiafloripa.com.br
  * @Eventos e Estabelecimentos de Floripa
  * @DEV by Morettic.com.br
- * @experienciasdigitais.com.br
- * @citywatch.com.br parceiro
+ * @copyright (c) 2017, MOrettic - Experiências Digitais
+ * @since Beta 1
+ * @tutorial https://github.com/morettic2015/guiafloripa
+ * @partner http://www.experienciasdigitais.com.br
+ * @partner http://www.citywatch.com.br
  */
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -129,8 +136,8 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
 
 /**
  * @Cron Run Once a Day 13:00 o Clock
+ * @Push Send daily push by onesignal PushNotifications
  */
-//Send daily push by onesignal PushNotifications
 $app->get('/push/', function (Request $request, Response $response) use ($app) {
     $newResponse = $response->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
@@ -140,7 +147,10 @@ $app->get('/push/', function (Request $request, Response $response) use ($app) {
     logActions("PUSH");
     return $newResponse->withJson($data, 201);
 });
-//Send anunciantes for integration
+/**
+ * @Send anunciantes for integration
+ * @Copy Lead to Mautic with a Specific Segment
+ * * */
 $app->get('/anunciantes/', function (Request $request, Response $response) use ($app) {
     $newResponse = $response->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
@@ -151,16 +161,16 @@ $app->get('/anunciantes/', function (Request $request, Response $response) use (
     return $newResponse->withJson($data, 201);
 });
 /**
-  @Cron Service runs every 3 days only
- * Sync Comer & Beber
+ * @Cron Service runs every 3 days only
+ * @Sync Comer & Beber
  * */
 $app->get('/sync_places_food/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_comer_beber", 1);
     logActions("SYNC PLACES FOOD");
 });
 /**
-  @Cron Service runs every 3 days only
- * Sync Hospedagem
+ * @Cron Service runs every 3 days only
+ * @Sync Hospedagem
  * */
 $app->get('/sync_places_hostage/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_hospedagem", 8);
@@ -211,11 +221,16 @@ $app->get('/sync_events/', function (Request $request, Response $response) use (
 });
 /**
  * @Test purpouse
+ * @ignore it only for Test
  */
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
     GuiaController::testCinemas();
 }); //Run Slim Microservice
 $app->run();
+
+/**
+ * @Global Util Functions for Log date format and others
+ * */
 
 /**
  * @Monolog log actions from requests
