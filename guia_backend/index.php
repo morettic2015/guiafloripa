@@ -183,6 +183,14 @@ $app->get('/sync_urls/', function (Request $request, Response $response) use ($a
     logActions("URL UPDATE");
 });
 /**
+ * @Cron Service once a week on tuesday 9 o clock
+ * @Sync Images from Events & Places
+ */
+$app->get('/sync_images/', function (Request $request, Response $response) use ($app) {
+    GuiaController::updateImages();
+    logActions("URL UPDATE");
+});
+/**
  * @Cron Manual Sync. Not called by Crontab -e
  */
 $app->get('/sync_cinemas/', function (Request $request, Response $response) use ($app) {

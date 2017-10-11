@@ -56,7 +56,7 @@ class GuiaController extends stdClass {
         $tomorrow = date('Y-m-d', $time);
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
-        $query = "select * from viewEventPlaces where date(dtFrom) >= '$today' and date(dtUntil) <= '$tomorrow'";
+        $query = "select * from viewEventPlaces where dtFrom >= '$today' and dtUntil <= '$tomorrow'";
         $eventos = DB::query($query); // misspelled SELECTvardump(
 //Return Object
         $stdGuia = new stdClass();
@@ -104,21 +104,82 @@ class GuiaController extends stdClass {
         return $stdGuia;
     }
 
-    public static function updateURLS() {
-        DB::debugMode();
+    /**
+     * @Update Places & Events Image
+     * @GEt From Wordpress
+     */
+    public static function updateImages() {
+        echo "<pre>";
         $conn = new MysqlDB();
-        $query = "select post_id, meta_value from wp_postmeta where meta_key = 'url_website'";
+        $query = "select ID,guid,post_parent,post_id,meta_key,meta_value from wp_posts join wp_postmeta on ID = post_id where post_type = 'attachment' and guid is not null and guid like '%http%' and guid like '%.%' limit 300";
+        echo $query;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
-
+        echo "<pre>";
+        $total = 0;
         while ($row = $conn->hasNext()) {
-            //var_dump($row);
-
-            DB::update('Place', array(
-                'deWebsite' => $row['meta_value']
-                    ), "idPlace=%s", $row['post_id']);
-            //die;
+            var_dump($row);
+            $total++;
         }
+        echo "<br>";
+        echo $total;
+        $conn->closeConn();
+    }
+
+    /**
+     * @Update URL from POSTS!
+     * @OPENX = LInk do GUia para controlar acessos
+     * @LINK DO SITE
+     * @PERMALINK WORDPRESS Plugin Wordpress
+     */
+    public static function updateURLS() {
+        //DB::debugMode();
+        $conn = new MysqlDB();
+        $query = "  select 
+                        ID,
+                        concat('http://www.guiafloripa.com.br/novoads/www/delivery/ck.php?bannerid=',(select meta_value from wp_postmeta where meta_key = 'id_anuncio_openx' and post_id = ID)) as fullOpen,
+                        (select meta_value from wp_postmeta where meta_key = 'id_anuncio_openx' and post_id = ID) as id_anuncio_openx, 
+                        (select meta_value from wp_postmeta where meta_key = 'url_website' and post_id = ID) as urlWebsite 
+                    from wp_posts 
+                    where ID 
+                        in (select post_id from wp_postmeta where meta_key in ('id_anuncio_openx','url_website') )";
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $conn->execute($query); // misspelled SELECT
+        echo "<pre>";
+        $tot = 0;
+        while ($row = $conn->hasNext()) {
+            //Verify whats the current URL
+            $url = empty($row['id_anuncio_openx']) ? (empty($row['urlWebsite']) ? "#" : $row['urlWebsite']) : $row['fullOpen'];
+            echo "<br>";
+            echo $url;
+            echo "<br>";
+            echo $row['urlWebsite'];
+            echo "<br>";
+            echo $row['id_anuncio_openx'];
+            echo "<br>";
+            DB::query("SELECT * FROM Place WHERE idPlace=%s", $row['ID']);
+            $counter = DB::count();
+            //Se tiver mais de ZERO ocorrências atualiza no APP
+            if ($counter > 0) {
+                //var_dump($row);
+                $tot++;
+                echo $counter . " ID FOUND " . $row['ID'] . "\n";
+                //continue;
+                DB::update('Place', array(
+                    'deWebsite' => $url
+                        ), "idPlace=%s", $row['ID']);
+            }
+        }
+        //Plugin Wordpress para redirecionamento 
+        //Não tem link nao tem OPENX link patrocinado
+        $baseUrl = "http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=";
+        DB::query("update Place as a set deWebsite = concat('$baseUrl',a.idPlace) where deWebsite is null");
+
+        //Imprime o total
+        echo $tot . " Found"; //Total de registros 
+        //Close Database
+        DB::disconnect(); //Close Con FROM APP
+        $conn->closeConn(); //Close Con FROM 
     }
 
     public static function cronEventCategory($type, $id) {
@@ -144,6 +205,9 @@ class GuiaController extends stdClass {
                 $eventRow->event_dtend = $row['event_dtend'];
                 $eventRow->event_dtstart = $row['event_dtstart'];
                 $eventRow->event_id_place = $row['event_id_place'];
+                $eventRow->vevent_price_label = $row['vevent_price_label'];//@Todo Adicionar na concatenação
+                $eventRow->vevent_price = $row['vevent_price'];//@Todo Adicionar na concatenação
+                $eventRow->event_moreinfo = $row['event_moreinfo'];//@Todo Adicionar na concatenação
                 $eventRow->ID = $row['ID'];
                 $eventRow->tit = $row['tit'];
                 $eventRow->info = $row['info'];
