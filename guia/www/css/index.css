@@ -177,28 +177,68 @@ h1 {
 }
 
 .txtCinema{
-    
     padding: 0px 0px 0px 0px;
     background: transparent;
     outline: none;
     border: none;
-    font-size: 8.8pt;
+    font-size: 11.0pt;
     width: 100%;
-   /* overflow: hidden;*/
+    /* overflow: hidden;*/
     /* resize: none; */
     display: inline-block;
     min-height: 30vh;
-    max-height: 100vh;
+    max-height: 70vh;
     overflow-y: auto;
+}
+.blankButtons{
+    background: transparent !important;
+    border: none !important;
+}
+.buttonTitle{
+    font-size: 10pt !important;
+}
+#flexiselDemo1{
+    background: transparent !important;
+}
+.nbs-flexisel-inner {
+    background:transparent!important;
+}
+#titCineWin .h2{
+    font-size: 10pt !important;
+    margin-top: 10px  !important;
+    margin-bottom: 10px  !important;
+    word-break: break-all !important;
+}
+#fotterToolTip{
+    margin-bottom: 50px;
+}
+
+.hideMeNow{
+    display: none;
+    visibility: hidden;
+}
+
+.footerMainWin{
+    height: 30% !important;
+    margin: 0px !important; 
+    background: #f1f1f1 !important;
+}
+.whiteBkHeader{
+    background: white !important;
 }
 
 .containerImagem{
-    max-width:100%;
-    height:18vh;
+    /* max-width:100%;
+     position: relative;*/
+
     /* max-width:400px; */
-    align-items: center;
-    overflow:hidden;
+    /*  align-items: center;
+      overflow:hidden;*/
 }
 .imgPopUp {
-    width:100%;
+    /* position: absolute;
+     left: 0;
+     top: 0%;
+     height: 100%;
+     -webkit-transform: translateY(-50%); */
 };

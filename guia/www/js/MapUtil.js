@@ -7,7 +7,7 @@
  * @UIX: João GUilherme de Oliveira
  * @EMAIL: jgoliveira78@hotmail.com
  */
-
+var zoom = 10;
 var map;
 var lat;
 var lng;
@@ -256,6 +256,14 @@ var MapUtils = function () {
             mapUtils.clusterOption(map, markers);
         });
     }
+
+    this.focusMap = function () {
+        map.setCenter({lat: lat, lng: lng});
+        map.setCenter(new google.maps.LatLng(lat, lng));
+        map.setZoom(zoom);
+        mapUtils.initSliderMenu();
+    }
+
     /**
      * @Called on load to show today events
      */
@@ -663,8 +671,15 @@ var MapUtils = function () {
  *  @lat user lat
  *  @lng user lon
  * */
-function InfoWindowT(obj, lat, lng) {
-    var dist = mapUtils.calculateDistance(obj.nrLat, obj.nrLng, lat, lng);
+function InfoWindowT(obj, plat, plng) {
+    zoom = map.getZoom();
+
+    mapUtils.showDistance(obj.nrLat, obj.nrLng, plat, plng);
+
+    lat = obj.nrLat;
+    lon = obj.nrLng;
+    document.getElementById('pageBt').click();
+    var dist = mapUtils.calculateDistance(obj.nrLat, obj.nrLng, plat, plng);
     var img = (obj.deLogo === "default" || obj.deLogo === "") ? obj.deImg : obj.deLogo;
 
     $("#txtTitT").text(obj.deEvent);
@@ -703,7 +718,7 @@ function InfoWindowT(obj, lat, lng) {
         showIt('txtPhonT');
         $("#txtPhonT").text(obj.nrPhone);
     }
-//Description null hide it
+    //Description null hide it
     if (obj.nmPlace === null || obj.idType === "1" || obj.idType === "3" || obj.idType === "5" || obj.idType === "8") {
         hideIt('txtPlaT')
     } else {
@@ -736,39 +751,22 @@ function InfoWindowT(obj, lat, lng) {
     if (obj.idType === "3") {
         document.getElementById('txtDescT').style.visibility = 'visible';
         document.getElementById('txtDescT').style.display = 'block';
-        var content = '<fieldset><ul id="flexiselCinema">';
+        var content = '<fieldset style="background: transparent;border: none"><ul id="flexiselCinema"  style="background: transparent;border: none">';
         for (i = 0; i < obj.movies.length; i++) {
             mP = obj.movies[i];
-            //;
-            /*   content += '<li>'
-             + '<div class="ui-grid-a"><div class="ui-block-a" style="width: 30% !important;"><div class="ui-bar ui-bar-a" style="height:320px">'
-             + '<img src="' + mP.deImg
-             + '" style="border-radius: 50%;border-radius:1px" width="120">'
-             + '<br>Datas'
-             + '<div>' + mP.dtFrom
-             + '</div><div>' + mP.dtUntil
-             + '</div></div></div>'
-             + '<div class="ui-block-b" style="width: 70% !important;"><div class="ui-bar ui-bar-a" style="height:320px;line-height: 100%;">'
-             + '<br><a href="#" class="ui-btn ui-mini"><small><small>' + mP.deEvent + '</small></small></a><br><h1>'
-             + '<textarea class="txtCinema" readonly>'
-             + mP.deDetail
-             + '</textarea></div></div></li>';*/
             var id = 'txtId' + i;
-            content += '<li>'
+            content += '<li style="background: transparent;border: none">'
+                    + '<a class="ui-btn ui-btn-inline blankButtons buttonTitle">' + mP.deEvent + '</a>'
                     + '<div class="containerImagem" id="divImagem">'
                     + '<img src="' + mP.deImg
                     + '" style="max-height: 150px;align-content: center" class="imgPopUp">'
                     + '</div>'
-                    + '<a class="ui-btn ui-mini ui-icon-calendar ui-btn-icon-left">' + mP.dtFrom + ' - ' + mP.dtUntil + '</a>'
+                    + '<a class="ui-btn ui-mini ui-icon-calendar ui-mini ui-btn-inline ui-btn-icon-left blankButtons">' + mP.dtFrom + ' - ' + mP.dtUntil + '</a>'
                     + '<textarea id=' + id + ' class="txtCinema" readonly>'
-                    + mP.deEvent +
-                    +"\n"
                     + mP.deDetail
                     + '</textarea></li>';
         }
         content += "</ul>"
-        // content += "<a class='ui-btn ui-icon-arrow-d ui-btn-icon-left ui-corner-all' onclick=scroolF('" + id + "')>Ler mais</a>"
-        // content += "<a class='ui-btn ui-icon-arrow-u ui-btn-icon-left ui-corner-all' onclick=scroolB('" + id + "')>Topo</a>"
         content += "</fieldset>";
         $("#txtDescT").html(content);
         $("#flexiselCinema").flexisel({
@@ -787,19 +785,17 @@ function InfoWindowT(obj, lat, lng) {
                 },
                 landscape: {
                     changePoint: 640,
-                    visibleItems: 2,
-                    itemsToScroll: 2
+                    visibleItems: 1,
+                    itemsToScroll: 1
                 },
                 tablet: {
-                    changePoint: 768,
-                    visibleItems: 3,
-                    itemsToScroll: 3
+                    changePoint: 1024,
+                    visibleItems: 1,
+                    itemsToScroll: 1
                 }
             }
         });
     }
-    mapUtils.showDistance(obj.nrLat, obj.nrLng, lat, lng);
-    document.getElementById('btToolTip').click();
 }
 
 

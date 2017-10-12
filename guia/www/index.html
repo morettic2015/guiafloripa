@@ -22,8 +22,7 @@
     <body>
         <!-- jquery mobile page 1 -->
         <div data-role="page" id="page1">
-            <div data-role="header" data-position="fixed" style="background: white;">
-                <a href="#popupToolTips" id="btToolTip" data-rel="popup" data-position-to="window" style="display: none" data-transition="pop"></a>
+            <div data-role="header" data-position="fixed"  class="whiteBkHeader">
                 <center>
                     <img src="img/header.png" />
                 </center>
@@ -34,7 +33,7 @@
                 <!-- Maps loads Here -->
             </div>
             <!-- end of page 1 content -->
-            <div data-role="footer" data-position="fixed" style=" height: 30%;margin: 0px; background: #f1f1f1;" data-tap-toggle="false">
+            <div data-role="footer" data-position="fixed" class="footerMainWin" data-tap-toggle="false">
                 <center>
                     <h1>Categorias</h1>
                     <fieldset>
@@ -78,6 +77,9 @@
                         </ul>
                     </fieldset>
                 </center>
+                <!-- Hidden Buttons Clicked by Jacascrutp -->
+                <a class="hideMeNow" id="pageBt" href="#popupToolTips">Window</a>
+                <a class="hideMeNow" id="pageBr" href="#page1">Page</a>
             </div>
             <!-- Painel de configurações do radar -->
             <div data-role="popup" id="popupInfo" data-transition="slidefade" data-theme="a" data-dismissible="true"  style="max-width:350px !important;">
@@ -99,67 +101,67 @@
                 </div>
             </div>
             <!-- Tooltips-->
-            <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" data-position-to="origin" style="max-width: 350px">
-                <div data-role="header" data-theme="b">
-                    <h3 id="txtTitT" style="font-size: 9px;margin-left: 5px;width: 95%"></h3>
-                </div>
-                <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-                <fieldset class="ui-grid-a">
-                    <div class="ui-block-a">
-                        <a href="#" id="txtURLT" title="Website" class="ui-btn ui-mini ui-btn-icon-left ui-icon-navigation">
-                            <small>
-                                <small>
-                                    Website
-                                </small>
-                            </small>
-                        </a>
-                    </div>
-                    <div class="ui-block-b">
-                        <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-icon-left ui-icon-location">
-                            <small>
-                                <small id="txtDistT">
-                                    http
-                                </small>
-                            </small>
-                        </a>
-                    </div>
-                </fieldset>
-                <fieldset class="ui-grid-a">
-                    <div class="ui-block-a">
-                        <a href="#" id="txtDateT1" class="ui-btn ui-mini ui-btn-icon-left ui-icon-calendar ">
-                            <small>
-                                <small id="txtDateT">
-                                    http
-                                </small>
-                            </small>
-                        </a>
-                    </div>
-                    <div class="ui-block-b">
-                        <a href="#" id="txtPhonT1" class="ui-btn ui-mini ui-btn-icon-left ui-icon-phone">
-                            <small>
-                                <small id="txtPhonT">
-                                    http
-                                </small>
-                            </small>
-                        </a>
-                    </div>
-                </fieldset>
-
-
-
-                <h6 id="txtPlaT"></h6>
-                <div class="containerImagem" id="divImagem">
-                    <img src="#" style="max-height: 150px;align-content: center" id="deLogoPromo" class="imgPopUp"/>
-                </div>
-
-                <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
-                <h6  id="txtDescT1">O que h&aacute;?</h6>
-                <p id="txtDescT" style="font-size: 11px"></p>
-                <div data-role="footer" class="ui-bar">
-                    <b style="font-size: 9px">Endereço</b><p id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
-                    <a href="#" onclick="shareObj.initShare('Compartilhe com seus amigos!','GuiaFloripa APP')" data-position-to="window" data-transition="pop" data-theme="b" data-rel="popup" data-icon="action" class="ui-btn-right" data-iconpos="notext">Opções</a>
-                </div>
+            <!-- <div data-role="popup" id="popupToolTips" data-transition="flip" data-theme="a" class="ui-corner-all" data-overlay-theme="b" data-dismissible="true" data-position-to="origin" style="max-width: 350px">
+                 <div data-role="header" data-theme="b">
+                     <h3 id="txtTitT" style="font-size: 9px;margin-left: 5px;width: 95%"></h3>
+                 </div>
+                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+                 <fieldset class="ui-grid-a">
+                     <div class="ui-block-a">
+                         <a href="#" id="txtURLT" title="Website" class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-navigation"  style="background: transparent;border: none">
+                             <small>
+                                 <small>
+                                     Website
+                                 </small>
+                             </small>
+                         </a>
+                     </div>
+                     <div class="ui-block-b">
+                         <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-location"  style="background: transparent;border: none">
+                             <small>
+                                 <small id="txtDistT">
+                                     http
+                                 </small>
+                             </small>
+                         </a>
+                     </div>
+                 </fieldset>
+                 <fieldset class="ui-grid-a">
+                     <div class="ui-block-a">
+                         <a href="#" id="txtDateT1" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-calendar "  style="background: transparent;border: none">
+                             <small>
+                                 <small id="txtDateT">
+                                     http
+                                 </small>
+                             </small>
+                         </a>
+                     </div>
+                     <div class="ui-block-b">
+                         <a href="#" id="txtPhonT1" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-phone"  style="background: transparent;border: none">
+                             <small>
+                                 <small id="txtPhonT">
+                                     http
+                                 </small>
+                             </small>
+                         </a>
+                     </div>
+                 </fieldset>
+ 
+ 
+ 
+                 <h6 id="txtPlaT"></h6>
+                 <div class="containerImagem" id="divImagem">
+                     <img src="#" style="max-height: 150px;align-content: center" id="deLogoPromo" class="imgPopUp"/>
+                 </div>
+ 
+            <!--  <a id="txtDateF" href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-a ui-btn-icon-left ui-icon-calendar ui-mini"></a> -->
+            <!--<h6  id="txtDescT1">O que h&aacute;?</h6>
+            <p id="txtDescT" style="font-size: 11px"></p>
+            <div data-role="footer" class="ui-bar">
+                <b style="font-size: 9px">Endereço</b><p id="txtAddrT" style="font-size: 9px" class="ui-corner-all ui-mini"></p>
+                <a href="#" onclick="shareObj.initShare('Compartilhe com seus amigos!', 'GuiaFloripa APP')" data-position-to="window" data-transition="pop" data-theme="b" data-rel="popup" data-icon="action" class="ui-btn-right" data-iconpos="notext">Opções</a>
             </div>
+        </div>-->
             <!-- Dates Filter-->
             <div data-role="popup" id="popupSearchGuia" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true"  style="max-width: 350px">
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
@@ -178,15 +180,83 @@
             </div>
             <!-- end page 1 footer -->
         </div>
+        <div data-role="page" id="popupToolTips">
+            <div data-role="header" class="whiteBkHeader" data-position="fixed" >
+                <center>
+                    <img src="img/header.png" />
+                </center>
+                <a href="#page1" onclick="mapUtils.focusMap()" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+                <a href="#" onclick="shareObj.initShare('Compartilhe com seus amigos!', 'GuiaFloripa APP')" data-position-to="window" data-transition="pop" data-theme="a" data-rel="popup" data-icon="action" class="ui-btn-left" data-iconpos="notext">Opções</a>
+            </div><!-- /header -->
+
+            <div role="main" class="ui-content">
+                <h1 id="txtTitT" >Bar</h1>
+                <h6 id="txtPlaT" class="ui-btn ui-btn-inline blankButtons buttonTitle"></h6>
+                <div class="containerImagem" id="divImagem">
+                    <center>
+                        <img src="#" id="deLogoPromo" class="imgPopUp"/>
+                    </center>
+                </div>
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" id="txtURLT" title="Website" class="ui-btn ui-mini ui-btn-inline ui-btn-icon-left ui-icon-navigation blankButtons">
+                            <small>
+                                <small>
+                                    Website
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#" title="Distância" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-location blankButtons">
+                            <small>
+                                <small id="txtDistT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                </fieldset>
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" id="txtDateT1" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-calendar blankButtons">
+                            <small>
+                                <small id="txtDateT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#" id="txtPhonT1" class="ui-btn ui-mini ui-btn-inline  ui-btn-icon-left ui-icon-phone blankButtons ">
+                            <small>
+                                <small id="txtPhonT">
+                                    http
+                                </small>
+                            </small>
+                        </a>
+                    </div>
+                </fieldset>
+                <h6  id="txtDescT1">O que h&aacute;?</h6>
+                <p id="txtDescT" style="font-size: 11px"></p>
+            </div><!-- /content -->
+
+            <div data-role="footer" id="fotterToolTip" data-position="fixed" >
+                <center>
+                    <p id="txtAddrT" style="font-size: 12px" class="ui-corner-all ui-mini"></p>
+                </center>
+            </div><!-- /footer -->
+        </div><!-- /page -->
         <!-- end page 1 -->
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery-1.11.1.min.js" id="cordova-jquery"></script>
         <script type="text/javascript" id="jqm-trans-disable">
-                        /* For having a faster transition */
-                        $(document).on("mobileinit", function () {
-                            $.mobile.defaultPageTransition = "none";
-                            $.mobile.defaultDialogTransition = "none";
-                        });
+                    /* For having a faster transition */
+                    $(document).on("mobileinit", function () {
+                        $.mobile.defaultPageTransition = "none";
+                        $.mobile.defaultDialogTransition = "none";
+                        $.mobile.page.prototype.options.domCache = true;
+                    });
         </script>
         <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
         <script type="text/javascript" src="js/jquery-1.5.0.mobile.min.js"></script>
@@ -199,18 +269,18 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/jquery.flexisel.js"></script>
         <script>
-                        (function (w, d, t, u, n, a, m) {
-                            w['MauticTrackingObject'] = n;
-                            w[n] = w[n] || function () {
-                                (w[n].q = w[n].q || []).push(arguments)
-                            }, a = d.createElement(t),
-                                    m = d.getElementsByTagName(t)[0];
-                            a.async = 1;
-                            a.src = u;
-                            m.parentNode.insertBefore(a, m)
-                        })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
+                    (function (w, d, t, u, n, a, m) {
+                        w['MauticTrackingObject'] = n;
+                        w[n] = w[n] || function () {
+                            (w[n].q = w[n].q || []).push(arguments)
+                        }, a = d.createElement(t),
+                                m = d.getElementsByTagName(t)[0];
+                        a.async = 1;
+                        a.src = u;
+                        m.parentNode.insertBefore(a, m)
+                    })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
 
-                        mt('send', 'pageview');
+                    mt('send', 'pageview');
         </script>
     </body>
 
