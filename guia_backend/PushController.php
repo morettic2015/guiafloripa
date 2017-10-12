@@ -90,8 +90,7 @@ class PushController extends stdClass {
     public static function dailyNotification() {
 
         // DB::debugMode();
-        $today = date("Y-m-d");
-        $query = "select * from viewEventPlaces where dtUntil >= '$today'";
+        $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL 1 DAY and dtUntil<=NOW() + INTERVAL 1 DAY";
         $eventos = DB::query($query);
         $counter = DB::count();
         //counter of events
