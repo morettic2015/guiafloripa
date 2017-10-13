@@ -9,8 +9,8 @@
  */
 var zoom = 10;
 var map;
-var lat;
-var lng;
+var lat,latZ;
+var lng,lngZ;
 var mapUtils;
 var lEventos;
 var directionsService;
@@ -258,8 +258,8 @@ var MapUtils = function () {
     }
 
     this.focusMap = function () {
-        map.setCenter({lat: lat, lng: lng});
-        map.setCenter(new google.maps.LatLng(lat, lng));
+        map.setCenter({lat: parseFloat(latZ), lng: lngZ});
+        //map.setCenter(new google.maps.LatLng(lat, lng));
         map.setZoom(zoom);
         mapUtils.initSliderMenu();
     }
@@ -518,7 +518,7 @@ var MapUtils = function () {
     }
     this.initSliderMenu = function () {
         $("#flexiselDemo1").flexisel({
-            visibleItems: 3,
+            visibleItems: 4,
             clone: false,
         });
     }
@@ -676,8 +676,8 @@ function InfoWindowT(obj, plat, plng) {
 
     mapUtils.showDistance(obj.nrLat, obj.nrLng, plat, plng);
 
-    lat = obj.nrLat;
-    lon = obj.nrLng;
+    latZ = obj.nrLat;
+    lngZ = obj.nrLng;
     document.getElementById('pageBt').click();
     var dist = mapUtils.calculateDistance(obj.nrLat, obj.nrLng, plat, plng);
     var img = (obj.deLogo === "default" || obj.deLogo === "") ? obj.deImg : obj.deLogo;
