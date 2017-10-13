@@ -58,6 +58,10 @@ class ProfileController extends stdClass {
         $rt->contactID = LeadController::createContact($obj->name, null, $obj->email);
         //Add Lead to Segment
         $rt->segmentID = LeadController::addContactToSegment($rt->contactID);
+        
+        //Close connection
+        DB::disconnect();
+        
         return $rt;
     }
 

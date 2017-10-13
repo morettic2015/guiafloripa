@@ -311,7 +311,7 @@ class GuiaController extends stdClass {
 
             GuiaController::updateCinemaEvent($eventRow);
             $encode = mb_detect_encoding($eventRow->titulo);
-            echo date('d/m/Y', $eventRow->dtstart) . ',' . $eventRow->dtstart . "," . date('d/m/Y', $eventRow->dtend) . ',' . $eventRow->dtend . "," . mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
+            //echo date('d/m/Y', $eventRow->dtstart) . ',' . $eventRow->dtstart . "," . date('d/m/Y', $eventRow->dtend) . ',' . $eventRow->dtend . "," . mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
         }
         DB::disconnect();
         $mdb->closeConn();

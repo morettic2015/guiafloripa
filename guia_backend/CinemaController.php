@@ -56,6 +56,8 @@ class CinemaController {
             }
             $ret[] = $std;
         }
+        //Close database connection
+        DB::disconnect();
         return $ret;
     }
 
