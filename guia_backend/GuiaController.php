@@ -54,7 +54,7 @@ class GuiaController extends stdClass {
         //Set Charset
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         //Set
-        $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL 1 DAY and dtUntil<=NOW() + INTERVAL 1 DAY";
+        $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL  360 MINUTE and dtUntil<=NOW() + INTERVAL 1 DAY";
         $eventos = DB::query($query); // misspelled SELECTvardump(
 //Return Object
         $stdGuia = new stdClass();
