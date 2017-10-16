@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e1aee70c08c1fdc24dbc12c45d655069",
+    "content-hash": "1baa69ef113593401b0c57411024f76c",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -390,17 +390,59 @@
             "time": "2017-03-20T17:10:46+00:00"
         },
         {
-            "name": "mautic/api-library",
-            "version": "2.6.0",
+            "name": "mantishub/mantis-php-client",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mautic/api-library.git",
-                "reference": "ea49a7e50cce3b59f85f2794c366c44e622e80f1"
+                "url": "https://github.com/mantishub/MantisPhpClient.git",
+                "reference": "0ee7e0f11b07b792ee4af81904b2b931137cbb3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mautic/api-library/zipball/ea49a7e50cce3b59f85f2794c366c44e622e80f1",
-                "reference": "ea49a7e50cce3b59f85f2794c366c44e622e80f1",
+                "url": "https://api.github.com/repos/mantishub/MantisPhpClient/zipball/0ee7e0f11b07b792ee4af81904b2b931137cbb3f",
+                "reference": "0ee7e0f11b07b792ee4af81904b2b931137cbb3f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MantisHub\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Victor Boctor",
+                    "email": "victor@mantishub.net"
+                }
+            ],
+            "description": "Library to interact with MantisBT or MantisHub via SOAP API",
+            "keywords": [
+                "MantisBT",
+                "api",
+                "mantishub",
+                "soap"
+            ],
+            "time": "2017-05-29T16:01:58+00:00"
+        },
+        {
+            "name": "mautic/api-library",
+            "version": "2.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mautic/api-library.git",
+                "reference": "7b92ff89e0fad499ae32360972b46ba90f2d31f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mautic/api-library/zipball/7b92ff89e0fad499ae32360972b46ba90f2d31f2",
+                "reference": "7b92ff89e0fad499ae32360972b46ba90f2d31f2",
                 "shasum": ""
             },
             "require": {
@@ -423,7 +465,7 @@
                 "MIT"
             ],
             "description": "Mautic API Connector Library",
-            "time": "2017-02-15T08:14:30+00:00"
+            "time": "2017-08-28T06:48:37+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -604,26 +646,27 @@
         },
         {
             "name": "php-http/client-common",
-            "version": "1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/client-common.git",
-                "reference": "154d36542eb96ee95daa504591eab78af2484baa"
+                "reference": "1901ad36347227c14751a218d8f4ea1467d1f1ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/client-common/zipball/154d36542eb96ee95daa504591eab78af2484baa",
-                "reference": "154d36542eb96ee95daa504591eab78af2484baa",
+                "url": "https://api.github.com/repos/php-http/client-common/zipball/1901ad36347227c14751a218d8f4ea1467d1f1ed",
+                "reference": "1901ad36347227c14751a218d8f4ea1467d1f1ed",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
                 "php-http/httplug": "^1.1",
-                "php-http/message": "^1.2",
+                "php-http/message": "^1.6",
                 "php-http/message-factory": "^1.0",
                 "symfony/options-resolver": "^2.6 || ^3.0"
             },
             "require-dev": {
+                "guzzlehttp/psr7": "^1.4",
                 "henrikbjorn/phpspec-code-coverage": "^1.0",
                 "phpspec/phpspec": "^2.4"
             },
@@ -635,7 +678,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.7-dev"
                 }
             },
             "autoload": {
@@ -661,7 +704,7 @@
                 "http",
                 "httplug"
             ],
-            "time": "2017-03-30T12:50:04+00:00"
+            "time": "2017-10-16T16:16:36+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -1420,7 +1463,7 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v3.3.9",
+            "version": "v3.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",

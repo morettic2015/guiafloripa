@@ -8,6 +8,7 @@
         "php-http/message": "^1.6",
         "geocoder-php/google-maps-provider": "^4.1",
         "slim/http-cache": "^0.3.0",
-        "php-http/cache-plugin": "^1.4"
+        "php-http/cache-plugin": "^1.4",
+        "mantishub/mantis-php-client":"*"
     }
 }

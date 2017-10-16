@@ -28,6 +28,7 @@ require 'PushController.php';
 require 'LeadController.php';
 require 'GeocoderController.php';
 require 'CinemaController.php';
+require 'BugTracker.php';
 
 
 /**
@@ -158,6 +159,28 @@ $app->get('/anunciantes/', function (Request $request, Response $response) use (
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     $data = ProfileController::insertLeadAnunciantes();
     logActions("LEADS ANUNCIANTES");
+    return $newResponse->withJson($data, 201);
+});
+/**
+ * @Send anunciantes for integration
+ * @Copy Lead to Mautic with a Specific Segment
+ * * */
+$app->post('/report/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+    $dt = $request->getParsedBody();
+    
+    //var_dump($dt);die;
+    
+    $data = new stdClass();
+    $data->title = filter_var($dt['title'], FILTER_SANITIZE_STRING);
+    $data->desc = filter_var($dt['desc'], FILTER_SANITIZE_STRING);
+    $data->desc.= " IP:".get_client_ip();
+    $data->id = BugTracker::addIssueBugTracker(10, 'Mobile', $data->title, $data->desc);
+
+    logActions("BUG TRACKER");
     return $newResponse->withJson($data, 201);
 });
 /**
