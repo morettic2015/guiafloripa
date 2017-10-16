@@ -36,6 +36,9 @@
         },
         "cordova-plugin-x-socialsharing": {
             "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
         }
     },
     "dependent_plugins": {

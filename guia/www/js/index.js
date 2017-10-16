@@ -10,6 +10,7 @@ var app = {
     // Application Constructor
     initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+     
     },
     //OnDevice Offline
     isOffline: function() {
@@ -43,6 +44,8 @@ var app = {
             //Loads Map
             mapUtils.sucessLoad(position);
             
+            
+            
         }, function(e) {
             navigator.splashscreen.hide();//Hide Splash
             //No GPS or WIFI!
@@ -56,11 +59,15 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
-
-
         console.log('Received Event: ' + id);
     }
 
 };
 
 app.initialize();
+
+//Exception handler and report
+window.onerror = function (msg, url, lineNo, columnNo, error){
+    var exceptHandler = new ExceptionHandler();
+    exceptHandler.report(device, msg, url, lineNo, columnNo, error);
+}

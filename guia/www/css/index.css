@@ -176,19 +176,24 @@ h1 {
     -webkit-animation:fade 3000ms infinite;
 }
 
-.txtCinema{
+.txtCinema{    
     padding: 0px 0px 0px 0px;
     background: transparent;
     outline: none;
     border: none;
     font-size: 11.0pt;
-    width: 100%;
+    width: 98%;
     /* overflow: hidden;*/
     /* resize: none; */
     display: inline-block;
-    min-height: 30vh;
-    max-height: 70vh;
+    min-height: 10vh;
+    max-height: 250vh;
+    margin-bottom:20px;
     overflow-y: auto;
+    text-transform: capitalize !important;
+    line-height: 140% !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
 }
 .blankButtons{
     background: transparent !important;

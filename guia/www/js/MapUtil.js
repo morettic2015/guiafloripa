@@ -258,7 +258,7 @@ var MapUtils = function () {
     }
 
     this.focusMap = function () {
-        map.setCenter({lat: parseFloat(latZ), lng: lngZ});
+        map.setCenter({lat: parseFloat(latZ), lng: parseFloat(lngZ)});
         //map.setCenter(new google.maps.LatLng(lat, lng));
         map.setZoom(zoom);
         mapUtils.initSliderMenu();
@@ -698,6 +698,7 @@ function InfoWindowT(obj, plat, plng) {
     } else {
         showIt('txtURLT');
         $("#txtURLT").attr("href", obj.deWebsite);
+        shareObj.setUrlShare(obj.deWebsite);
         //$("#txtURLT").text("Website");
     }
 
@@ -751,25 +752,25 @@ function InfoWindowT(obj, plat, plng) {
     if (obj.idType === "3") {
         document.getElementById('txtDescT').style.visibility = 'visible';
         document.getElementById('txtDescT').style.display = 'block';
-        var content = '<fieldset style="background: transparent;border: none"><ul id="flexiselCinema"  style="background: transparent;border: none">';
+       // var content = '<fieldset style="background: transparent;border: none"><ul id="flexiselCinema"  style="background: transparent;border: none">';
+        var content = '';
         for (i = 0; i < obj.movies.length; i++) {
             mP = obj.movies[i];
             var id = 'txtId' + i;
-            content += '<li style="background: transparent;border: none">'
-                    + '<a class="ui-btn ui-btn-inline blankButtons buttonTitle">' + mP.deEvent + '</a>'
+            content += '<h1 class="txtTitT">' + mP.deEvent + '</h1>'
                     + '<div class="containerImagem" id="divImagem">'
-                    + '<img src="' + mP.deImg
+                    + '<center><img src="' + mP.deImg
                     + '" style="max-height: 150px;align-content: center" class="imgPopUp">'
-                    + '</div>'
+                    + '</center></div>'
                     + '<a class="ui-btn ui-mini ui-icon-calendar ui-mini ui-btn-inline ui-btn-icon-left blankButtons">' + mP.dtFrom + ' - ' + mP.dtUntil + '</a>'
-                    + '<textarea id=' + id + ' class="txtCinema" readonly>'
+                    + '<div id=' + id + ' class="txtCinema" readonly>'
                     + mP.deDetail
-                    + '</textarea></li>';
+                    + '</div><hr>';
         }
-        content += "</ul>"
-        content += "</fieldset>";
+      //  content += "</ul>"
+         content += "<br><br><br><br>";
         $("#txtDescT").html(content);
-        $("#flexiselCinema").flexisel({
+      /**  $("#flexiselCinema").flexisel({
             visibleItems: 1,
             clone: true,
             autoPlay: {
@@ -794,7 +795,7 @@ function InfoWindowT(obj, plat, plng) {
                     itemsToScroll: 1
                 }
             }
-        });
+        });*/
     }
 }
 

@@ -8,18 +8,26 @@
 
 var SocialShare = function () {
     this.options = null;
-
+    this.url = "https://app.guiafloripa.com.br";
+    this.setUrlShare = function (pUrl) {
+        this.url = pUrl;
+    }
     this.initShare = function (msg, subject) {
         this.options = {
             message: msg, // not supported on some apps (Facebook, Instagram)
             subject: subject, // fi. for email
             files: ['', ''], // an array of filenames either locally or remotely
-            url: 'https://app.guiafloripa.com.br',
+            url: this.url,
             chooserTitle: 'GuiaFloripa APP Compartilhe com seus Amigos!' // Android only, you can override the default share sheet title
         }
-        window.plugins.socialsharing.shareWithOptions(this.options, this.onSuccess, this.onError);
+        try {
+            window.plugins.socialsharing.shareWithOptions(this.options, this.onSuccess, this.onError);
+        } catch (e) {
+            console.log(e);
+            alert(e);
+        }
     }
-    this.initShareURL = function (msg, subject,URL) {
+    this.initShareURL = function (msg, subject, URL) {
         this.options = {
             message: msg, // not supported on some apps (Facebook, Instagram)
             subject: subject, // fi. for email
