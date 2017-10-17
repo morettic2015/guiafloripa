@@ -9,7 +9,7 @@
  * @Eventos e Estabelecimentos de Floripa
  * @DEV by Morettic.com.br
  * @copyright (c) 2017, MOrettic - Experiências Digitais
- * @since Beta 1
+ * @since Beta 1.2.5 2017-10-18
  * @tutorial https://github.com/morettic2015/guiafloripa
  * @partner http://www.experienciasdigitais.com.br
  * @partner http://www.citywatch.com.br
@@ -162,8 +162,7 @@ $app->get('/anunciantes/', function (Request $request, Response $response) use (
     return $newResponse->withJson($data, 201);
 });
 /**
- * @Send anunciantes for integration
- * @Copy Lead to Mautic with a Specific Segment
+ * @Send issues to bugtracker webservice
  * * */
 $app->post('/report/', function (Request $request, Response $response) use ($app) {
     $newResponse = $response->withHeader('Content-type', 'application/json')

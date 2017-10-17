@@ -10,22 +10,22 @@ include dirname(dirname(__FILE__)) . '/MantisPhpClient.php';
 use MantisHub\MantisPhpClient;
 use SoapClient;
 
-const BUGTRACKER_REST = "https://bugtracker.morettic.com.br";
-const USER = 'mobilebot';
-const PASS = 'm0b1l3b0t';
-const MANTIS_PROJECT = 'GuiaFloripa App';
+const MANTIS_REST = "https://bugtracker.morettic.com.br";
+const MANTIS_USER = 'mobilebot';
+const MANTIS_PASS = 'm0b1l3b0t';
+const MANTIS_PROJECT = 'guiafloripa app';
 
 class BugTracker extends stdClass {
 
     public static function addIssueBugTracker($projectID, $category, $summary, $desc) {
 
-        $mantis = new MantisPhpClient(BUGTRACKER_REST, USER, PASS, 'GuiaFloripaBugTracker');
+        $mantis = new MantisPhpClient(MANTIS_REST, MANTIS_USER, MANTIS_PASS, 'GuiaFloripaBugTracker');
 
         //var_dump($mantis);
 
         $issue = array(
             'project' => array(
-                'name' => 'guiafloripa app',
+                'name' => MANTIS_PROJECT,
                 'id' => $projectID
             ),
             'category' => $category,
