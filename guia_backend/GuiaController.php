@@ -54,7 +54,10 @@ class GuiaController extends stdClass {
         //Set Charset
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         //Set
-        $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL  360 MINUTE and dtUntil<=NOW() + INTERVAL 1 DAY";
+        $query = " select * from viewEventPlaces "
+                . " where ((dtFrom >= (now()- INTERVAL  360 MINUTE)"
+                . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
+                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())";
         $eventos = DB::query($query); // misspelled SELECTvardump(
 //Return Object
         $stdGuia = new stdClass();
@@ -186,11 +189,16 @@ class GuiaController extends stdClass {
 
         $conn = new MysqlDB();
 
-        $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday  and event_dtend <= $timestamp  and  a.event_id in ( select object_id from $type) ";
+        $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtend >= $yesterday  and  a.event_id in ( select object_id from $type) ";
+
+        //$query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where a.event_id in (41801)";
+        //$query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where a.event_id in ( 41801) ";
+
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         //echo "Init List ";
         echo "<pre>";
+        echo "" . $query;
         $lEventos = Array();
 
         while ($row = $conn->hasNext()) {
@@ -492,8 +500,11 @@ class GuiaController extends stdClass {
         $time = strtotime($today) + 86400;
         $tomorrow = date('Y-m-d', $time);
 //If date is empty or another shit
-        $query = "select * from viewEventPlaceType where date(dtFrom) >= date('$today') and idType = " . $type;
-//
+        $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
+                . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
+                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type;
+//      
+        //echo $query;die();
         $query2 = "select * from viewEventPlaceType where idType = " . $type
                 . " and DATE(dtFrom) >= date('" . $dtOrigem
                 . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";

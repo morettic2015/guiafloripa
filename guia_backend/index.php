@@ -276,7 +276,7 @@ $app->get('/sync_infantil/', function (Request $request, Response $response) use
  * @ignore it only for Test
  */
 $app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
-    GuiaController::testCinemas();
+    //GuiaController::testCinemas();
 }); //Run Slim Microservice
 $app->run();
 
