@@ -68,7 +68,7 @@ var exceptHandler = new ExceptionHandler();
 //Exception handler and report
 window.onerror = function (msg, url, lineNo, columnNo, error) {
     exceptHandler.report(device, msg, url, lineNo, columnNo, error);
-    window.location.href = "erro.html";
+    //window.location.href = "erro.html";
 }
 /**
  * Window loader controller

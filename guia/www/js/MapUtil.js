@@ -277,7 +277,7 @@ var MapUtils = function () {
      * @Called on load to show today events
      */
     this.sucessLoad = function (position) {
- 
+
         //Init directions service
         directionsService = new google.maps.DirectionsService();
         directionsDisplay = new google.maps.DirectionsRenderer();
@@ -534,7 +534,8 @@ var MapUtils = function () {
     }
 
     this.setBorderStyle = function (element, name, id) {
-        map.setZoom(10);
+        //zoom = zoom == undefined ? 10 : zoom;
+       // map.setZoom(10);
         res = element.src.split("_");
         pos = res.length - 1;
         element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
@@ -546,7 +547,8 @@ var MapUtils = function () {
         this.requestPin(id, pdtInit, pdtFim);
     }
     this.setBorderStyle1 = function (element, name, id) {
-        map.setZoom(10);
+       // zoom = map.getZoom();
+       // map.setZoom(zoom);
         res = element.src.split("_");
         pos = res.length - 1;
         element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
