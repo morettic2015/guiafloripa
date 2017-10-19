@@ -28,7 +28,6 @@
         "cordova-admob-sdklibs": "^2.1.4",
         "cordova-android": "^6.2.3",
         "cordova-browser": "^4.1.0",
-        "cordova-ios": "^4.4.0",
         "cordova-plugin-admob-simple": "^3.3.4",
         "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-device": "^1.1.6",
@@ -39,6 +38,7 @@
         "cordova-plugin-whitelist": "1",
         "cordova-plugin-x-socialsharing": "^5.2.0",
         "cordova-plugin-x-toast": "^2.6.0",
+        "cordova-support-google-services": "^1.0.0",
         "cordova.plugins.diagnostic": "^3.6.5",
         "es6-promise-plugin": "^4.1.0",
         "onesignal-cordova-plugin": "^2.1.2"

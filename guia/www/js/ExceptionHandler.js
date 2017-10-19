@@ -9,9 +9,11 @@
 var ExceptionHandler = function () {
     this.url = "https://guiafloripa.morettic.com.br/report/";
     this.report = function (device, msg, url, lineNo, columnNo, error) {
-        var manufac = device.manufacturer===undefined?"":device.manufacturer;
+      var manufac = device.manufacturer === undefined ? "" : device.manufacturer;
         var title = device.model + "-" + manufac + "-" + device.version;
         var desc = (msg + " " + url + " " + lineNo + " " + columnNo + " " + error);
+
+        //window.cordova.plugins.firebase.crash.report("Exception Error");
         $.ajax({
             type: 'POST',
             url: this.url,
@@ -23,5 +25,5 @@ var ExceptionHandler = function () {
                 //window.location.reload();
             }
         });
-    }
-}
+    };
+};

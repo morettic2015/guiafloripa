@@ -9,8 +9,8 @@
  */
 var zoom = 10;
 var map;
-var lat,latZ;
-var lng,lngZ;
+var lat, latZ;
+var lng, lngZ;
 var mapUtils;
 var lEventos;
 var directionsService;
@@ -19,6 +19,7 @@ var markers = new Array();
 var notificationOpenedCallback;
 var watcherPosition = null;
 var markerCluster = null;
+var myLoader;
 
 var MapUtils = function () {
     //Get Pin Type Based on TYPE from Marker
@@ -80,6 +81,7 @@ var MapUtils = function () {
     }
 
     this.requestPin = function (pinType, dtInit, dtFim) {
+        myLoader.show();
         //Requisição ao server side
         mapUtils.clearAllPinsFromMap();
         var url1 = "https://guiafloripa.morettic.com.br/filtro/" + pinType + "/" + dtInit + "/" + dtFim;
@@ -135,6 +137,7 @@ var MapUtils = function () {
                 animation: google.maps.Animation.BOUNCE,
             });
             mapUtils.clusterOption(map, markers);
+            myLoader.hide();
         });
     }
 
@@ -256,18 +259,25 @@ var MapUtils = function () {
             mapUtils.clusterOption(map, markers);
         });
     }
-
+    /**
+     * @Focus map again after close Detail Window.
+     * */
     this.focusMap = function () {
-        map.setCenter({lat: parseFloat(latZ), lng: parseFloat(lngZ)});
-        //map.setCenter(new google.maps.LatLng(lat, lng));
-        map.setZoom(zoom);
-        mapUtils.initSliderMenu();
+        try {
+            map.setCenter({lat: parseFloat(latZ), lng: parseFloat(lngZ)});
+            //map.setCenter(new google.maps.LatLng(lat, lng));
+            map.setZoom(zoom);
+            mapUtils.initSliderMenu();
+        } catch (e) {//Capture error from ZOOM
+            exceptHandler.report(device, e.toString(), e.fileName, e.lineNumber, e.columnNumber, e.description);
+        }
     }
 
     /**
      * @Called on load to show today events
      */
     this.sucessLoad = function (position) {
+ 
         //Init directions service
         directionsService = new google.maps.DirectionsService();
         directionsDisplay = new google.maps.DirectionsRenderer();
@@ -590,38 +600,42 @@ var MapUtils = function () {
         });
     }
     this.initAds = function () {
-        if (window.plugins && window.plugins.AdMob) {
-            var ad_units = {
-                ios: {
-                    banner: 'ca-app-pub-5450650045028162/7776401911', //PUT ADMOB ADCODE HERE
-                    interstitial: 'ca-app-pub-5450650045028162/2653913659'	//PUT ADMOB ADCODE HERE
-                },
-                android: {
-                    banner: 'ca-app-pub-5450650045028162/7776401911', //PUT ADMOB ADCODE HERE
-                    interstitial: 'ca-app-pub-5450650045028162/2653913659'	//PUT ADMOB ADCODE HERE
-                }
-            };
-            var admobid = (/(android)/i.test(navigator.userAgent)) ? ad_units.android : ad_units.ios;
+        try {
+            if (window.plugins && window.plugins.AdMob) {
+                var ad_units = {
+                    ios: {
+                        banner: 'ca-app-pub-5450650045028162/7776401911', //PUT ADMOB ADCODE HERE
+                        interstitial: 'ca-app-pub-5450650045028162/2653913659'	//PUT ADMOB ADCODE HERE
+                    },
+                    android: {
+                        banner: 'ca-app-pub-5450650045028162/7776401911', //PUT ADMOB ADCODE HERE
+                        interstitial: 'ca-app-pub-5450650045028162/2653913659'	//PUT ADMOB ADCODE HERE
+                    }
+                };
+                var admobid = (/(android)/i.test(navigator.userAgent)) ? ad_units.android : ad_units.ios;
 
-            window.plugins.AdMob.setOptions({
-                publisherId: admobid.banner,
-                interstitialAdId: admobid.interstitial,
-                adSize: window.plugins.AdMob.AD_SIZE.SMART_BANNER, //use SMART_BANNER, BANNER, LARGE_BANNER, IAB_MRECT, IAB_BANNER, IAB_LEADERBOARD
-                bannerAtTop: false, // set to true, to put banner at top
-                overlap: true, // banner will overlap webview
-                offsetTopBar: false, // set to true to avoid ios7 status bar overlap
-                isTesting: false, // receiving test ad
-                autoShow: false // auto show interstitial ad when loaded
-            });
+                window.plugins.AdMob.setOptions({
+                    publisherId: admobid.banner,
+                    interstitialAdId: admobid.interstitial,
+                    adSize: window.plugins.AdMob.AD_SIZE.SMART_BANNER, //use SMART_BANNER, BANNER, LARGE_BANNER, IAB_MRECT, IAB_BANNER, IAB_LEADERBOARD
+                    bannerAtTop: false, // set to true, to put banner at top
+                    overlap: true, // banner will overlap webview
+                    offsetTopBar: false, // set to true to avoid ios7 status bar overlap
+                    isTesting: false, // receiving test ad
+                    autoShow: false // auto show interstitial ad when loaded
+                });
 
-            //registerAdEvents();
-            //window.plugins.AdMob.createInterstitialView();	//get the interstitials ready to be shown
-            //window.plugins.AdMob.requestInterstitialAd();
-            window.plugins.AdMob.createBannerView();
+                //registerAdEvents();
+                //window.plugins.AdMob.createInterstitialView();	//get the interstitials ready to be shown
+                //window.plugins.AdMob.requestInterstitialAd();
+                window.plugins.AdMob.createBannerView();
 
-            setInterval(window.plugins.AdMob.requestInterstitialAd(), 10000);
-        } else {
-            //alert( 'admob plugin not ready' );
+                setInterval(window.plugins.AdMob.requestInterstitialAd(), 10000);
+            } else {
+                //alert( 'admob plugin not ready' );
+            }
+        } catch (e) {//Send Exception to Firebase
+            exceptHandler.report(device, e.toString(), e.fileName, e.lineNumber, e.columnNumber, e.description);
         }
     }
 
@@ -629,6 +643,7 @@ var MapUtils = function () {
         try {
             navigator.geolocation.clearWatch(watcherPosition);
         } catch (e) {
+            window.cordova.plugins.firebase.crash.report(e.toString());
             console.log(e)
         }
     }
@@ -752,7 +767,7 @@ function InfoWindowT(obj, plat, plng) {
     if (obj.idType === "3") {
         document.getElementById('txtDescT').style.visibility = 'visible';
         document.getElementById('txtDescT').style.display = 'block';
-       // var content = '<fieldset style="background: transparent;border: none"><ul id="flexiselCinema"  style="background: transparent;border: none">';
+        // var content = '<fieldset style="background: transparent;border: none"><ul id="flexiselCinema"  style="background: transparent;border: none">';
         var content = '';
         for (i = 0; i < obj.movies.length; i++) {
             mP = obj.movies[i];
@@ -767,35 +782,35 @@ function InfoWindowT(obj, plat, plng) {
                     + mP.deDetail
                     + '</div><hr>';
         }
-      //  content += "</ul>"
-         content += "<br><br><br><br>";
+        //  content += "</ul>"
+        content += "<br><br><br><br>";
         $("#txtDescT").html(content);
-      /**  $("#flexiselCinema").flexisel({
-            visibleItems: 1,
-            clone: true,
-            autoPlay: {
-                enable: false,
-                interval: 5000,
-                pauseOnHover: true
-            },
-            responsiveBreakpoints: {
-                portrait: {
-                    changePoint: 480,
-                    visibleItems: 1,
-                    itemsToScroll: 1
-                },
-                landscape: {
-                    changePoint: 640,
-                    visibleItems: 1,
-                    itemsToScroll: 1
-                },
-                tablet: {
-                    changePoint: 1024,
-                    visibleItems: 1,
-                    itemsToScroll: 1
-                }
-            }
-        });*/
+        /**  $("#flexiselCinema").flexisel({
+         visibleItems: 1,
+         clone: true,
+         autoPlay: {
+         enable: false,
+         interval: 5000,
+         pauseOnHover: true
+         },
+         responsiveBreakpoints: {
+         portrait: {
+         changePoint: 480,
+         visibleItems: 1,
+         itemsToScroll: 1
+         },
+         landscape: {
+         changePoint: 640,
+         visibleItems: 1,
+         itemsToScroll: 1
+         },
+         tablet: {
+         changePoint: 1024,
+         visibleItems: 1,
+         itemsToScroll: 1
+         }
+         }
+         });*/
     }
 }
 

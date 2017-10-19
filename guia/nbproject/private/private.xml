@@ -6,7 +6,9 @@
             <file>file:/C:/app/guiafloripa/guia/www/index.html</file>
             <file>file:/C:/app/guiafloripa/guia/www/js/index.js</file>
             <file>file:/C:/app/guiafloripa/guia/www/js/MapUtil.js</file>
-            <file>file:/C:/app/guiafloripa/guia/www/css/flex.css</file>
+            <file>file:/C:/app/guiafloripa/guia/config.xml</file>
+            <file>file:/C:/app/guiafloripa/guia/platforms/android/build.gradle</file>
+            <file>file:/C:/app/guiafloripa/guia/www/js/ExceptionHandler.js</file>
             <file>file:/C:/app/guiafloripa/guia/www/css/index.css</file>
         </group>
     </open-files>

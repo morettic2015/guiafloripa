@@ -8,12 +8,12 @@
 
 var app = {
     // Application Constructor
-    initialize: function() {
+    initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-     
+
     },
     //OnDevice Offline
-    isOffline: function() {
+    isOffline: function () {
         //navigator.splashscreen.show();
         //alert('OFFLINE');
         var networkState = navigator.connection.type;
@@ -26,7 +26,7 @@ var app = {
     //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
-    onDeviceReady: function() {
+    onDeviceReady: function () {
         this.receivedEvent('deviceready');
         //document.addEventListener("offline", this.onOffline(), false);
 
@@ -38,15 +38,14 @@ var app = {
         //Init Ads
         mapUtils.initAds();
         //Init Geolocation
-        navigator.geolocation.getCurrentPosition(function(position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
             //Init Show info;
             mapUtils.showWelcome();
             //Loads Map
             mapUtils.sucessLoad(position);
-            
-            
-            
-        }, function(e) {
+            //Loader for Actions
+            myLoader = new Loader();
+        }, function (e) {
             navigator.splashscreen.hide();//Hide Splash
             //No GPS or WIFI!
             mapUtils.showNoGPS();
@@ -57,7 +56,7 @@ var app = {
         profileUtil.initProfile();
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
+    receivedEvent: function (id) {
         var parentElement = document.getElementById(id);
         console.log('Received Event: ' + id);
     }
@@ -65,9 +64,12 @@ var app = {
 };
 
 app.initialize();
-
+var exceptHandler = new ExceptionHandler();
 //Exception handler and report
-window.onerror = function (msg, url, lineNo, columnNo, error){
-    var exceptHandler = new ExceptionHandler();
+window.onerror = function (msg, url, lineNo, columnNo, error) {
     exceptHandler.report(device, msg, url, lineNo, columnNo, error);
+    window.location.href = "erro.html";
 }
+/**
+ * Window loader controller
+ * */

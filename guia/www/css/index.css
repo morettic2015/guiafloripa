@@ -188,7 +188,7 @@ h1 {
     display: inline-block;
     min-height: 10vh;
     max-height: 250vh;
-    margin-bottom:20px;
+    margin-bottom:80px;
     overflow-y: auto;
     text-transform: capitalize !important;
     line-height: 140% !important;
