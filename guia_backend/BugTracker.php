@@ -5,15 +5,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-include dirname(dirname(__FILE__)) . '/MantisPhpClient.php';
+//include dirname(dirname(__FILE__)) . '/MantisPhpClient.php';
 
 use MantisHub\MantisPhpClient;
-use SoapClient;
+//use SoapClient;
 
 const MANTIS_REST = "https://bugtracker.morettic.com.br";
 const MANTIS_USER = 'mobilebot';
 const MANTIS_PASS = 'm0b1l3b0t';
 const MANTIS_PROJECT = 'guiafloripa app';
+const BACKEND = "BACKEND";
+const GEOCODER_E = "GEOCODER";
+const QUERY = "QUERY";
+
 
 class BugTracker extends stdClass {
 

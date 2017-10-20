@@ -23,7 +23,7 @@ class GeocoderController extends stdClass {
      * @todo implement cache
      *      */
     public static final function geocodeQuery($address) {
-        if(strlen($address)<5){
+        if (strlen($address) < 5) {
             return false;
         }
         $adapter = new Client();
@@ -41,15 +41,6 @@ class GeocoderController extends stdClass {
                     . ", " . $obj->getAdminLevels()->get(2)->getName()
                     . ", " . $obj->getAdminLevels()->first()->getName();
         } catch (Geocoder\Exception\CollectionIsEmpty $e) {
-         /*   logActions($e->getMessage()
-                    . '/'
-                    . $e->getMessage()
-                    . '/'
-                    . $e->getTrace()
-                    . '/'
-                    . $e->getCode()
-                    . '/'
-                    . $e->getFile());*/
             return null;
         } catch (Exception $e) {
             //echo "\n";

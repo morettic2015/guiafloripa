@@ -163,6 +163,7 @@ $app->get('/anunciantes/', function (Request $request, Response $response) use (
 });
 /**
  * @Send issues to bugtracker webservice
+ * @Endpoint for Mobile Issues!
  * * */
 $app->post('/report/', function (Request $request, Response $response) use ($app) {
     $newResponse = $response->withHeader('Content-type', 'application/json')
@@ -170,13 +171,13 @@ $app->post('/report/', function (Request $request, Response $response) use ($app
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
     $dt = $request->getParsedBody();
-    
+
     //var_dump($dt);die;
-    
+
     $data = new stdClass();
     $data->title = filter_var($dt['title'], FILTER_SANITIZE_STRING);
     $data->desc = filter_var($dt['desc'], FILTER_SANITIZE_STRING);
-    $data->desc.= " IP:".get_client_ip();
+    $data->desc .= " IP:" . get_client_ip();
     $data->id = BugTracker::addIssueBugTracker(10, 'Mobile', $data->title, $data->desc);
 
     logActions("BUG TRACKER");
@@ -220,7 +221,7 @@ $app->get('/sync_urls/', function (Request $request, Response $response) use ($a
  */
 $app->get('/sync_images/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateImages();
-    logActions("URL UPDATE");
+    logActions("Sync Images");
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -237,7 +238,7 @@ $app->get('/sync_cinemas/', function (Request $request, Response $response) use 
 $app->get('/sync_free/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_gratuitos_ids", 9);
     GuiaController::updateURLS();
-    logActions("EVENTS");
+    logActions("EVENTS - FREE");
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -245,7 +246,7 @@ $app->get('/sync_free/', function (Request $request, Response $response) use ($a
 $app->get('/sync_cultura/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_cultura_ids", 4);
     GuiaController::updateURLS();
-    logActions("EVENTS");
+    logActions("EVENTS - CULT");
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -253,7 +254,7 @@ $app->get('/sync_cultura/', function (Request $request, Response $response) use 
 $app->get('/sync_lazer/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_lazer_ids", 7);
     GuiaController::updateURLS();
-    logActions("EVENTS");
+    logActions("EVENTS - LAZER");
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -261,7 +262,7 @@ $app->get('/sync_lazer/', function (Request $request, Response $response) use ($
 $app->get('/sync_eventos/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_eventos_ids", 6);
     GuiaController::updateURLS();
-    logActions("EVENTS");
+    logActions("EVENTS - EVENTS");
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -269,7 +270,7 @@ $app->get('/sync_eventos/', function (Request $request, Response $response) use 
 $app->get('/sync_infantil/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_infantil_ids", 2);
     GuiaController::updateURLS();
-    logActions("EVENTS");
+    logActions("EVENTS - CHILD");
 });
 /**
  * @Test purpouse

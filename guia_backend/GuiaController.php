@@ -8,7 +8,9 @@ DB::$dbName = 'guiafloripa_app';
 DB::$host = 'localhost';
 DB::$port = '3306';
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
-DB::$error_handler = 'my_error_handler';
+//DB::$error_handler = 'my_error_handler';
+DB::$error_handler = false; // since we're catching errors, don't need error handler
+DB::$throw_exception_on_error = true;
 
 class GuiaController extends stdClass {
 
@@ -146,25 +148,25 @@ class GuiaController extends stdClass {
                         in (select post_id from wp_postmeta where meta_key in ('id_anuncio_openx','url_website') )";
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
-        echo "<pre>";
+        //echo "<pre>";
         $tot = 0;
         while ($row = $conn->hasNext()) {
 //Verify whats the current URL
             $url = empty($row['id_anuncio_openx']) ? (empty($row['urlWebsite']) ? "#" : $row['urlWebsite']) : $row['fullOpen'];
-            echo "<br>";
-            echo $url;
-            echo "<br>";
-            echo $row['urlWebsite'];
-            echo "<br>";
-            echo $row['id_anuncio_openx'];
-            echo "<br>";
+            /*   echo "<br>";
+              echo $url;
+              echo "<br>";
+              echo $row['urlWebsite'];
+              echo "<br>";
+              echo $row['id_anuncio_openx'];
+              echo "<br>"; */
             DB::query("SELECT * FROM Place WHERE idPlace=%s", $row['ID']);
             $counter = DB::count();
 //Se tiver mais de ZERO ocorrências atualiza no APP
             if ($counter > 0) {
 //var_dump($row);
                 $tot++;
-                echo $counter . " ID FOUND " . $row['ID'] . "\n";
+                //echo $counter . " ID FOUND " . $row['ID'] . "\n";
 //continue;
                 DB::update('Place', array(
                     'deWebsite' => $url
@@ -177,7 +179,7 @@ class GuiaController extends stdClass {
         DB::query("update Place as a set deWebsite = concat('$baseUrl',a.idPlace) where deWebsite is null");
 
 //Imprime o total
-        echo $tot . " Found"; //Total de registros 
+        //  echo $tot . " Found"; //Total de registros 
 //Close Database
         DB::disconnect(); //Close Con FROM APP
         $conn->closeConn(); //Close Con FROM 
@@ -197,10 +199,11 @@ class GuiaController extends stdClass {
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         //echo "Init List ";
-        echo "<pre>";
-        echo "" . $query;
+        /* echo "<pre>";
+          echo "" . $query; */
         $lEventos = Array();
-
+        //Set error = Empty
+        $pErrors = "";
         while ($row = $conn->hasNext()) {
             //var_dump($row);
             try {
@@ -224,11 +227,25 @@ class GuiaController extends stdClass {
                 //var_dump($eventRow);die;
                 GuiaController::insertUpdateEvent($eventRow, $id);
             } catch (Exception $e) {
-                var_dump($e);
+                $pErrors .= "<p>";
+                $pErrors .= "FILE";
+                $pErrors .= $e->getFile();
+                $pErrors .= "<br>MSG";
+                $pErrors .= $e->getMessage();
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($row);
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($e);
+                $pErrors .= "<hr></p>";
             }
         }
         DB::disconnect();
         $conn->closeConn();
+
+        if (!empty($pErrors)) {
+            //echo $pErrors;
+            BugTracker::addIssueBugTracker(10, BACKEND, "cronEventCategory($type, $id) ", "EVENT SYNC ERROR" . $pErrors);
+        }
     }
 
     public static function testCinemas() {
@@ -271,25 +288,24 @@ class GuiaController extends stdClass {
      *  Insert or update Cinemas
      * */
     public static function cronCinemas() {
+        $pErrors = "";
 
+        /* $yesterday = strtotime("-8 week");
+          $timestamp = strtotime('+4 week');
 
-        $yesterday = strtotime("-8 week");
-        $timestamp = strtotime('+4 week');
+          $now = time(); */
 
-        $now = time();
-
-//DB::debugMode();
+        //DB::debugMode();
         $query = "SELECT * from view_cinema where id_cn_filme is not null order by dtstart,dtend asc";
-//echo $query;
+        //echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
-
-        echo "<pre>";
+        // echo "<pre>";
 
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
-//var_dump($row); //die;
+            //var_dump($row); //die;
             $eventRow->dtstart = $row['dtstart'];
             $eventRow->dtend = $row['dtend'];
             $eventRow->titulo = utf8_encode($row['titulo']);
@@ -313,99 +329,109 @@ class GuiaController extends stdClass {
             $eventRow->outras_informacoes_html = $row['outras_informacoes'];
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
-//var_dump($eventRow);
-//  echo "<br>".utf8_encode($eventRow->titulo)."CHARSET...." . mb_detect_encoding($eventRow->titulo);
-// echo "<br>".utf8_encode($eventRow->titulo_original)."CHARSET...." . mb_detect_encoding($eventRow->titulo_original);
 
-            GuiaController::updateCinemaEvent($eventRow);
-            $encode = mb_detect_encoding($eventRow->titulo);
+
+            $pErrors .= GuiaController::updateCinemaEvent($eventRow);
+            //$encode = mb_detect_encoding($eventRow->titulo);
             //echo date('d/m/Y', $eventRow->dtstart) . ',' . $eventRow->dtstart . "," . date('d/m/Y', $eventRow->dtend) . ',' . $eventRow->dtend . "," . mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
         }
         DB::disconnect();
         $mdb->closeConn();
+        //Log erros
+        if (!empty($pErrors)) {
+            BugTracker::addIssueBugTracker(10, BACKEND, "updateCinemaEvent() ", $pErrors);
+        }
     }
 
     public static function updateCinemaEvent($obj) {
-//DB::debugMode();
-        DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-
-
-//echo time() . "*********************************************\n";
-// var_dump($obj);
-        if (is_null($obj->id_wp_post))
-            return;
-
-        $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
-
-        $number_accounts = DB::queryFirstField($query);
-        var_dump($number_accounts);
-// echo $number_accounts === "1";
-//  echo "Cinema exists?" . $number_accounts;
-
-        if (!($number_accounts[0] > 0)) {
-
-            $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
-            if (is_null($obj->geo->lat)) {
+        //DB::debugMode();
+        try {
+            DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+            //Error record
+            if (is_null($obj->id_wp_post)) {
+                BugTracker::addIssueBugTracker(10, BACKEND, "updateCinemaEvent($obj)" . $e->getFile(), $e->getMessage() . " JSON:" . json_encode($obj));
                 return;
             }
-            $cep = "88000-000";
-            $cepvet = explode(",", $obj->geo->formatted_address);
-//$vSize = count($cepvet);
-            $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
-            $cep = empty($cep1) ? $cep : $cep1;
 
-//Insert Update Place
+            $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
+
+            $number_accounts = DB::queryFirstField($query);
+
+            if (!($number_accounts[0] > 0)) {
+
+                $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
+                if (is_null($obj->geo->lat)) {
+                    return;
+                }
+                $cep = "88000-000";
+                $cepvet = explode(",", $obj->geo->formatted_address);
+                $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
+                $cep = empty($cep1) ? $cep : $cep1;
+
+                //Insert Update Place
+                DB::insertUpdate(
+                        'Place', array(
+                    'idPlace' => $obj->id_wp_post, //primary key
+                    'nmPlace' => ($obj->post_title),
+                    'nrPhone' => null,
+                    'deWebsite' => null,
+                    'deAddress' => ($obj->geo->formatted_address),
+                    'deLogo' => 'default',
+                    'dePlace' => ($obj->post_content),
+                    'deEmail' => null,
+                    'nrLat' => $obj->geo->lat,
+                    'nrLng' => $obj->geo->lng,
+                    'nrCep' => $cep,
+                    'idPlaceBranch' => null
+                        ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
+                DB::commit();
+            }
+            //insert update Cinema
+            //echo $obj->titulo_original . " --";
+
+            $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
+            $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
+
+            $dtFrom = date("Y-m-d H:i:s", $obj->dtstart);
+            $dtUntil = date("Y-m-d H:i:s", $obj->dtend);
             DB::insertUpdate(
-                    'Place', array(
-                'idPlace' => $obj->id_wp_post, //primary key
-                'nmPlace' => ($obj->post_title),
-                'nrPhone' => null,
-                'deWebsite' => null,
-                'deAddress' => ($obj->geo->formatted_address),
-                'deLogo' => 'default',
-                'dePlace' => ($obj->post_content),
-                'deEmail' => null,
-                'nrLat' => $obj->geo->lat,
-                'nrLng' => $obj->geo->lng,
-                'nrCep' => $cep,
-                'idPlaceBranch' => null
-                    ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
+                    'Event', array(
+                'idEvent' => $obj->id_cn_filme, //primary key
+                'deEvent' => $deEvent,
+                'deDetail' => $deDetail,
+                'dtFrom' => $dtFrom,
+                'dtUntil' => $dtUntil,
+                'idPlaceOwner' => $obj->id_wp_post,
+                'nrEdition' => '1',
+                'deImg' => $obj->imagem_full,
+                'idType' => 3
+            ));
+
+            // DB::debugMode();
+            DB::insertUpdate(
+                    'SubCategory', array(
+                'fkPlace' => $obj->id_wp_post, //primary key
+                'fkEvent' => $obj->id_cn_filme,
+                'fkType' => 3,
+                'dtStart' => $dtFrom,
+                'dtEnd' => $dtUntil,
+                'catInfo' => 'movie'
+            ));
             DB::commit();
+        } catch (Exception $e) {
+            $pErrors1 = "";
+            $pErrors1 .= "<p>";
+            $pErrors1 .= "FILE";
+            $pErrors1 .= $e->getFile();
+            $pErrors1 .= "<br>MSG";
+            $pErrors1 .= $e->getMessage();
+            $pErrors1 .= "<br>JSON";
+            $pErrors1 .= json_encode($row);
+            $pErrors1 .= "<br>JSON";
+            $pErrors1 .= json_encode($e);
+            $pErrors1 .= "<hr></p>";
+            return $pErrors1;
         }
-//insert update Cinema
-        echo $obj->titulo_original . " --";
-
-//$encode = mb_detect_encoding($obj->titulo);
-        $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
-        $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
-
-//echo $encode . "--------";
-        $dtFrom = date("Y-m-d H:i:s", $obj->dtstart);
-        $dtUntil = date("Y-m-d H:i:s", $obj->dtend);
-        DB::insertUpdate(
-                'Event', array(
-            'idEvent' => $obj->id_cn_filme, //primary key
-            'deEvent' => $deEvent,
-            'deDetail' => $deDetail,
-            'dtFrom' => $dtFrom,
-            'dtUntil' => $dtUntil,
-            'idPlaceOwner' => $obj->id_wp_post,
-            'nrEdition' => '1',
-            'deImg' => $obj->imagem_full,
-            'idType' => 3
-        ));
-
-        DB::debugMode();
-        DB::insertUpdate(
-                'SubCategory', array(
-            'fkPlace' => $obj->id_wp_post, //primary key
-            'fkEvent' => $obj->id_cn_filme,
-            'fkType' => 3,
-            'dtStart' => $dtFrom,
-            'dtEnd' => $dtUntil,
-            'catInfo' => 'movie'
-        ));
-        DB::commit();
     }
 
     public static function getCategoryIDS($tp) {
@@ -418,7 +444,7 @@ class GuiaController extends stdClass {
     public static function insertUpdateEvent($obj, $id) {
 
 
-        DB::debugMode();
+        // DB::debugMode();
 
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
 
@@ -434,7 +460,7 @@ class GuiaController extends stdClass {
             //echo time() . "*********************************************\n";
             $obj->geo = GeocoderController::geocodeQuery($obj->endereco . ", " . $obj->cidade);
 
-            if (is_null($obj->geo) || is_null($obj->geo->lat)) {
+            if ((!($obj->geo instanceof stdClass)) || is_null($obj->geo) || is_null($obj->geo->lat)) {
                 return;
             }
             $cep = "88000-000";
@@ -489,6 +515,7 @@ class GuiaController extends stdClass {
             'dtStart' => $dtFrom,
             'dtEnd' => $dtUntil
         ));
+        DB::commit();
     }
 
     /*
@@ -558,36 +585,38 @@ class GuiaController extends stdClass {
      *  @Insert places and create custom cat by View
      * */
     public static final function updatePlacesByCategory($view, $typeID) {
-        echo "<pre>";
-        DB::debugMode();
+        //echo "<pre>";
+        //DB::debugMode();
         $conn = new MysqlDB();
         $query = "select * from $view where endereco is not null order by ID desc";
-//echo $query;
+        //echo $query;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         $i = 0;
-//while ($row = $conn->hasNext()) {
+
+        $pErrors = "";
+        //while ($row = $conn->hasNext()) {
         while ($row = $conn->hasNext()) {
-            $obj = null;
             try {
                 $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
-
-                if (is_null($obj->lat))
+                
+                if (is_null($obj->lat)||!($obj instanceof stdClass)) {
                     continue;
+                }
 
-//CEP FROM GEOLOCATION
+                //CEP FROM GEOLOCATION
                 $cep = $obj->cep == NULL ? "88000-000" : $obj->cep;
-//Place Description
+                //Place Description
                 $dePlace = $row['post_excerpt'];
                 $nmPlace = $row['post_title'];
                 $email = strlen($row['email']) < 2 ? NULL : $row['email'];
 
-//Insert Update Place
+                //Insert Update Place
                 DB::insertUpdate(
                         'Place', array(
                     'idPlace' => $row['ID'], //primary key
                     'nmPlace' => mb_convert_encoding($nmPlace, "utf8"),
-                    'nrPhone' => $row['tel'],
+                    'nrPhone' => $row['telefone'],
                     'deWebsite' => null,
                     'deAddress' => ($obj->formatted_address),
                     'deLogo' => $row['logo'],
@@ -597,24 +626,32 @@ class GuiaController extends stdClass {
                     'nrLng' => $obj->lng,
                     'nrCep' => $cep,
                     'idPlaceBranch' => null
-                        ), 'deLogo=%s', $row['logo'], 'nmPlace=%s', mb_convert_encoding($nmPlace, "utf8"), 'deAddress=%s', $obj->formatted_address, 'dePlace=%s', ($dePlace), 'nrLat', $obj->lat, 'nrLng', $obj->lng, 'nrCep=%s', $cep);
-//Associate place with a given type
+                ));
+
+                //Associate place with a given type
                 $query = "insert into PlaceType values($typeID," . $row['ID'] . ",now()) on duplicate key update lastUpdate = now();";
                 DB::query($query);
                 DB::affectedRows();
                 DB::commit();
-            } catch (Exception $ex) {
-//var_dump($ex);
+            } catch (Exception $e) {
+                $pErrors = "";
+                $pErrors .= "<p>";
+                $pErrors .= "FILE";
+                $pErrors .= $e->getFile();
+                $pErrors .= "<br>MSG";
+                $pErrors .= $e->getMessage();
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($row);
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($e);
+                $pErrors .= "<hr></p>";
 
-                var_dump($row);
-                logActions($ex->getMessage());
-                logActions($ex->getCode());
-                logActions($ex->getFile());
-                logActions($ex->getLine());
-                logActions($ex->getTraceAsString());
-                logActions($ex);
                 continue;
             }
+        }
+
+        if (!empty($pErrors)) {
+            BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
         }
     }
 
@@ -622,12 +659,12 @@ class GuiaController extends stdClass {
 
 /* * ****
  *    Database Handlers
+ *  SEnd Error to Mautic Integration
  */
 
 function my_error_handler($params) {
-    echo "Error: " . $params['error'] . "<br>\n";
-    echo "Query: " . $params['query'] . "<br>\n";
-// die; // don't want to keep going if a query broke
+    $pErrors .= " ";
+    $pErrors .= json_encode($params);
 }
 
 function removeOneDay($date) {

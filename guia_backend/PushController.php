@@ -88,27 +88,30 @@ class PushController extends stdClass {
     }
 
     public static function dailyNotification() {
+        try {
+            // DB::debugMode();
+            $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL 1 DAY and dtUntil<=NOW() + INTERVAL 1 DAY";
+            $eventos = DB::query($query);
+            $counter = DB::count();
+            //counter of events
+            //  echo $counter;
+            //Has events today
+            if ($counter > 0) {
+                $message = $counter . " Eventos em Floripa Hoje a sua escolha!";
+                // $query = "SELECT userID FROM guiafloripa_app.Profile";
+                //     $users = DB::query($query);
+                //   $ids = DBHelper::verticalSlice($users, 'userID');
 
-        // DB::debugMode();
-        $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL 1 DAY and dtUntil<=NOW() + INTERVAL 1 DAY";
-        $eventos = DB::query($query);
-        $counter = DB::count();
-        //counter of events
-        //  echo $counter;
-        //Has events today
-        if ($counter > 0) {
-            $message = $counter . " Eventos em Floripa Hoje a sua escolha!";
-            // $query = "SELECT userID FROM guiafloripa_app.Profile";
-            //     $users = DB::query($query);
-            //   $ids = DBHelper::verticalSlice($users, 'userID');
 
 
-
-            return PushController::sendBroadCastPush($message);
+                return PushController::sendBroadCastPush($message);
+            }
+            DB::disconnect();
+        } catch (Exception $e) {
+            $bug = BugTracker::addIssueBugTracker(10, "BACKEND", "dailyNotification() ".$e->getFile(), $e->getMessage());
+            return $bug;
         }
-        DB::disconnect();
     }
-
 }
 
 ?>
