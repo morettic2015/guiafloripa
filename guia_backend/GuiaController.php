@@ -599,8 +599,8 @@ class GuiaController extends stdClass {
         while ($row = $conn->hasNext()) {
             try {
                 $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
-                
-                if (is_null($obj->lat)||!($obj instanceof stdClass)) {
+
+                if (is_null($obj->lat) || !($obj instanceof stdClass)) {
                     continue;
                 }
 
@@ -649,7 +649,10 @@ class GuiaController extends stdClass {
                 continue;
             }
         }
-
+        //Close connections
+        DB::disconnect();
+        $conn->closeConn();
+        //Send log to Mantis
         if (!empty($pErrors)) {
             BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
         }
