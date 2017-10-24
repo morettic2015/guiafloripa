@@ -12,7 +12,32 @@ DB::$encoding = 'utf8'; // defaults to latin1 if omitted
 DB::$error_handler = false; // since we're catching errors, don't need error handler
 DB::$throw_exception_on_error = true;
 
+const WP_CONTENT = "http://www.guiafloripa.com.br/wp-content/uploads/";
+
 class GuiaController extends stdClass {
+
+    public static final function getPlaceById($id) {
+        $query = "SELECT * FROM guiafloripa_app.Place where idPlace = " . $id;
+        $place = DB::query($query);
+
+        // var_dump($place);die;
+        // $std = new stdClass();
+        /*  $std->nrPhone = $place[0]['nrPhone'];
+          $std->deLogo = $place['deLogo'];
+          $std->deAddress = $place['deAddress'];
+          //$std->deEvent = $row['deEvent'];
+          $std->dePlace = $place['dePlace'];
+          //$std->dtFrom = $row['dtFrom'];
+          $std->nmPlace = ($place['nmPlace']);
+          //$std->dtUntil = $row['dtUntil'];
+          $std->idType = $tp;
+          $std->nrCep = $place['nrCep'];
+          $std->deWebsite = $place['deWebsite'];
+          $std->nrLat = $place['nrLat'];
+          $std->nrLng = $place['nrLng']; */
+
+        return $place;
+    }
 
     /**
      * @Search for Places by Type
@@ -127,6 +152,63 @@ class GuiaController extends stdClass {
         echo "<br>";
         echo $total;
         $conn->closeConn();
+    }
+
+    /**
+     * update Place set deLogo = '123123' where idPlace = 999999999999999;
+     * @Places images from Encoded String to Php Object reverse from Wordpress MANUAL
+     */
+    public static final function reverseImagesFromWordress() {
+        DB::debugMode();
+        $conn = new MysqlDB();
+
+        $places = DB::query("SELECT idPlace FROM Place");
+
+
+
+        $query = "select "
+                . " ID,post_title, post_parent, meta_value "
+                . "from "
+                . " wp_posts "
+                . "left join "
+                . " wp_postmeta "
+                . "on "
+                . " ID = post_id "
+                . "where "
+                . " post_type = 'attachment' "
+                . "and "
+                . " meta_key = '_wp_attachment_metadata'"
+                . "and "
+                . " post_parent = ";
+
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+
+        foreach ($places as $p) {
+
+
+            $conn->execute($query . $p['idPlace']); // misspelled SELECT
+            echo "<pre>";
+            $tot = 0;
+            if ($row = $conn->hasNext()) {
+                //var_dump($row);
+
+                $imageMeta = unserialize($row['meta_value']);
+
+                // var_dump($imageMeta);
+
+                $imagePath = WP_CONTENT . $imageMeta['file'];
+                echo '<br>' . $imagePath . '<br>';
+
+                DB::update('Place', array(
+                    'deLogo' => $imagePath
+                        ), "idPlace=%s", $p['idPlace']);
+            } else {
+                echo "<br>not found ." . $p['idPlace'];
+                continue;
+            }
+        }
+        $conn->closeConn();
+        DB::disconnect();
     }
 
     /**

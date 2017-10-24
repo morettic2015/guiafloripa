@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1baa69ef113593401b0c57411024f76c",
+    "content-hash": "2ddd3c737364e157acebefc6f608b091",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -90,6 +90,63 @@
             "time": "2017-02-14T19:40:03+00:00"
         },
         {
+            "name": "geocoder-php/arcgis-online-provider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/arcgis-online-provider.git",
+                "reference": "839864ceb8726972bca22a74bf24397044536da9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/arcgis-online-provider/zipball/839864ceb8726972bca22a74bf24397044536da9",
+                "reference": "839864ceb8726972bca22a74bf24397044536da9",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "nyholm/psr7": "^0.2.2",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "6.3.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\ArcGISOnline\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder ArcGIS Online adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "time": "2017-10-06T13:25:36+00:00"
+        },
+        {
             "name": "geocoder-php/common-http",
             "version": "4.0.0",
             "source": {
@@ -150,6 +207,63 @@
                 "http geocoder"
             ],
             "time": "2017-08-01T06:58:52+00:00"
+        },
+        {
+            "name": "geocoder-php/geonames-provider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/geonames-provider.git",
+                "reference": "0e6ea8bee2c0a9670b63ac520371950b739024d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/geonames-provider/zipball/0e6ea8bee2c0a9670b63ac520371950b739024d3",
+                "reference": "0e6ea8bee2c0a9670b63ac520371950b739024d3",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "nyholm/psr7": "^0.2.2",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "6.3.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\Geonames\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder Geonames adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "time": "2017-10-06T23:24:45+00:00"
         },
         {
             "name": "geocoder-php/google-maps-provider",
@@ -1578,7 +1692,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "geocoder-php/arcgis-online-provider": 20,
+        "geocoder-php/geonames-provider": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

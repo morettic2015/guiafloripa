@@ -86,6 +86,26 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     return $newResponse->withJson($data, 201);
 });
 /**
+ * @get A Place by id
+ */
+$app->get('/place/{id}', function (Request $request, Response $response) use ($app) {
+    //Content Type JSON Cross Domain JSON
+    //Cache 100 days
+    $newResponse = $this->cache
+            ->withExpires($response, time() + 3600 * 24* 100)
+            ->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    //Return Eventos for today
+    $data = new stdClass();
+    $data->id = $request->getAttribute('id');
+    $data = GuiaController::getPlaceById($data->id);
+    logActions("estabelecimentos");
+    //Response Busca Hoje
+    return $newResponse->withJson($data, 201);
+});
+/**
  * @SEarch for events in a given date
  * Busca eventos de uma determinada data
  */
@@ -183,6 +203,12 @@ $app->post('/report/', function (Request $request, Response $response) use ($app
     logActions("BUG TRACKER");
     return $newResponse->withJson($data, 201);
 });
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * @see /sync_* Only for integration purpouse 
+ * @copyright (c) 2017, Moretto, LAMM <projetos@morettic.com.br>
+ */
+//////////////////////////////////////////////////////////////////////////////
 /**
  * @Cron Service runs every 3 days only
  * @Sync Comer & Beber
@@ -190,6 +216,7 @@ $app->post('/report/', function (Request $request, Response $response) use ($app
 $app->get('/sync_places_food/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_comer_beber", 1);
     logActions("SYNC PLACES FOOD");
+    die();
 });
 /**
  * @Cron Service runs every 3 days only
@@ -198,6 +225,7 @@ $app->get('/sync_places_food/', function (Request $request, Response $response) 
 $app->get('/sync_places_hostage/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_hospedagem", 8);
     logActions("SYNC PLACES HOTEL");
+    die();
 });
 /**
   @Cron Service runs every 3 days only
@@ -206,6 +234,7 @@ $app->get('/sync_places_hostage/', function (Request $request, Response $respons
 $app->get('/sync_places_tourism/', function (Request $request, Response $response) use ($app) {
     GuiaController::updatePlacesByCategory("view_servico_turistico", 5);
     logActions("SYNC PLACES TOURISM");
+    die();
 });
 /**
  * @Cron Service once a week on tuesday 9 o clock
@@ -214,6 +243,7 @@ $app->get('/sync_places_tourism/', function (Request $request, Response $respons
 $app->get('/sync_urls/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();
     logActions("URL UPDATE");
+    die();
 });
 /**
  * @Cron Service once a week on tuesday 9 o clock
@@ -222,6 +252,7 @@ $app->get('/sync_urls/', function (Request $request, Response $response) use ($a
 $app->get('/sync_images/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateImages();
     logActions("Sync Images");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -231,6 +262,7 @@ $app->get('/sync_cinemas/', function (Request $request, Response $response) use 
     GuiaController::cronCinemas();
     GuiaController::updateURLS();
     logActions("CRON CINEMA");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -239,6 +271,7 @@ $app->get('/sync_free/', function (Request $request, Response $response) use ($a
     GuiaController::cronEventCategory("view_gratuitos_ids", 9);
     GuiaController::updateURLS();
     logActions("EVENTS - FREE");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -247,6 +280,7 @@ $app->get('/sync_cultura/', function (Request $request, Response $response) use 
     GuiaController::cronEventCategory("view_cultura_ids", 4);
     GuiaController::updateURLS();
     logActions("EVENTS - CULT");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -255,6 +289,7 @@ $app->get('/sync_lazer/', function (Request $request, Response $response) use ($
     GuiaController::cronEventCategory("view_lazer_ids", 7);
     GuiaController::updateURLS();
     logActions("EVENTS - LAZER");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -263,6 +298,7 @@ $app->get('/sync_eventos/', function (Request $request, Response $response) use 
     GuiaController::cronEventCategory("view_eventos_ids", 6);
     GuiaController::updateURLS();
     logActions("EVENTS - EVENTS");
+    die();
 });
 /**
  * @Cron Manual Sync. Not called by Crontab -e
@@ -271,13 +307,18 @@ $app->get('/sync_infantil/', function (Request $request, Response $response) use
     GuiaController::cronEventCategory("view_infantil_ids", 2);
     GuiaController::updateURLS();
     logActions("EVENTS - CHILD");
+    die();
 });
 /**
  * @Test purpouse
  * @ignore it only for Test
  */
-$app->get('/test_cinema/', function (Request $request, Response $response) use ($app) {
+$app->get('/test_case/', function (Request $request, Response $response) use ($app) {
     //GuiaController::testCinemas();
+    //GuiaController::reverseImagesFromWordress(8948);
+    $addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
+    echo "<pre>";
+    var_dump($addr);
 }); //Run Slim Microservice
 $app->run();
 

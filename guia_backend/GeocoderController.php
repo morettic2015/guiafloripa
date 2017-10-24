@@ -3,6 +3,8 @@
 use Geocoder\Query\GeocodeQuery;
 use Http\Adapter\Guzzle6\Client;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
+use Geocoder\Provider\ArcGISOnline\ArcGISOnline;
+use Geocoder\Provider\Geonames\Geonames;
 use Geocoder\StatefulGeocoder;
 
 /*
@@ -26,8 +28,23 @@ class GeocoderController extends stdClass {
         if (strlen($address) < 5) {
             return false;
         }
+        $secs = intval(date("s"));
+        $provider = null;
         $adapter = new Client();
-        $provider = new GoogleMaps($adapter);
+
+        /*if (($secs % 4) < 1) {//If mod 4 = 0 Geoname
+            $provider = new Geonames($adapter,'username');
+            echo 'geo';
+        } else*/
+        if (($secs % 3) < 1) {//If mode 3 = 0 Google Maps
+            $provider = new GoogleMaps($adapter);
+            echo 'goo';
+        } else {//Argis
+            $provider = new ArcGISOnline($adapter);
+            echo 'arc';
+        }
+        //var_dump($provider);
+
         $geocoder = new StatefulGeocoder($provider, 'pt-BR');
         $result = $geocoder->geocodeQuery(GeocodeQuery::create($address));
         //Return object
