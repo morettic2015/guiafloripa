@@ -232,3 +232,72 @@ WHERE posts.post_type = '_wp_attached_file'
 select ID,post_title, post_parent, meta_value from wp_posts left join wp_postmeta on ID = post_id where post_type = 'attachment' and meta_key = '_wp_attachment_metadata';
 
 a:6:{s:5:"width";s:3:"100";s:6:"height";s:3:"100";s:14:"hwstring_small";s:22:"height='96' width='96'";s:4:"file";s:29:"2013/09/pousadacorrea_100.jpg";s:5:"sizes";a:2:{s:11:"thumb-75-75";a:3:{s:4:"file";s:27:"pousadacorrea_100-75x75.jpg";s:5:"width";s:2:"75";s:6:"height";s:2:"75";}s:12:"thumb-75-75p";a:3:{s:4:"file";s:27:"pousadacorrea_100-75x75.jpg";s:5:"width";s:2:"75";s:6:"height";s:2:"75";}}s:10:"image_meta";a:10:{s:8:"aperture";s:1:"0";s:6:"credit";s:0:"";s:6:"camera";s:0:"";s:7:"caption";s:0:"";s:17:"created_timestamp";s:1:"0";s:9:"copyright";s:0:"";s:12:"focal_length";s:1:"0";s:3:"iso";s:1:"0";s:13:"shutter_speed";s:1:"0";s:5:"title";s:0:"";}}
+
+
+
+ SELECT 
+        `a`.`ID` AS `event_id`,
+        `a`.`post_title` AS `event_tit`,
+        `a`.`post_content` AS `event_info`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_price_label'))) AS `vevent_price_label`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_price'))) AS `vevent_price`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_moreinfo'))) AS `event_moreinfo`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_dtend'))) AS `event_dtend`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_dtstart'))) AS `event_dtstart`,
+        (SELECT 
+                `wp_postmeta`.`meta_value` AS `state`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`post_id` = `a`.`ID`)
+                    AND (`wp_postmeta`.`meta_key` = 'vevent_location'))) AS `event_id_place`
+    FROM
+        `wp_posts` `a`
+    WHERE
+        ((`a`.`post_type` = 'evento')
+            AND (`a`.`post_status` = 'publish'))
+    ORDER BY `a`.`ID`
+
+
+
+select `wp_term_relationships`.`object_id` AS `object_id` from `wp_term_relationships` where `wp_term_relationships`.`term_taxonomy_id` in (select `wp_term_taxonomy`.`term_taxonomy_id` from `wp_term_taxonomy` where (`wp_term_taxonomy`.`term_id` in (select `wp_terms`.`term_id` from `wp_terms` where ((`wp_terms`.`name` like 'Cursos%') or (`wp_terms`.`name` like 'Eventos%') or (`wp_terms`.`name` like 'Atendimentos%') or (`wp_terms`.`name` like 'Evento%') or (`wp_terms`.`name` like 'Wordkshop%') or (`wp_terms`.`name` like 'Palestras%') or (`wp_terms`.`name` like 'Inscrições%') or (`wp_terms`.`name` like 'Outras%'))) and (`wp_term_taxonomy`.`taxonomy` = 'segmento'))) group by `wp_term_relationships`.`object_id` order by `wp_term_relationships`.`object_id`;
+
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_eventos_ids`
+select `wp_term_relationships`.`object_id`
+ from `wp_term_relationships` 
+where `wp_term_relationships`.`term_taxonomy_id` in 
+(select `wp_term_taxonomy`.`term_taxonomy_id` 
+from `wp_term_taxonomy` where (`wp_term_taxonomy`.`term_id` 
+in (select `wp_terms`.`term_id` from `wp_terms` 
+where (((`wp_terms`.`name` like 'Cursos') or (`wp_terms`.`name` like 'Eventos%') or (`wp_terms`.`name` like 'Atendimentos%') or (`wp_terms`.`name` like 'Evento%') or (`wp_terms`.`name` like 'Workshop%') or (`wp_terms`.`name` like 'Palestras%') or (`wp_terms`.`name` like 'Inscrições%') or (`wp_terms`.`name` like 'Outras%')) and  (`wp_terms`.`name` not like 'Permanente%')) ) and (`wp_term_taxonomy`.`taxonomy` = 'segmento'))) group by `wp_term_relationships`.`object_id` order by `wp_term_relationships`.`object_id`;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ddd3c737364e157acebefc6f608b091",
+    "content-hash": "75f304acd8f9fa6cd2a8d05aa210fd13",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -145,6 +145,63 @@
             "description": "Geocoder ArcGIS Online adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "time": "2017-10-06T13:25:36+00:00"
+        },
+        {
+            "name": "geocoder-php/bing-maps-provider",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/bing-maps-provider.git",
+                "reference": "bcbe769ce53c8bbadad2226ddf4d5b7e3c772015"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/bing-maps-provider/zipball/bcbe769ce53c8bbadad2226ddf4d5b7e3c772015",
+                "reference": "bcbe769ce53c8bbadad2226ddf4d5b7e3c772015",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "nyholm/psr7": "^0.2.2",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^6.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\BingMaps\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder BigMaps adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "time": "2017-06-30T06:41:22+00:00"
         },
         {
             "name": "geocoder-php/common-http",
@@ -321,6 +378,69 @@
             "description": "Geocoder GoogleMaps adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "time": "2017-09-16T13:21:54+00:00"
+        },
+        {
+            "name": "geocoder-php/locationiq-provider",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/locationiq-provider.git",
+                "reference": "877876b229a806b7c2a0197efbcdd16cef86768b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/locationiq-provider/zipball/877876b229a806b7c2a0197efbcdd16cef86768b",
+                "reference": "877876b229a806b7c2a0197efbcdd16cef86768b",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "nyholm/psr7": "^0.2.2",
+                "php-http/curl-client": "^1.7",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "6.3.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\LocationIQ\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Srihari Thalla",
+                    "email": "srihari@unwiredlabs.com"
+                }
+            ],
+            "description": "Geocoder LocationIQ adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "keywords": [
+                "address",
+                "geocoder",
+                "geocoding",
+                "locationiq"
+            ],
+            "time": "2017-10-06T13:25:36+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1694,7 +1814,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "geocoder-php/arcgis-online-provider": 20,
-        "geocoder-php/geonames-provider": 20
+        "geocoder-php/geonames-provider": 20,
+        "geocoder-php/locationiq-provider": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

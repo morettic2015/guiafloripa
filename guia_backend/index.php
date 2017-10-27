@@ -5,14 +5,14 @@
  * 
  * www.guiafloripa.com.br
  * 
- * @site https://app.guiafloripa.com.br
+ * @Site https://app.guiafloripa.com.br
  * @Eventos e Estabelecimentos de Floripa
  * @DEV by Morettic.com.br
- * @copyright (c) 2017, MOrettic - Experiências Digitais
- * @since Beta 1.2.5 2017-10-18
- * @tutorial https://github.com/morettic2015/guiafloripa
- * @partner http://www.experienciasdigitais.com.br
- * @partner http://www.citywatch.com.br
+ * @Copyright (c) 2017, Morettic - Experiências Digitais
+ * @Since Beta 1.2.5 2017-10-18
+ * @Tutorial https://github.com/morettic2015/guiafloripa
+ * @Partner http://www.experienciasdigitais.com.br
+ * @Partner http://www.citywatch.com.br
  */
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -92,7 +92,7 @@ $app->get('/place/{id}', function (Request $request, Response $response) use ($a
     //Content Type JSON Cross Domain JSON
     //Cache 100 days
     $newResponse = $this->cache
-            ->withExpires($response, time() + 3600 * 24* 100)
+            ->withExpires($response, time() + 3600 * 24 * 100)
             ->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
@@ -203,6 +203,21 @@ $app->post('/report/', function (Request $request, Response $response) use ($app
     logActions("BUG TRACKER");
     return $newResponse->withJson($data, 201);
 });
+/**
+ * GET issues from Soap bugtracker webservice
+ * @Endpoint for Mobile Issues!
+ * * */
+$app->get('/issues/', function (Request $request, Response $response) use ($app) {
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24);
+    $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+
+    $data = BugTracker::getIssueBugTracker(10);
+    logActions("/issues/");
+    return $newResponse->withJson($data, 201);
+});
 //////////////////////////////////////////////////////////////////////////////
 /**
  * @see /sync_* Only for integration purpouse 
@@ -310,6 +325,44 @@ $app->get('/sync_infantil/', function (Request $request, Response $response) use
     die();
 });
 /**
+ * @Sync Point
+ */
+$app->get('/sync_tourism_manual/{id}', function (Request $request, Response $response) use ($app) {
+    $id = $request->getAttribute('id');
+    GuiaController::updatePlacesByCategoryID("view_servico_turistico", 5, $id);
+    logActions("/sync_tourism_manual/{id}");
+    die();
+});
+/**
+ * @Sync Point
+ */
+$app->get('/sync_host_manual/{id}', function (Request $request, Response $response) use ($app) {
+    $id = $request->getAttribute('id');
+    GuiaController::updatePlacesByCategoryID("view_hospedagem", 8, $id);
+    logActions("/sync_host_manual/{id}");
+    die();
+});
+/**
+ * @Sync Point
+ */
+$app->get('/sync_comer_manual/{id}', function (Request $request, Response $response) use ($app) {
+    $id = $request->getAttribute('id');
+    GuiaController::updatePlacesByCategoryID("view_comer_beber", 1, $id);
+    logActions("/sync_comer_manual/{id}");
+    die();
+});
+/**
+ * @Sync Point
+ */
+$app->get('/sync_recorrencias/', function (Request $request, Response $response) use ($app) {
+    GuiaController::updateReccuringDates();
+    logActions("/sync_recorrencias/");
+    die();
+});
+
+
+
+/**
  * @Test purpouse
  * @ignore it only for Test
  */
@@ -364,4 +417,9 @@ function get_client_ip() {
     }
 
     return $ipaddress;
+}
+
+function tirarAcentos($string) {
+    return strtr(utf8_decode($string), utf8_decode(
+                    'ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ'), 'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy');
 }

@@ -11,6 +11,8 @@
         "php-http/cache-plugin": "^1.4",
         "mantishub/mantis-php-client":"*",
         "geocoder-php/arcgis-online-provider": "dev-master",
-        "geocoder-php/geonames-provider": "dev-master"
+        "geocoder-php/geonames-provider": "dev-master",
+        "geocoder-php/bing-maps-provider": "^4.0",
+        "geocoder-php/locationiq-provider": "dev-master"
     }
 }

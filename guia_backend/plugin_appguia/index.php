@@ -36,6 +36,15 @@ add_shortcode('guia_app', 'guia_app_redirect');
 /**
  * @Show Slider with today events
  *  */
+function fguia_panel() {
+    include PLUGIN_ROOT_DIR . 'views/panel.php';
+}
+
+add_shortcode('guia_panel', 'fguia_panel');
+
+/**
+ * @Show Slider with today events
+ *  */
 function fguia_event() {
     include PLUGIN_ROOT_DIR . 'views/event.php';
 }
@@ -63,6 +72,22 @@ function get_content() {
     }
 }
 
+add_action('admin_menu', 'wpse_91693_register');
+
+function wpse_91693_register() {
+    add_menu_page(
+            'Guia APP Admin', // page title
+            'Guia APP Admin', // menu title
+            'manage_options', // capability
+            'app_guiafloripa_manager_backend', // menu slug
+            'wpse_91693_render', null, 6
+    );
+}
+
+function wpse_91693_render() {
+    include PLUGIN_ROOT_DIR . 'views/admin.php';
+}
+
 /* gets content from a URL via curl */
 
 function get_url($url) {
@@ -74,6 +99,47 @@ function get_url($url) {
     curl_close($ch);
     $result = iconv("Windows-1251", "UTF-8", $content);
     return $result;
+}
+
+function post_url($url, $fields) {
+
+
+//url-ify the data for the POST
+    foreach ($fields as $key => $value) {
+        $fields_string .= $key . '=' . $value . '&';
+    }
+    rtrim($fields_string, '&');
+
+//open connection
+    $ch = curl_init();
+
+//set the url, number of POST vars, POST data
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, count($fields));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+
+//execute post
+    $result = curl_exec($ch);
+
+//close connection
+    curl_close($ch);
+
+    return $result;
+}
+
+function wp_login($login, $pass) {
+    $creds = array(
+        'user_login' => $login,
+        'user_password' => $pass,
+        'remember' => true
+    );
+
+    $user = wp_signon($creds, false);
+    //var_dump($user);
+
+    return $user;
 }
 
 ?>

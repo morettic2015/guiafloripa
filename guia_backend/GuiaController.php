@@ -19,23 +19,7 @@ class GuiaController extends stdClass {
     public static final function getPlaceById($id) {
         $query = "SELECT * FROM guiafloripa_app.Place where idPlace = " . $id;
         $place = DB::query($query);
-
-        // var_dump($place);die;
-        // $std = new stdClass();
-        /*  $std->nrPhone = $place[0]['nrPhone'];
-          $std->deLogo = $place['deLogo'];
-          $std->deAddress = $place['deAddress'];
-          //$std->deEvent = $row['deEvent'];
-          $std->dePlace = $place['dePlace'];
-          //$std->dtFrom = $row['dtFrom'];
-          $std->nmPlace = ($place['nmPlace']);
-          //$std->dtUntil = $row['dtUntil'];
-          $std->idType = $tp;
-          $std->nrCep = $place['nrCep'];
-          $std->deWebsite = $place['deWebsite'];
-          $std->nrLat = $place['nrLat'];
-          $std->nrLng = $place['nrLng']; */
-
+        DB::disconnect();
         return $place;
     }
 
@@ -79,20 +63,29 @@ class GuiaController extends stdClass {
      */
     public static function getEventosDeHoje() {
         //Set Charset
+        $dayOfWeek = date("D");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         //Set
         $query = " select * from viewEventPlaces "
                 . " where ((dtFrom >= (now()- INTERVAL  360 MINUTE)"
                 . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
-                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())";
+                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())"
+                . " and ((json_contains(deRecurring->'$[*]', json_array('')) or json_contains(deRecurring, json_array('$dayOfWeek'))))";
+               // . " or (dtUntil>=NOW()) and ()";
+        //echo $query;die;
         $eventos = DB::query($query); // misspelled SELECTvardump(
+        //
+        //var_dump($eventos);
 //Return Object
         $stdGuia = new stdClass();
         $stdGuia->e = [];
+        
         foreach ($eventos as $row) {
 
+            //var_dump($row);die;
+            // Img from 
             $img = is_null($row['deLogo']) ? (is_null($row['deImg']) ? 'default' : $row['deImg']) : $row['deLogo'];
-
+            // Stad Class
             $std = new stdClass();
             $std->nrPhone = $row['nrPhone'];
             $std->deLogo = $img;
@@ -108,6 +101,7 @@ class GuiaController extends stdClass {
             $std->nrLng = offset($row['nrLng']);
             $std->deWebsite = $row['deWebsite'];
             $std->deImg = $row['deImg'];
+            $std->deRecurring = $row['deRecurring'];
             $std->printDate = printEventDate($row['dtFrom'], $row['dtUntil']);
 //Adiciona
             $stdGuia->e[] = $std;
@@ -738,6 +732,219 @@ class GuiaController extends stdClass {
         if (!empty($pErrors)) {
             BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
         }
+    }
+
+    /**
+     * @Update Events
+     * @Put reccuring dates information inside 
+     * @Each event has it owns period
+     *  Sun | on 
+     *  Wed | on
+     *  Fri | on  
+     *  Mon | on
+     *  Tue | on 
+     *  Thu | on 
+     *  Sat | on
+     */
+    public static final function updateReccuringDates() {
+
+        $result = DB::query("SELECT idEvent FROM Event");
+        // echo date("D", date($date));die;
+        echo "<pre>";
+        //var_dump($result);
+
+        $parameters = '(';
+        foreach ($result as $row) {
+            $parameters .= $row['idEvent'];
+            $parameters .= ',';
+        }
+        $parameters .= "-1)";
+
+        //echo $parameters;
+
+
+        $query = "SELECT 
+        `wp_posts`.`ID` AS `ID`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Mon')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Mon`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Tue')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Tue`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Wed')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Wed`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Fri')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Fri`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Sat')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Sat`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Sun')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Sun`,
+        (SELECT `wp_postmeta`.`meta_value`
+            FROM
+                `wp_postmeta`
+            WHERE
+                ((`wp_postmeta`.`meta_key` = 'Thu')
+                    AND (`wp_postmeta`.`post_id` = `wp_posts`.`ID`))) AS `Thu`
+        FROM `wp_posts`
+        WHERE ID in $parameters";
+
+        //echo $query;
+
+        $conn = new MysqlDB();
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $conn->execute($query); // misspelled SELECT
+        $i = 0;
+
+        $pErrors = "";
+
+        DB::debugMode();
+
+        //while ($row = $conn->hasNext()) {
+        while ($row = $conn->hasNext()) {
+            //  var_dump($row);
+            //  die;
+
+            $std = [];
+
+            if (!is_null($row['Mon'])) {
+                $std[] = 'Mon';
+            }
+            if (!is_null($row['Tue'])) {
+                $std[] = 'Tue';
+            }
+            if (!is_null($row['Wed'])) {
+                $std[] = 'Wed';
+            }
+            if (!is_null($row['Fri'])) {
+                $std[] = 'Fri';
+            }
+            if (!is_null($row['Sat'])) {
+                $std[] = 'Sat';
+            }
+            if (!is_null($row['Sun'])) {
+                $std[] = 'Sun';
+            }
+            if (!is_null($row['Thu'])) {
+                $std[] = 'Thu';
+            }
+            //  var_dump($std);
+            //  
+            $json = json_encode($std);
+            //
+            //echo ( $json );
+
+
+            DB::update('Event', array(
+                'deRecurring' => $json
+                    ), "idEvent=%s", $row['ID']);
+        }
+        $conn->closeConn();
+        DB::disconnect();
+        die;
+    }
+
+    /**
+     * @ Force Place Update
+     */
+
+    /**
+     *  @Insert places and create custom cat by View
+     * */
+    public static final function updatePlacesByCategoryID($view, $typeID, $id) {
+        //echo "<pre>";
+        //DB::debugMode();
+        $conn = new MysqlDB();
+        $query = "select * from $view where endereco is not null and ID = $id";
+        echo $query;
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $conn->execute($query); // misspelled SELECT
+        $i = 0;
+
+        $pErrors = "";
+        //while ($row = $conn->hasNext()) {
+        if ($row = $conn->hasNext()) {
+            echo "<pre>";
+            var_dump($row);
+            try {
+                $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
+                var_dump($obj);
+                if (is_null($obj->lat) || !($obj instanceof stdClass)) {
+                    echo "ERRO"; die;
+                }
+
+                //CEP FROM GEOLOCATION
+                $cep = $obj->cep == NULL ? "88000-000" : $obj->cep;
+                //Place Description
+                $dePlace = $row['post_excerpt'];
+                $nmPlace = $row['post_title'];
+                $email = strlen($row['email']) < 2 ? NULL : $row['email'];
+
+                //Insert Update Place
+                DB::insertUpdate(
+                        'Place', array(
+                    'idPlace' => $row['ID'], //primary key
+                    'nmPlace' => mb_convert_encoding($nmPlace, "utf8"),
+                    'nrPhone' => $row['telefone'],
+                    'deWebsite' => null,
+                    'deAddress' => ($obj->formatted_address),
+                    'deLogo' => $row['logo'],
+                    'dePlace' => $dePlace,
+                    'deEmail' => $email,
+                    'nrLat' => $obj->lat,
+                    'nrLng' => $obj->lng,
+                    'nrCep' => $cep,
+                    'idPlaceBranch' => null
+                ));
+
+                //Associate place with a given type
+                $query = "insert into PlaceType values($typeID," . $row['ID'] . ",now()) on duplicate key update lastUpdate = now();";
+                DB::query($query);
+                DB::affectedRows();
+                DB::commit();
+            } catch (Exception $e) {
+                var_dump($e);
+                $pErrors = "";
+                $pErrors .= "<p>";
+                $pErrors .= "FILE";
+                $pErrors .= $e->getFile();
+                $pErrors .= "<br>MSG";
+                $pErrors .= $e->getMessage();
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($row);
+                $pErrors .= "<br>JSON";
+                $pErrors .= json_encode($e);
+                $pErrors .= "<hr></p>";
+            }
+        }
+        //Close connections
+        DB::disconnect();
+        $conn->closeConn();
+        /*//Send log to Mantis
+        if (!empty($pErrors)) {
+            BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
+        }*/
     }
 
 }
