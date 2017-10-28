@@ -10,6 +10,8 @@ define('PLUGIN_ROOT_DIR', plugin_dir_path(__FILE__));
 const DEFAULT_VIEW_URL = "htps://app.guiafloripa.com.br";
 const DEFAULT_REST_URL = "https://guiafloripa.morettic.com.br/busca/";
 const DEFAULT_REST_PLACE = "https://guiafloripa.morettic.com.br/place/";
+const DEFAULT_REST_ISSUE = "https://guiafloripa.morettic.com.br/issues/";
+const DEFAULT_REST_STATS = "https://guiafloripa.morettic.com.br/sync_stats/";
 const CACHE_FILE = "guia_cache.json";
 
 /**
@@ -71,17 +73,63 @@ function get_content() {
         return ($content);
     }
 }
+function get_stats() {
+    //vars
+    $current_time = time();
+    $expire_time = 24 * 60 * 60 *3;
+    $file_time = filemtime("stas_" . CACHE_FILE);
+    //echo $file_time;
+    //decisions, decisions
+    if (file_exists("stas_" . CACHE_FILE) && ($current_time - $expire_time < $file_time)) {
+        return file_get_contents("stas_" . CACHE_FILE);
+    } else {
+        $content = get_url(DEFAULT_REST_STATS);
+
+        //echo mb_detect_encoding($content);
+
+        file_put_contents("stas_" . CACHE_FILE, ($content));
+        return ($content);
+    }
+}
+function get_bugs() {
+    //vars
+    $current_time = time();
+    $expire_time = 24 * 60 * 60;
+    $file_time = filemtime("BUG_" . CACHE_FILE);
+    //echo $file_time;
+    //decisions, decisions
+    if (file_exists("BUG_" . CACHE_FILE) && ($current_time - $expire_time < $file_time)) {
+        return file_get_contents("BUG_" . CACHE_FILE);
+    } else {
+        $content = get_url(DEFAULT_REST_ISSUE);
+
+        //echo mb_detect_encoding($content);
+
+        file_put_contents("BUG_" . CACHE_FILE, ($content));
+        return ($content);
+    }
+}
 
 add_action('admin_menu', 'wpse_91693_register');
 
 function wpse_91693_register() {
     add_menu_page(
-            'Guia APP Admin', // page title
+            'Sincronização', // page title
             'Guia APP Admin', // menu title
             'manage_options', // capability
             'app_guiafloripa_manager_backend', // menu slug
             'wpse_91693_render', null, 6
     );
+    add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Estatisticas', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_stats');
+    add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');
+}
+
+function wpse_91693_stats() {
+    include PLUGIN_ROOT_DIR . 'views/stats.php';
+}
+
+function wpse_91693_bug() {
+    include PLUGIN_ROOT_DIR . 'views/bug.php';
 }
 
 function wpse_91693_render() {

@@ -71,7 +71,7 @@ class GuiaController extends stdClass {
                 . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
                 . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())"
                 . " and ((json_contains(deRecurring->'$[*]', json_array('')) or json_contains(deRecurring, json_array('$dayOfWeek'))))";
-               // . " or (dtUntil>=NOW()) and ()";
+        // . " or (dtUntil>=NOW()) and ()";
         //echo $query;die;
         $eventos = DB::query($query); // misspelled SELECTvardump(
         //
@@ -79,7 +79,7 @@ class GuiaController extends stdClass {
 //Return Object
         $stdGuia = new stdClass();
         $stdGuia->e = [];
-        
+
         foreach ($eventos as $row) {
 
             //var_dump($row);die;
@@ -259,6 +259,46 @@ class GuiaController extends stdClass {
 //Close Database
         DB::disconnect(); //Close Con FROM APP
         $conn->closeConn(); //Close Con FROM 
+    }
+
+    public static final function statsFromOriginDestiny() {
+        $query = "select 
+                    (select count(*) from view_comer_beber) as eat,
+                    (select count(*) from view_cultura_ids) as cult,
+                    (select count(*) from view_gratuitos_ids) as free,
+                    (select count(*) from view_hospedagem) as host,
+                    (select count(*) from view_infantil_ids) as child,
+                    (select count(*) from view_lazer_ids) as party,
+                    (select count(*) from view_servico_turistico) as tourism,
+                    (select count(*) from view_eventos_ids) as event,
+                    (SELECT count(*) from view_cinema) as cine
+                from dual";
+
+        $conn = new MysqlDB();
+        $conn->execute($query); // misspelled SELECT
+
+        $std = new stdClass();
+
+        $std->origin = $conn->hasNext();
+
+
+        $query = "select 
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 3) as cine,
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 4) as cult,
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 6) as event,
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 9) as free,
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 7) as party,
+                    (SELECT count(*) FROM guiafloripa_app.Event where idType = 2) as child,
+                    (SELECT count(*) FROM guiafloripa_app.Place where idPlace in (select fkIdPlace from PlaceType where fkIdType = 8)) as host,
+                    (SELECT count(*) FROM guiafloripa_app.Place where idPlace in (select fkIdPlace from PlaceType where fkIdType = 5)) as tourism,
+                    (SELECT count(*) FROM guiafloripa_app.Place where idPlace in (select fkIdPlace from PlaceType where fkIdType = 1)) as eat
+                 from dual";
+
+        $std->destiny = DB::query($query);
+        DB::disconnect();
+
+        $conn->closeConn();
+        return $std;
     }
 
     public static function cronEventCategory($type, $id) {
@@ -891,7 +931,8 @@ class GuiaController extends stdClass {
                 $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
                 var_dump($obj);
                 if (is_null($obj->lat) || !($obj instanceof stdClass)) {
-                    echo "ERRO"; die;
+                    echo "ERRO";
+                    die;
                 }
 
                 //CEP FROM GEOLOCATION
@@ -941,10 +982,10 @@ class GuiaController extends stdClass {
         //Close connections
         DB::disconnect();
         $conn->closeConn();
-        /*//Send log to Mantis
-        if (!empty($pErrors)) {
-            BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
-        }*/
+        /* //Send log to Mantis
+          if (!empty($pErrors)) {
+          BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
+          } */
     }
 
 }

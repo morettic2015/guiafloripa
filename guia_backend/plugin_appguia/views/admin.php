@@ -10,6 +10,7 @@ $user = wp_get_current_user();
 print "<h1>$title</h1>";
 print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
 ?>
+
 <!-- Start tabs -->
 <div>
     <ul class="wp-tab-bar" >

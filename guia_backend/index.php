@@ -154,7 +154,19 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
     //Response Busca Data
     return $newResponse->withJson($data, 201);
 });
-
+/**
+ * @Stats From Origin Destiny
+ */
+$app->get('/sync_stats/', function (Request $request, Response $response) use ($app) {
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 *3);
+    $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = GuiaController::statsFromOriginDestiny();
+    logActions("'/sync_stats/'");
+    return $newResponse->withJson($data, 201);
+});
 /**
  * @Cron Run Once a Day 13:00 o Clock
  * @Push Send daily push by onesignal PushNotifications
