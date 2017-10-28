@@ -66,11 +66,11 @@ class GuiaController extends stdClass {
         $dayOfWeek = date("D");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         //Set
-        $query = " select * from viewEventPlaces "
-                . " where ((dtFrom >= (now()- INTERVAL  360 MINUTE)"
-                . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
-                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())"
-                . " and ((json_contains(deRecurring->'$[*]', json_array('')) or json_contains(deRecurring, json_array('$dayOfWeek'))))";
+        $query = " select * from viewEventPlaces where ((dtFrom >= (now()- INTERVAL 720 MINUTE) 
+								and dtUntil<=NOW() + INTERVAL 720 MINUTE))
+                    union
+                    select * from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
+                    and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil DESC";
         // . " or (dtUntil>=NOW()) and ()";
         //echo $query;die;
         $eventos = DB::query($query); // misspelled SELECTvardump(
@@ -418,10 +418,17 @@ class GuiaController extends stdClass {
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
         // echo "<pre>";
-
+        $i = 0;
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
             //var_dump($row); //die;
+            echo "|".$i++;
+            if ($row['dtstart'] === "" || !$row['dtend'] === "") {
+                echo "NOT IMPORTED WITHOUT DATE";
+                var_dump($eventRow);
+                continue;
+            }
+
             $eventRow->dtstart = $row['dtstart'];
             $eventRow->dtend = $row['dtend'];
             $eventRow->titulo = utf8_encode($row['titulo']);
@@ -470,9 +477,7 @@ class GuiaController extends stdClass {
             }
 
             $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
-
             $number_accounts = DB::queryFirstField($query);
-
             if (!($number_accounts[0] > 0)) {
 
                 $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
@@ -502,9 +507,6 @@ class GuiaController extends stdClass {
                         ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
                 DB::commit();
             }
-            //insert update Cinema
-            //echo $obj->titulo_original . " --";
-
             $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
             $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
 
@@ -535,6 +537,8 @@ class GuiaController extends stdClass {
             ));
             DB::commit();
         } catch (Exception $e) {
+            var_dump($obj);
+            die;
             $pErrors1 = "";
             $pErrors1 .= "<p>";
             $pErrors1 .= "FILE";
