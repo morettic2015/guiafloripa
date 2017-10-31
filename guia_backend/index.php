@@ -159,17 +159,18 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
 /**
  * @Add place or Event to favorite
  */
-$app->get('/favorite/{placeID}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
+$app->get('/favorite/{pId}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
     $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
     $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     $data = new stdClass();
-    $data->placeID = $request->getAttribute('placeID');
+    $data->placeID = $request->getAttribute('pId');
     $data->eventID = $request->getAttribute('eventID');
     $data->email = $request->getAttribute('email');
-    $data = ProfileController::favoriteOne($data->placeID, $data->eventID, $data->email);
+    //var_dump($data);
+    $data = ProfileController::favoriteOne($data);
     logActions("'/favorite/'");
     return $newResponse->withJson($data, 201);
 });
