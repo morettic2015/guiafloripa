@@ -377,7 +377,7 @@ $app->get('/sync_comer_manual/{id}', function (Request $request, Response $respo
     die();
 });
 /**
- * @Sync Point
+ * @Sync Point 47244 botequim_100.gif
  */
 $app->get('/sync_prop/', function (Request $request, Response $response) use ($app) {
     GuiaController::updateURLS();

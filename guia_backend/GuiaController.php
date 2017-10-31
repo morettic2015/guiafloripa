@@ -536,7 +536,7 @@ class GuiaController extends stdClass {
             $pErrors1 .= "<br>MSG";
             $pErrors1 .= $e->getMessage();
             $pErrors1 .= "<br>JSON";
-            $pErrors1 .= json_encode($row);
+            $pErrors1 .= json_encode($obj);
             $pErrors1 .= "<br>JSON";
             $pErrors1 .= json_encode($e);
             $pErrors1 .= "<hr></p>";
