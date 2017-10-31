@@ -101,7 +101,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].nmPlace,
+                    title: lEventos[i].deEvent,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
@@ -218,7 +218,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].nmPlace,
+                    title: lEventos[i].deEvent,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
@@ -317,7 +317,7 @@ var MapUtils = function () {
                     //alert()
                     position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
                     map: map,
-                    title: lEventos[i].nmPlace,
+                    title: lEventos[i].deEvent,
                     indice: i,
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
