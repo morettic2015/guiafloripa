@@ -49,6 +49,8 @@ $app->add(new \Slim\HttpCache\Cache('public', 86400));
   ];
   $c = new \Slim\Container($configuration);
   $app = new \Slim\App($c); */
+
+//$app->config('debug', true);
 /**
  * @Search //Define Routes //Busca Eventos de Hoje
  */
@@ -155,10 +157,27 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
     return $newResponse->withJson($data, 201);
 });
 /**
+ * @Add place or Event to favorite
+ */
+$app->get('/favorite/{placeID}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
+    $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = new stdClass();
+    $data->placeID = $request->getAttribute('placeID');
+    $data->eventID = $request->getAttribute('eventID');
+    $data->email = $request->getAttribute('email');
+    $data = ProfileController::favoriteOne($data->placeID, $data->eventID, $data->email);
+    logActions("'/favorite/'");
+    return $newResponse->withJson($data, 201);
+});
+/**
  * @Stats From Origin Destiny
  */
 $app->get('/sync_stats/', function (Request $request, Response $response) use ($app) {
-    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 *3);
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
     $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
@@ -287,7 +306,6 @@ $app->get('/sync_images/', function (Request $request, Response $response) use (
 $app->get('/sync_cinemas/', function (Request $request, Response $response) use ($app) {
     //header("Content-type: text/html; charset=iso");
     GuiaController::cronCinemas();
-    GuiaController::updateURLS();
     logActions("CRON CINEMA");
     die();
 });
@@ -296,7 +314,6 @@ $app->get('/sync_cinemas/', function (Request $request, Response $response) use 
  */
 $app->get('/sync_free/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_gratuitos_ids", 9);
-    GuiaController::updateURLS();
     logActions("EVENTS - FREE");
     die();
 });
@@ -305,7 +322,6 @@ $app->get('/sync_free/', function (Request $request, Response $response) use ($a
  */
 $app->get('/sync_cultura/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_cultura_ids", 4);
-    GuiaController::updateURLS();
     logActions("EVENTS - CULT");
     die();
 });
@@ -314,7 +330,6 @@ $app->get('/sync_cultura/', function (Request $request, Response $response) use 
  */
 $app->get('/sync_lazer/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_lazer_ids", 7);
-    GuiaController::updateURLS();
     logActions("EVENTS - LAZER");
     die();
 });
@@ -323,7 +338,6 @@ $app->get('/sync_lazer/', function (Request $request, Response $response) use ($
  */
 $app->get('/sync_eventos/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_eventos_ids", 6);
-    GuiaController::updateURLS();
     logActions("EVENTS - EVENTS");
     die();
 });
@@ -332,7 +346,6 @@ $app->get('/sync_eventos/', function (Request $request, Response $response) use 
  */
 $app->get('/sync_infantil/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_infantil_ids", 2);
-    GuiaController::updateURLS();
     logActions("EVENTS - CHILD");
     die();
 });
@@ -366,9 +379,11 @@ $app->get('/sync_comer_manual/{id}', function (Request $request, Response $respo
 /**
  * @Sync Point
  */
-$app->get('/sync_recorrencias/', function (Request $request, Response $response) use ($app) {
+$app->get('/sync_prop/', function (Request $request, Response $response) use ($app) {
+    GuiaController::updateURLS();
+    GuiaController::reverseImagesFromWordress();
     GuiaController::updateReccuringDates();
-    logActions("/sync_recorrencias/");
+    logActions("/sync_prop/");
     die();
 });
 

@@ -33,13 +33,30 @@ class LeadController extends stdClass {
         return $response;
     }
 
+    public static function createSegment($name, $alias, $desc) {
+        $data = array(
+            'name' => $name,
+            'alias' => $alias,
+            'description' => $desc,
+            'isPublished' => 1
+        );
+        $con = LeadController::connectMautic();
+        
+        
+        $segmentApi = $con->api->newApi("segments", $con->auth, MAUTIC_INSTANCE_API);
+        
+        //var_dump($segmentApi);die;
+        $segment = $segmentApi->create($data);
+        return $segment;
+    }
+
     /**
      * @Add Lead To Segment
      */
-    public static function addContactToSegment($contactId) {
+    public static function addContactToSegment($contactId,$segmentID=MAUTIC_SEGMENT_ID) {
         $con = LeadController::connectMautic();
         $segmentApi = $con->api->newApi("segments", $con->auth, MAUTIC_INSTANCE_API);
-        $response = $segmentApi->addContact(MAUTIC_SEGMENT_ID, $contactId);
+        $response = $segmentApi->addContact($segmentID, $contactId);
         return $response;
     }
 

@@ -58,31 +58,25 @@ class GuiaController extends stdClass {
         return $stdGuia;
     }
 
-    /**
+    /*     * DATE_FORMAT(NOW() - INTERVAL FLOOR(RAND() * 14) DAY,'%Y-%m-%d')
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */
+
     public static function getEventosDeHoje() {
         //Set Charset
         $dayOfWeek = date("D");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        //Set
-        $query = " select * from viewEventPlaces where ((dtFrom >= (now()- INTERVAL 720 MINUTE) 
-								and dtUntil<=NOW() + INTERVAL 720 MINUTE))
+        $query = " select * from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d')>= (DATE_FORMAT(now(),'%Y-%m-%d')) 
+								and DATE_FORMAT(dtUntil,'%Y-%m-%d')<=DATE_FORMAT(NOW() + INTERVAL 300 MINUTE,'%Y-%m-%d')))
                     union
                     select * from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
                     and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil DESC";
-        // . " or (dtUntil>=NOW()) and ()";
-        //echo $query;die;
+
         $eventos = DB::query($query); // misspelled SELECTvardump(
-        //
-        //var_dump($eventos);
-//Return Object
         $stdGuia = new stdClass();
         $stdGuia->e = [];
 
         foreach ($eventos as $row) {
-
-            //var_dump($row);die;
             // Img from 
             $img = is_null($row['deLogo']) ? (is_null($row['deImg']) ? 'default' : $row['deImg']) : $row['deLogo'];
             // Stad Class
@@ -103,14 +97,14 @@ class GuiaController extends stdClass {
             $std->deImg = $row['deImg'];
             $std->deRecurring = $row['deRecurring'];
             $std->printDate = printEventDate($row['dtFrom'], $row['dtUntil']);
-//Adiciona
+            //Adiciona
             $stdGuia->e[] = $std;
         }
-//get types descriptions
+        //get types descriptions
         $query = "SELECT * FROM Type;";
-//RUn qyery
+        //RUn qyery
         $types = DB::query($query); // misspelled SELECT
-//Prepare another return
+        //Prepare another return
         $stdGuia->t = [];
         foreach ($types as $row) {
             $std = new stdClass();
@@ -118,10 +112,10 @@ class GuiaController extends stdClass {
             $std->deType = $row['deType'];
             $stdGuia->t[] = $std;
         }
-//Merge array with Cinemas from today
+        //Merge array with Cinemas from today
         $cine = CinemaController::loadCinemaPlaces(null, null);
         $stdGuia->e = array_merge($stdGuia->e, $cine);
-//Close Connection
+        //Close Connection
         DB::disconnect();
         return $stdGuia;
     }
@@ -309,9 +303,6 @@ class GuiaController extends stdClass {
 
         $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtend >= $yesterday  and  a.event_id in ( select object_id from $type) ";
 
-        //$query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where a.event_id in (41801)";
-        //$query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where a.event_id in ( 41801) ";
-
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         //echo "Init List ";
@@ -422,10 +413,10 @@ class GuiaController extends stdClass {
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
             //var_dump($row); //die;
-            echo "|".$i++;
+            echo "|" . $i++;
             if ($row['dtstart'] === "" || !$row['dtend'] === "") {
                 echo "NOT IMPORTED WITHOUT DATE";
-                var_dump($eventRow);
+                var_dump($row);
                 continue;
             }
 
@@ -472,13 +463,12 @@ class GuiaController extends stdClass {
             DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
             //Error record
             if (is_null($obj->id_wp_post)) {
-                BugTracker::addIssueBugTracker(10, BACKEND, "updateCinemaEvent($obj)" . $e->getFile(), $e->getMessage() . " JSON:" . json_encode($obj));
                 return;
             }
 
             $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
             $number_accounts = DB::queryFirstField($query);
-            if (!($number_accounts[0] > 0)) {
+            if($number_accounts <1) {
 
                 $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
                 if (is_null($obj->geo->lat)) {
@@ -538,7 +528,7 @@ class GuiaController extends stdClass {
             DB::commit();
         } catch (Exception $e) {
             var_dump($obj);
-            die;
+           // die;
             $pErrors1 = "";
             $pErrors1 .= "<p>";
             $pErrors1 .= "FILE";
@@ -572,15 +562,16 @@ class GuiaController extends stdClass {
 
         $number_accounts = DB::queryFirstField($query);
         //var_dump($number_accounts);
-// echo $number_accounts === "1";
+//echo $number_accounts === "1";die;
 //  echo "Cinema exists?" . $number_accounts;
 
-        if (!($number_accounts[0] > 0)) {
-
+        if($number_accounts <1) {
+            echo "Não EX!";
+            var_dump($obj);
             //echo time() . "*********************************************\n";
             $obj->geo = GeocoderController::geocodeQuery($obj->endereco . ", " . $obj->cidade);
 
-            if ((!($obj->geo instanceof stdClass)) || is_null($obj->geo) || is_null($obj->geo->lat)) {
+            if (is_null($obj->geo) || is_null($obj->geo->lat)) {
                 return;
             }
             $cep = "88000-000";

@@ -39,10 +39,10 @@ class GeocoderController extends stdClass {
         $provider = null;
         $adapter = new Client();
         $geo = new stdClass();
-        if (($secs % 3) === 0) {//If mod 4 = 0 Geoname
+       /* if (($secs % 3) === 0) {//If mod 4 = 0 Geoname
             $provider = new ArcGISOnline($adapter, "BR");
             $geo->proviver = "ARC";
-        } else if (($secs % 5) === 0) {//If mode 3 = 0 Google Maps
+        } else */if (($secs % 3) === 0) {//If mode 3 = 0 Google Maps
             $provider = new GoogleMaps($adapter);
             $geo->proviver = "GOO";
         } else {//Argis
