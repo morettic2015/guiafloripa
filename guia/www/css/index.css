@@ -234,12 +234,12 @@ h1 {
 
 .containerImagem{
    
-    /* max-width:100%;
-     position: relative;*/
+    max-width:100%;
+     position: relative;
 
-    /* max-width:400px; */
-    /*  align-items: center;
-      overflow:hidden;*/
+    /* max-width:400px;*/
+    align-items: center;
+    overflow:hidden;
 }
 .imgPopUp {
      border: #000 2px solid;
@@ -249,4 +249,9 @@ h1 {
      top: 0%;
      height: 100%;
      -webkit-transform: translateY(-50%); */
-};
+}
+
+.controlgroup-textinput {
+        padding-top:.22em;
+        padding-bottom:.22em;
+    };

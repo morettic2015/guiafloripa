@@ -46,10 +46,23 @@ var app = {
             //Loader for Actions
             myLoader = new Loader();
         }, function (e) {
-            navigator.splashscreen.hide();//Hide Splash
-            //No GPS or WIFI!
-            mapUtils.showNoGPS();
-        }, {timeout: 5000});
+            //Old Location
+            if (localStorage.getItem("lat") !== null) {
+                mapUtils.showMessage("Sem GPS...", "#FF0000");
+                var pOld = {'coords':
+                                {'latitude':localStorage.getItem("lat"),
+                                 'longitude':localStorage.getItem("lon")}
+                            }
+                mapUtils.sucessLoad(pOld);
+                navigator.splashscreen.hide();//Hide Splash
+               // window.plugins.AdMob.createInterstitialView();	//get the interstitials ready to be shown
+               // window.plugins.AdMob.requestInterstitialAd();
+            } else {
+                //No GPS or WIFI!
+                navigator.splashscreen.hide();//Hide Splash
+                mapUtils.showNoGPS();
+            }
+        }, { timeout: 5000 });
         //Init Push
         mapUtils.initPush();
         //Init profile data
