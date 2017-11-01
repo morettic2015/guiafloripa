@@ -74,7 +74,7 @@ $app->get('/busca/', function (Request $request, Response $response) use ($app) 
 $app->get('/estabelecimentos/{types}', function (Request $request, Response $response) use ($app) {
     //Content Type JSON Cross Domain JSON
     //Cache 24 hours
-    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24);
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
     $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
@@ -159,7 +159,7 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
 /**
  * @Add place or Event to favorite
  */
-$app->get('/favorite/{pId}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
+$app->post('/favorite/{pId}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
     $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
     $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
@@ -397,9 +397,9 @@ $app->get('/sync_prop/', function (Request $request, Response $response) use ($a
 $app->get('/test_case/', function (Request $request, Response $response) use ($app) {
     //GuiaController::testCinemas();
     //GuiaController::reverseImagesFromWordress(8948);
-    $addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
-    echo "<pre>";
-    var_dump($addr);
+    //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
+    //echo "<pre>";
+    //var_dump($addr);
 }); //Run Slim Microservice
 $app->run();
 
