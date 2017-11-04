@@ -8,7 +8,7 @@
 global $title;
 $user = wp_get_current_user();
 print "<h1>$title</h1>";
-print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
+print "<p> Registro de ações em nome de <b>(" . $user->user_login . ")</b></p>";
 ?>
 
 <!-- Start tabs -->
@@ -40,6 +40,7 @@ print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/1">COMER_BEBER</option>
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/5">SERVICOS TURISTICOS</option>
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/8">HOSPEDAGEM</option>
+                           
                         </select>
                     </td>
                     <td>
@@ -62,6 +63,7 @@ print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
                             <option value="https://guiafloripa.morettic.com.br/sync_free/">GRATUITO</option>
                             <option value="https://guiafloripa.morettic.com.br/sync_infantil/">INFANTIL</option>
                             <option value="https://guiafloripa.morettic.com.br/sync_lazer/">LAZER</option>
+                             <option value="https://guiafloripa.morettic.com.br/sync_zombie/">REGISTROS ZUMBIS(EVENTOS)</option>
                         </select>
                     </td>
                     <td>
@@ -233,7 +235,7 @@ print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
         border-top-left-radius: 3px;
         border-bottom-left-radius: 3px;
         border-top-right-radius: 0px;
-         height: 800px ;
+        height: 800px ;
     }
 
     div.wp-tab-panel-active {
@@ -291,7 +293,7 @@ print "<p> Registro de ações em nome de <b>(".$user->user_login.")</b></p>";
 
     #post-body ul.wp-tab-bar li {
         padding: 8px;
-       /* display: block; */
+        /* display: block; */
         height: 800px ;
     }
 

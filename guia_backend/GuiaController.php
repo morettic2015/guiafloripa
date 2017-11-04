@@ -8,7 +8,7 @@ DB::$dbName = 'guiafloripa_app';
 DB::$host = 'localhost';
 DB::$port = '3306';
 DB::$encoding = 'utf8'; // defaults to latin1 if omitted
-//DB::$error_handler = 'my_error_handler';
+DB::$error_handler = 'my_error_handler';
 DB::$error_handler = false; // since we're catching errors, don't need error handler
 DB::$throw_exception_on_error = true;
 
@@ -395,6 +395,7 @@ class GuiaController extends stdClass {
      *  Insert or update Cinemas
      * */
     public static function cronCinemas() {
+        define('CHARSET', 'ISO-8859-1');
         $pErrors = "";
 
         /* $yesterday = strtotime("-8 week");
@@ -403,8 +404,8 @@ class GuiaController extends stdClass {
           $now = time(); */
 
         //DB::debugMode();
-        $query = "SELECT * from view_cinema where id_cn_filme is not null order by dtstart,dtend asc";
-        //echo $query;
+        $query = " select *, CONVERT(titulo USING utf8) as titulo, CONVERT(titulo_original USING utf8) as titulo_original, CONVERT(post_content using utf8) as post_content from view_cinema where id_cn_filme is not null order by dtstart,dtend DESC";
+        echo $query;
         $mdb = new MysqlDB();
         $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
@@ -414,16 +415,18 @@ class GuiaController extends stdClass {
             $eventRow = new stdClass();
             //var_dump($row); //die;
             echo "|" . $i++;
-            if ($row['dtstart'] === "" || !$row['dtend'] === "") {
-                echo "NOT IMPORTED WITHOUT DATE";
-                var_dump($row);
+            $dtStart = ($row['dtstart'] === "" ? time() : $row['dtstart']);
+            //Data Fim nao pode ser vazia.....
+            if ($row['dtend'] === "") {
+                echo "DATA FIM NAO INFORMADA.....<br>".imap_utf7_decode($row['titulo']);
                 continue;
             }
+            echo "<br>";
 
-            $eventRow->dtstart = $row['dtstart'];
+            $eventRow->dtstart = $dtStart;
             $eventRow->dtend = $row['dtend'];
-            $eventRow->titulo = utf8_encode($row['titulo']);
-            $eventRow->titulo_original = utf8_encode($row['titulo_original']);
+            $eventRow->titulo = imap_utf7_decode($row['titulo']);///Table charset SUCKS
+            $eventRow->titulo_original = imap_utf7_decode($row['titulo_original']);
             $eventRow->ano_producao = $row['ano_producao'];
             $eventRow->duracao = $row['duracao'];
             $eventRow->pais_origem = $row['pais_origem'];
@@ -434,20 +437,22 @@ class GuiaController extends stdClass {
             $eventRow->id_cn_filme_post = $row['id_cn_filme_post'];
             $eventRow->id_cn_filme = $row['id_cn_filme'];
             $eventRow->id_wp_post = $row['id_wp_post'];
-            $eventRow->post_title = utf8_encode($row['post_title']);
+            $eventRow->post_title = imap_utf7_decode($row['post_title']);
             $eventRow->state = $row['state'];
             $eventRow->city = $row['city'];
-            $eventRow->addressID = $row['address'];
+            $eventRow->addressID = imap_utf7_decode($row['address']);
             $eventRow->post_content = $row['post_content'];
-            $eventRow->outras_informacoes_clean = strip_tags($row['outras_informacoes']);
-            $eventRow->outras_informacoes_html = $row['outras_informacoes'];
+            $eventRow->outras_informacoes_clean = imap_utf7_decode(strip_tags($row['outras_informacoes']));
+            $eventRow->outras_informacoes_html = imap_utf7_decode($row['outras_informacoes']);
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
 
             $pErrors .= GuiaController::updateCinemaEvent($eventRow);
-            //$encode = mb_detect_encoding($eventRow->titulo);
-            //echo date('d/m/Y', $eventRow->dtstart) . ',' . $eventRow->dtstart . "," . date('d/m/Y', $eventRow->dtend) . ',' . $eventRow->dtend . "," . mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
+            $encode = mb_detect_encoding($eventRow->titulo);
+        //    echo imap_utf7_decode ($eventRow->titulo) . ',' . utf8_decode($eventRow->titulo) . "<br>";
+
+        //    echo mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
         }
         DB::disconnect();
         $mdb->closeConn();
@@ -460,7 +465,7 @@ class GuiaController extends stdClass {
     public static function updateCinemaEvent($obj) {
         //DB::debugMode();
         try {
-            DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+            // DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
             //Error record
             if (is_null($obj->id_wp_post)) {
                 return;
@@ -468,7 +473,7 @@ class GuiaController extends stdClass {
 
             $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->id_wp_post;
             $number_accounts = DB::queryFirstField($query);
-            if($number_accounts <1) {
+            if ($number_accounts < 1) {
 
                 $obj->geo = GeocoderController::geocodeQuery($obj->addressID);
                 if (is_null($obj->geo->lat)) {
@@ -527,8 +532,9 @@ class GuiaController extends stdClass {
             ));
             DB::commit();
         } catch (Exception $e) {
+            print $e;
             var_dump($obj);
-           // die;
+            //die;
             $pErrors1 = "";
             $pErrors1 .= "<p>";
             $pErrors1 .= "FILE";
@@ -565,7 +571,7 @@ class GuiaController extends stdClass {
 //echo $number_accounts === "1";die;
 //  echo "Cinema exists?" . $number_accounts;
 
-        if($number_accounts <1) {
+        if ($number_accounts < 1) {
             echo "Não EX!";
             var_dump($obj);
             //echo time() . "*********************************************\n";
@@ -993,6 +999,10 @@ class GuiaController extends stdClass {
 function my_error_handler($params) {
     $pErrors .= " ";
     $pErrors .= json_encode($params);
+    echo "Error: <br>\n";
+    echo "Error: " . $params['error'] . "<br>\n";
+    echo "Query: " . $params['query'] . "<br>\n";
+    echo "-------------------------------------<br>\n";
 }
 
 function removeOneDay($date) {
