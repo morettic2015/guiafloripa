@@ -40,7 +40,7 @@ print "<p> Registro de ações em nome de <b>(" . $user->user_login . ")</b></p>
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/1">COMER_BEBER</option>
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/5">SERVICOS TURISTICOS</option>
                             <option value="https://guiafloripa.morettic.com.br/estabelecimentos/8">HOSPEDAGEM</option>
-                           
+
                         </select>
                     </td>
                     <td>
@@ -63,7 +63,7 @@ print "<p> Registro de ações em nome de <b>(" . $user->user_login . ")</b></p>
                             <option value="https://guiafloripa.morettic.com.br/sync_free/">GRATUITO</option>
                             <option value="https://guiafloripa.morettic.com.br/sync_infantil/">INFANTIL</option>
                             <option value="https://guiafloripa.morettic.com.br/sync_lazer/">LAZER</option>
-                             <option value="https://guiafloripa.morettic.com.br/sync_zombie/">REGISTROS ZUMBIS(EVENTOS)</option>
+                            <option value="https://guiafloripa.morettic.com.br/sync_zombie/">REGISTROS ZUMBIS(EVENTOS)</option>
                         </select>
                     </td>
                     <td>
