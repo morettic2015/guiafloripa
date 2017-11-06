@@ -233,17 +233,17 @@ h1 {
 }
 
 .containerImagem{
-   
+
     max-width:100%;
-     position: relative;
+    position: relative;
 
     /* max-width:400px;*/
     align-items: center;
     overflow:hidden;
 }
 .imgPopUp {
-     border: #000 2px solid;
-     margin-top: 10px;
+    border: #000 2px solid;
+    margin-top: 10px;
     /* position: absolute;
      left: 0;
      top: 0%;
@@ -252,6 +252,11 @@ h1 {
 }
 
 .controlgroup-textinput {
-        padding-top:.22em;
-        padding-bottom:.22em;
-    };
+    padding-top:.22em;
+    padding-bottom:.22em;
+}
+
+.facebook{
+    background: #3b5998 !important;
+    color: #ffffff !important;
+}

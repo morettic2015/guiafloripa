@@ -500,7 +500,7 @@ var MapUtils = function () {
      * @Welcome message
      * */
     this.showWelcome = function () {
-        this.showMessage("Bem vindo ao APP do Guiafloripa. Pesquise os eventos perto de você!", "#454545");
+        this.showMessage("Bem vindo ao APP do Guia Floripa. Pesquise os eventos perto de você!", "#454545");
     }
     /**
      * @GPS Exception

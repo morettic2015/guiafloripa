@@ -9,7 +9,7 @@
  */
 
 
-var ProfileUtil = function() {
+var ProfileUtil = function () {
     this.nome = null;
     this.email = null;
     this.token = null;
@@ -19,16 +19,24 @@ var ProfileUtil = function() {
     this.pushOn = null;
 
 
-    this.initProfile = function() {
-        if (localStorage.getItem("pushOn") != undefined) {
+    this.initProfile = function () {
+        if (localStorage.getItem("pushOn") !== undefined) {
             $('#checkPushOn').prop('checked', localStorage.getItem("pushOn")).trigger('click').trigger('change');
             $("#txtNomeProfile").val(localStorage.getItem("nome"));
             $("#txtEmailProfile").val(localStorage.getItem("email"));
             $("#slider-1").val(localStorage.getItem("distance"))
         }
+        if (localStorage.getItem("pushOn") !== null) {
+            var avatar = localStorage.getItem("avatar");
+            $("#imgAvatar").attr("src", avatar);
+            $("#imgAvatar").attr("style", "border-radius: 50%;")
+        }
+
+
+
     }
 
-    this.saveProfile = function() {
+    this.saveProfile = function () {
         this.nome = $("#txtNomeProfile").val();
         this.email = $("#txtEmailProfile").val();
         this.token = localStorage.getItem("pushToken");
@@ -56,7 +64,7 @@ var ProfileUtil = function() {
         //this.mauticData();
         this.url = "https://guiafloripa.morettic.com.br/profile/" + this.email + "/" + this.nome + "/" + this.userId + "/" + this.token;
         console.log(this.url);
-        $.get(this.url, function(data, status) {
+        $.get(this.url, function (data, status) {
             console.log(data);
             console.log(status);
             mapUtils.showMessage("Perfil atualizado", "#000000");
@@ -67,10 +75,10 @@ var ProfileUtil = function() {
     /**
      * @Send Lead to Mautic Inbound Marketing tool
      * */
-    this.sendMauticData = function() {
-        (function(w, d, t, u, n, a, m) {
+    this.sendMauticData = function () {
+        (function (w, d, t, u, n, a, m) {
             w['MauticTrackingObject'] = n;
-            w[n] = w[n] || function() {
+            w[n] = w[n] || function () {
                 (w[n].q = w[n].q || []).push(arguments)
             }, a = d.createElement(t),
                     m = d.getElementsByTagName(t)[0];
@@ -80,6 +88,42 @@ var ProfileUtil = function() {
         })(window, document, 'script', 'https://inbound.citywatch.com.br/mtc.js', 'mt');
         mt('send', 'pageview', {email: this.email, firstname: this.nome});
 
+    }
+
+    /**
+     * @Todo Implement a service that serialize response from facebook on Server Side. 
+     * @Post method to submit data
+     * @Submits also email and name
+     * @Create a Config instance with all metadatah
+     * @Origin need to be from Facebook
+     * */
+    this.facebookLogin = function () {
+        facebookConnectPlugin.login(["public_profile"],
+                function (userData) {
+                    console.log("UserInfo: ", userData);
+                    //Get Data From User
+                    facebookConnectPlugin.api(
+                            "me/?fields=id,name,email,picture", // graph path
+                            [], // array of additional permissions
+                            function (response) {
+                                localStorage.setItem("facebook", JSON.stringify(response));
+                                console.log("Response: ", response);
+                                $("#txtNomeProfile").val(response.name);
+                                $("#txtEmailProfile").val(response.email);
+                                $("#imgAvatar").attr("src", response.picture.data.url);
+                                $("#imgAvatar").attr("style", "border-radius: 50%;")
+                                localStorage.setItem("nome", response.name);
+                                localStorage.setItem("email", response.email);
+                                localStorage.setItem("avatar", response.picture.data.url);
+                            }
+                    )
+                },
+                function (error) {
+                    console.error(error);
+                    exceptHandler = new ExceptionHandler();
+                    exceptHandler.report(device.model, error.filename, error.code, "119", "error.crash", error.crash)
+                }
+        );
     }
 }
 

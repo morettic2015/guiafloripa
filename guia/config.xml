@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="br.com.morettic.guiafloripa.CityWatch" version="1.2.9" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>GuiaFloripa</name>
+    <name>Guia Floripa</name>
     <description>
         APP Guia Floripa City Watch Eventos.
     </description>
@@ -48,4 +48,8 @@
     <plugin name="cordova-plugin-network-information" spec="^1.3.3" />
     <plugin name="cordova-plugin-x-socialsharing" spec="^5.2.0" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-facebook4" spec="^1.9.1">
+        <variable name="APP_ID" value="1405126029586258" />
+        <variable name="APP_NAME" value="guiafloripaapp" />
+    </plugin>
 </widget>
