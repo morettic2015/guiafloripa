@@ -17,13 +17,13 @@ class CinemaController {
         $query = "SELECT * FROM viewCinemaPlaces where idPlace in (";
         $innerQuery = null;
         $ret = [];
-        if ($dtUntil!=="-1" && $dtFrom!=="-1"&&!empty($dtUntil)) {
-            $query .= "select distinct idPlaceOwner  FROM viewCinemaIDS where date(dtFrom) >= '$dtFrom' AND date(dtUntil)<= '$dtUntil ')";
+        if ($dtUntil !== "-1" && $dtFrom !== "-1" && !empty($dtUntil)) {
+            $query .= "SELECT fkPlace FROM SubCategory where dtEnd >= now() and date(dtStart) >= '$dtFrom' AND date(dtEnd)<= '$dtUntil '  and fkType = 3)";
             $innerQuery = " select * from viewMovieTheater where date(dtFrom) >= '$dtFrom'and date(dtUntil) <= '$dtUntil'";
         } else {
             $today = date("Y-m-d");
-            $query .= "select distinct idPlaceOwner FROM viewCinemaIDS where date(dtUntil) >= '$today')";
-            $innerQuery = " select * from viewMovieTheater where date(dtUntil) >= '$today'";
+            $query .= "SELECT fkPlace FROM SubCategory where dtEnd >= now() and fkType = 3 group by fkPlace)";
+            $innerQuery = " select * from viewMovieTheater where date(dtUntil) >= now()";
         }
         $cinemas = DB::query($query);
         foreach ($cinemas as $cine) {
@@ -59,6 +59,22 @@ class CinemaController {
         //Close database connection
         DB::disconnect();
         return $ret;
+    }
+
+    public static final function countMovieTheaters() {
+        $today = date("Y-m-d");
+        $query = "SELECT * FROM viewCinemaPlaces where idPlace in (SELECT fkPlace FROM SubCategory where dtEnd >= now() and fkType = 3 group by fkPlace)";
+        $innerQuery = " select * from viewMovieTheater where date(dtUntil) >= '$today'";
+        $cinemas = DB::query($query);
+        $total = 0;
+        foreach ($cinemas as $cine) {
+            //echo $innerQuery . " AND idPlaceOwner = " . $cine['idPlace'];
+            DB::query($innerQuery . " AND idPlaceOwner = " . $cine['idPlace']);
+            $total+= intval(DB::count());
+        }
+        //Close database connection
+        DB::disconnect();
+        return $total;
     }
 
 }

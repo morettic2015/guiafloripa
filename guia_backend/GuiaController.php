@@ -66,8 +66,8 @@ class GuiaController extends stdClass {
         //Set Charset
         $dayOfWeek = date("D");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        $query = " select * from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d')>= (DATE_FORMAT(now(),'%Y-%m-%d')) 
-								and DATE_FORMAT(dtUntil,'%Y-%m-%d')<=DATE_FORMAT(NOW() + INTERVAL 300 MINUTE,'%Y-%m-%d')))
+        $query = " select * from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d H')>= (DATE_FORMAT(now(),'%Y-%m-%d H')) 
+								and DATE_FORMAT(dtUntil,'%Y-%m-%d H')<DATE_FORMAT(NOW() + INTERVAL 300 MINUTE,'%Y-%m-%d H')))
                     union
                     select * from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
                     and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil DESC";
@@ -418,15 +418,21 @@ class GuiaController extends stdClass {
             $dtStart = ($row['dtstart'] === "" ? time() : $row['dtstart']);
             //Data Fim nao pode ser vazia.....
             if ($row['dtend'] === "") {
-                echo "DATA FIM NAO INFORMADA.....<br>".imap_utf7_decode($row['titulo']);
+                echo "DATA FIM NAO INFORMADA.....<br>" . imap_utf7_decode($row['titulo']);
                 continue;
             }
             echo "<br>";
 
+            $titulo = $row['titulo'];
+            //$titulo
+            $titulo_original = @imap_utf7_decode($row['titulo_original']) === "" ? $row['titulo_original'] : @imap_utf7_decode($row['titulo_original']);
+
+            echo $titulo . '-' . $titulo_original . "<br>";
+
             $eventRow->dtstart = $dtStart;
             $eventRow->dtend = $row['dtend'];
-            $eventRow->titulo = imap_utf7_decode($row['titulo']);///Table charset SUCKS
-            $eventRow->titulo_original = imap_utf7_decode($row['titulo_original']);
+            $eventRow->titulo = $titulo; ///Table charset SUCKS
+            $eventRow->titulo_original = $titulo_original;
             $eventRow->ano_producao = $row['ano_producao'];
             $eventRow->duracao = $row['duracao'];
             $eventRow->pais_origem = $row['pais_origem'];
@@ -437,22 +443,21 @@ class GuiaController extends stdClass {
             $eventRow->id_cn_filme_post = $row['id_cn_filme_post'];
             $eventRow->id_cn_filme = $row['id_cn_filme'];
             $eventRow->id_wp_post = $row['id_wp_post'];
-            $eventRow->post_title = imap_utf7_decode($row['post_title']);
+            $eventRow->post_title = @imap_utf7_decode($row['post_title']);
             $eventRow->state = $row['state'];
             $eventRow->city = $row['city'];
-            $eventRow->addressID = imap_utf7_decode($row['address']);
+            $eventRow->addressID = @imap_utf7_decode($row['address']);
             $eventRow->post_content = $row['post_content'];
-            $eventRow->outras_informacoes_clean = imap_utf7_decode(strip_tags($row['outras_informacoes']));
-            $eventRow->outras_informacoes_html = imap_utf7_decode($row['outras_informacoes']);
+            $eventRow->outras_informacoes_clean = @imap_utf7_decode(strip_tags($row['outras_informacoes']));
+            $eventRow->outras_informacoes_html = @imap_utf7_decode($row['outras_informacoes']);
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
 
             $pErrors .= GuiaController::updateCinemaEvent($eventRow);
-            $encode = mb_detect_encoding($eventRow->titulo);
-        //    echo imap_utf7_decode ($eventRow->titulo) . ',' . utf8_decode($eventRow->titulo) . "<br>";
-
-        //    echo mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
+            //$encode = mb_detect_encoding($eventRow->titulo);
+            //    echo imap_utf7_decode ($eventRow->titulo) . ',' . utf8_decode($eventRow->titulo) . "<br>";
+            //    echo mb_convert_encoding($eventRow->titulo, "utf8", $encode) . ',' . mb_detect_encoding($eventRow->titulo) . "<br>";
         }
         DB::disconnect();
         $mdb->closeConn();
@@ -463,11 +468,13 @@ class GuiaController extends stdClass {
     }
 
     public static function updateCinemaEvent($obj) {
-        //DB::debugMode();
+        DB::debugMode();
         try {
             // DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
             //Error record
+            echo "|" . $obj->id_wp_post . "|";
             if (is_null($obj->id_wp_post)) {
+                echo "IS EMPTY OWNER";
                 return;
             }
 
@@ -502,7 +509,9 @@ class GuiaController extends stdClass {
                         ), 'nmPlace=%s', $obj->post_title, 'deAddress=%s', $obj->geo->formatted_address, 'dePlace=%s', ($obj->post_content), 'nrLat', $obj->geo->lat, 'nrLng', $obj->geo->lng, 'nrCep=%s', $cep);
                 DB::commit();
             }
-            $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
+            $tit = $obj->titulo === "" ? $obj->titulo_original === "" ? "" : $obj->titulo_original : $obj->titulo;
+            // $deEvent = ($obj->titulo_original . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
+            $deEvent = ($tit . ", (" . $obj->ano_producao . "), " . $obj->duracao . "min  ");
             $deDetail = (($obj->sinopse) . "<br>Diretor:" . $obj->diretor . "<br>" . ($obj->outras_informacoes_html) . "<br>" . $obj->salas_horarios);
 
             $dtFrom = date("Y-m-d H:i:s", $obj->dtstart);
@@ -636,6 +645,8 @@ class GuiaController extends stdClass {
     }
 
     /*
+     * 
+     * 
      *   @ FIltra eventos pela data e pelo tipo.
      */
 
@@ -643,22 +654,27 @@ class GuiaController extends stdClass {
         $today = date("Y-m-d");
         $time = strtotime($today) + 86400;
         $tomorrow = date('Y-m-d', $time);
+        $dayOfWeek = date("D");
 //If date is empty or another shit
         $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
                 . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
-                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type;
+                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type
+                . " and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]')";
 //      
         //echo $query;die();
         $query2 = "select * from viewEventPlaceType where idType = " . $type
                 . " and DATE(dtFrom) >= date('" . $dtOrigem
                 . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";
-        if (empty($dtOrigem) || empty($dtFim) || $dtOrigem == "-1" || $dtFim == "-1") {
+        $stdGuia = new stdClass();
+
+        if ($dtOrigem === "-1" || $dtFim === "-1") {
+            //$stdGuia->query = $query;
             $eventos = DB::query($query); // misspelled SELECT
         } else {
+           // $stdGuia->query = $query2;
             $eventos = DB::query($query2); // misspelled SELECT
         }
 //Return Object
-        $stdGuia = new stdClass();
         $stdGuia->e = [];
         foreach ($eventos as $row) {
             $img = $row['deLogo'] === "default" ? (empty($row['deImg']) ? 'default' : $row['deImg']) : $row['deLogo'];

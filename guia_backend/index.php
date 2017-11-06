@@ -395,14 +395,13 @@ $app->get('/sync_prop/', function (Request $request, Response $response) use ($a
 $app->get('/sync_zombie/', function (Request $request, Response $response) use ($app) {
     ZombieController::getAllLivingIdsFromRemoteByCategory();
  }); //Run Slim Microservice
-$app->run();
 
 /**
  * @Test purpouse
  * @ignore it only for Test
  */
 $app->get('/test_case/', function (Request $request, Response $response) use ($app) {
-    ZombieController::getAllLivingIdsFromRemoteByCategory();
+    echo CinemaController::countMovieTheaters();
     //GuiaController::reverseImagesFromWordress(8948);
     //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
     //echo "<pre>";

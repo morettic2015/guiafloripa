@@ -90,28 +90,30 @@ class PushController extends stdClass {
     public static function dailyNotification() {
         try {
             // DB::debugMode();
-            $query = "select * from viewEventPlaces where dtFrom >= now()- INTERVAL 1 DAY and dtUntil<=NOW() + INTERVAL 1 DAY";
+            $dayOfWeek = date("D");
+            $query = " select * from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d H')>= (DATE_FORMAT(now(),'%Y-%m-%d H')) 
+								and DATE_FORMAT(dtUntil,'%Y-%m-%d H')<DATE_FORMAT(NOW() + INTERVAL 300 MINUTE,'%Y-%m-%d H')))
+                    union
+                    select * from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
+                    and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil DESC";
             $eventos = DB::query($query);
+
             $counter = DB::count();
             //counter of events
+            $cines = CinemaController::countMovieTheaters();
             //  echo $counter;
             //Has events today
             if ($counter > 0) {
-                $message = $counter . " Eventos em Floripa Hoje a sua escolha!";
-                // $query = "SELECT userID FROM guiafloripa_app.Profile";
-                //     $users = DB::query($query);
-                //   $ids = DBHelper::verticalSlice($users, 'userID');
-
-
-
+                $message = $counter . " eventos e " . $cines . " filmes em cartaz na região";
                 return PushController::sendBroadCastPush($message);
             }
             DB::disconnect();
         } catch (Exception $e) {
-            $bug = BugTracker::addIssueBugTracker(10, "BACKEND", "dailyNotification() ".$e->getFile(), $e->getMessage());
+            $bug = BugTracker::addIssueBugTracker(10, "BACKEND", "dailyNotification() " . $e->getFile(), $e->getMessage());
             return $bug;
         }
     }
+
 }
 
 ?>

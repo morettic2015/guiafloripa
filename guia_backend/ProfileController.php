@@ -55,6 +55,7 @@ class ProfileController extends stdClass {
             'userID' => $obj->userId,
             'pushToken' => $obj->pushToken
         ));
+        $rt->userID = DB::insertId();
         //Add contact to Mautic Integration
         $rt->contactID = LeadController::createContact($obj->name, null, $obj->email);
         //Add Lead to Segment
