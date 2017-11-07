@@ -40,6 +40,9 @@
                         <a class="ui-btn ui-btn-icon-left ui-icon-user" href="#popupInfo" data-rel="popup" data-position-to="window">Meu Perfil</a>
                     </li>
                     <li>
+                        <a class="ui-btn ui-btn-icon-left ui-icon-bullets" href="#popupListView" data-rel="popup" data-position-to="window">Lista de Eventos</a>
+                    </li>
+                    <li>
                         <a class="ui-btn ui-btn-icon-left ui-icon-star" href="javascript:alert('Em Breve!')">Favoritos</a>
                     </li>
                     <li>
@@ -123,7 +126,7 @@
                     <form>
                         <div data-role="controlgroup" data-type="horizontal">
                             Notificações:
-                            <input type="checkbox" data-role="flipswitch" name="checkPushOn" id="checkPushOn" data-on-text="ON" data-off-text="OFF">
+                            <input type="checkbox" data-role="flipswitch" checked="false" name="checkPushOn" id="checkPushOn" data-on-text="ON" data-off-text="OFF">
                         </div>
 
                         <input type="hidden" name="txtNomeProfile" id="txtNomeProfile" value="" data-mini="true" />
@@ -135,7 +138,95 @@
                 </div>
             </div>
             <!-- Tooltips-->
+            <!-- -->
+            <div data-role="popup" id="popupListView" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b"   data-dismissible="true" style="max-width: 350px">
+                <div role="main" class="ui-content">
+                    <ul data-role="listview" data-inset="true" style="height: 50%; overflow-y: auto;">
+                        <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>  <li>
+                            <a href="#">
+                                <img src="../_assets/img/album-bb.jpg">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="img/icone.png">
+                                <h2>Broken Bells</h2>
+                                <p>Broken Bells</p>
+                            </a>
+                        </li>
 
+                    </ul>
+                </div>
+            </div>
             <!-- Dates Filter-->
             <div data-role="popup" id="popupSearchGuia" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b"
                  data-dismissible="true" style="max-width: 350px">

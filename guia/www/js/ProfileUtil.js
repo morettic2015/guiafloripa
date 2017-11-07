@@ -37,8 +37,8 @@ var ProfileUtil = function () {
     }
 
     this.saveProfile = function () {
-        this.nome = $("#txtNomeProfile").val();
-        this.email = $("#txtEmailProfile").val();
+        this.nome = localStorage.getItem("nome");
+        this.email = localStorage.getItem("email");
         this.token = localStorage.getItem("pushToken");
         this.userId = localStorage.getItem("userId");
         this.distance = $("#slider-1").val();
@@ -57,18 +57,38 @@ var ProfileUtil = function () {
             return;
         }
         ///set local storage
-        localStorage.setItem("nome", this.nome);
-        localStorage.setItem("email", this.email);
         localStorage.setItem("distance", this.distance);
         localStorage.setItem("pushOn", this.pushOn);
         //this.mauticData();
-        this.url = "https://guiafloripa.morettic.com.br/profile/" + this.email + "/" + this.nome + "/" + this.userId + "/" + this.token;
+
+        var jsFacebook = localStorage.getItem("facebook");
+        jsFacebook = JSON.parse(jsFacebook);
+
+        this.url = "https://guiafloripa.morettic.com.br/facebook/";
         console.log(this.url);
-        $.get(this.url, function (data, status) {
-            console.log(data);
-            console.log(status);
-            mapUtils.showMessage("Perfil atualizado", "#000000");
+
+        var faceData = {"email": jsFacebook.email,
+            "name": jsFacebook.name,
+            "userID": this.userId,
+            "token": this.token,
+            "facebook": jsFacebook.picture.data.url
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: this.url,
+            data: faceData,
+            success: function (data) {
+                console.log(data);
+                console.log(status);
+                mapUtils.showMessage("Perfil atualizado", "#000000");
+                //window.location.reload();
+            }, error: function (e) {
+                alert('Failed!');
+                console.log(e);
+            }
         });
+
         this.sendMauticData();
     }
 
@@ -115,6 +135,8 @@ var ProfileUtil = function () {
                                 localStorage.setItem("nome", response.name);
                                 localStorage.setItem("email", response.email);
                                 localStorage.setItem("avatar", response.picture.data.url);
+                                localStorage.setItem("facebook", JSON.stringify(response));
+                                profileUtil.saveProfile();
                             }
                     )
                 },
