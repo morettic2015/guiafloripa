@@ -157,6 +157,28 @@ $app->get('/profile/{email}/{name}/{userId}/{pushToken}', function (Request $req
     //Response Busca Data
     return $newResponse->withJson($data, 201);
 });
+$app->post('/facebook/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+    $dt = $request->getParsedBody();
+    //StdObject for return
+    $data = new stdClass();
+    $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING);
+    $data->name = filter_var($dt['name'], FILTER_SANITIZE_STRING);
+    $data->userId = filter_var($dt['userID'], FILTER_SANITIZE_STRING);
+    $data->pushToken = filter_var($dt['token'], FILTER_SANITIZE_STRING);
+    $data->facebook = filter_var($dt['facebook'], FILTER_SANITIZE_STRING);
+    
+    //var_dump($data);
+    //Return Eventos by date interval
+    //DB::debugMode();
+    $data = ProfileController::insertUpdateProfile($data);
+    logActions("PROFILE");
+    //Response Busca Data
+    return $newResponse->withJson($data, 201);
+});
 /**
  * @Add place or Event to favorite
  */
@@ -394,7 +416,7 @@ $app->get('/sync_prop/', function (Request $request, Response $response) use ($a
  */
 $app->get('/sync_zombie/', function (Request $request, Response $response) use ($app) {
     ZombieController::getAllLivingIdsFromRemoteByCategory();
- }); //Run Slim Microservice
+}); //Run Slim Microservice
 
 /**
  * @Test purpouse

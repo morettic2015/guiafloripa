@@ -43,15 +43,11 @@ class ProfileController extends stdClass {
         //echo "<pre>";
         //DB::debugMode();
         $userId = DB::queryFirstField("select idProfile from Profile where deEmail like '%" . $obj->email . "%'");
-        //echo $userId . "asdasd";
+       // echo $userId . "asdasd";
         DB::insertUpdate('Profile', array(
             'idProfile' => $userId, //primary key
             'deName' => $obj->name,
             'deEmail' => $obj->email,
-            'userID' => $obj->userId,
-            'pushToken' => $obj->pushToken
-                ), array(
-            'deName' => $obj->name,
             'userID' => $obj->userId,
             'pushToken' => $obj->pushToken
         ));
@@ -60,6 +56,22 @@ class ProfileController extends stdClass {
         $rt->contactID = LeadController::createContact($obj->name, null, $obj->email);
         //Add Lead to Segment
         $rt->segmentID = LeadController::addContactToSegment($rt->contactID);
+        $obj->contactID = $rt->contactID;
+        $obj->segmentID = $rt->segmentID;
+
+        $configID = DB::queryFirstField("SELECT idConfig FROM guiafloripa_app.Config where profileID = $userId and type = 'FACEBOOK' and placeID is null and eventID is null");
+
+
+        // var_dump($obj);
+        //die;
+        if (isset($obj->facebook)) {
+            DB::insertUpdate('Config', array(
+                'idConfig' => $configID,
+                'profileID' => $userId,
+                'log' => json_encode($obj),
+                'type' => 'FACEBOOK')
+            );
+        }
 
         //Close connection
         DB::disconnect();
@@ -75,9 +87,8 @@ class ProfileController extends stdClass {
      * @Associate Lead with
      */
     public static function favoriteOne($req) {
-       // DB::debugMode();
-
-     //   var_dump($req);
+        // DB::debugMode();
+        //   var_dump($req);
         //die;
         $std = new stdClass();
         $userId = DB::queryFirstField("select idProfile from Profile where deEmail like '%" . $req->email . "%'");
@@ -91,7 +102,6 @@ class ProfileController extends stdClass {
         //has favorited before this event / place???
         $query = "SELECT idConfig FROM Config WHERE profileID = $userId";
         //var_dump($req);
-        
         //echo $req->eventID."---a--a--a";
         $eventID = "-1";
         if ($req->eventID === "-1") {//Only if has place ID
@@ -99,21 +109,21 @@ class ProfileController extends stdClass {
             $placeID = $req->placeID;
             //echo $query;
             $eventID = NULL;
-          //  die;
+            //  die;
         } else {
             $placeID = DB::queryFirstField("select idPlaceOwner from Event where idEvent = " . $req->eventID);
             $query .= " AND eventID = " . $req->eventID . " AND placeID = $placeID";
             $eventID = $req->eventID;
             //echo $query;
-       //     die;
+            //     die;
         }
         $favID = DB::queryFirstField($query);
-        
+
         //var_dump($favID);die;
         $std->userID = $userId;
         $std->date = date('Y-m-d');
 
-        if ($favID<1) {
+        if ($favID < 1) {
             //Inser user configuration
             DB::insert('Config', array('profileID' => $userId, 'placeID' => $placeID, 'eventID' => $eventID, 'log' => json_encode($std), 'type' => 'FAV'));
             $favID = DB::insertId();
