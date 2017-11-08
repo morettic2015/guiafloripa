@@ -281,7 +281,25 @@ var MapUtils = function () {
             }
         }, 100);
     }
+    this.showList = function () {
+        var jsonStr = localStorage.getItem("todayEvents");
+        var lEventos = JSON.parse(jsonStr);
+        var contentList = '<div style="width: 350px">';
 
+        for (i = 0; i < lEventos.length; i++) {
+            var image = lEventos[i].deLogo === "default" ? "img/icone.png" : lEventos[i].deLogo;
+            var deEvent = lEventos[i].deEvent === undefined ? lEventos[i].movies.length + " Filmes em cartaz" : lEventos[i].deEvent;
+            contentList += '<fieldset class="ui-grid-a">'
+                    + '<div class="ui-block-a" style="width: 30% !important;"><img width="96" height="96" src="' + image + '"></div>'
+                    + '<div class="ui-block-b" style="width: 70% !important;"><h3>' + lEventos[i].nmPlace + '</h3><p><small>' + deEvent + '</small></p></div>'
+                    + '</fieldset>'
+                    + '<hr>'
+        }   
+        contentList += "</div>";
+        $(contentList).appendTo("#listViewTodayEvents");
+
+        //$("#listViewTodayEvents").html(contentList);
+    }
     /**
      * @Called on load to show today events
      */
@@ -320,6 +338,8 @@ var MapUtils = function () {
             //alert("Data: " + data + "\nStatus: " + status);
             //Lista de eventos
             lEventos = data.e;
+            //Save list to show on
+            localStorage.setItem("todayEvents", JSON.stringify(data.e));
 
             infowindow = mapUtils.createInfoWindowDef();
 

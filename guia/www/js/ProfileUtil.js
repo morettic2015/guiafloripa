@@ -20,16 +20,21 @@ var ProfileUtil = function () {
 
 
     this.initProfile = function () {
-        if (localStorage.getItem("pushOn") !== undefined) {
-            $('#checkPushOn').prop('checked', localStorage.getItem("pushOn")).trigger('click').trigger('change');
+        if (localStorage.getItem("facebook") !== null) {
+            hideIt('btFaceLogin');//Ja logou esconde...
+            var checkedPush = (localStorage.getItem("pushOn") === 'true');
+            console.log(checkedPush);
+
+            $('#checkPushOn').prop('checked', checkedPush).checkboxradio('refresh');
             $("#txtNomeProfile").val(localStorage.getItem("nome"));
             $("#txtEmailProfile").val(localStorage.getItem("email"));
             $("#slider-1").val(localStorage.getItem("distance"))
-        }
-        if (localStorage.getItem("pushOn") !== null) {
             var avatar = localStorage.getItem("avatar");
             $("#imgAvatar").attr("src", avatar);
-            $("#imgAvatar").attr("style", "border-radius: 50%;")
+            $("#imgAvatar").attr("style", "border-radius: 50%;");
+            $("#myNameIs").html(localStorage.getItem("nome"));
+        } else {
+            $('#checkPushOn').prop('checked', false).checkboxradio('refresh');
         }
 
 
@@ -42,7 +47,7 @@ var ProfileUtil = function () {
         this.token = localStorage.getItem("pushToken");
         this.userId = localStorage.getItem("userId");
         this.distance = $("#slider-1").val();
-        //this.pushOn = $("#checkPushOn").prop("checked");
+        this.pushOn = $("#checkPushOn").prop("checked");
 
         if (this.nome === "") {
             mapUtils.showMessage("Informe seu nome", "#f1f1f1");
