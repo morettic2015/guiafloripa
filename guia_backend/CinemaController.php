@@ -37,6 +37,7 @@ class CinemaController {
             $std->deWebsite = $cine['deWebsite'];
             $std->idType = "3";
             $std->nrCep = $cine['cep'];
+            $std->idPlace = $cine['idPlace'];
             $std->nrLat = $cine['lat'];
             $std->nrLng = $cine['lng'];
             $std->movies = [];
@@ -46,6 +47,7 @@ class CinemaController {
             foreach ($filmes as $movie) {
                 //   var_dump($movie);
                 $std1 = new stdClass();
+                $std1->idPlace = $cine['idPlace'];
                 $std1->idEvent = $movie['idEvent'];
                 $std1->deEvent = $movie['deEvent'];
                 $std1->deDetail = strip_tags($movie['deDetail']);

@@ -37,6 +37,7 @@ class GuiaController extends stdClass {
         foreach ($places as $row) {
             $std = new stdClass();
             $std->nrPhone = $row['nrPhone'];
+            $std->idPlace = $row['idPlace'];
             $std->deLogo = $row['deLogo'];
             $std->deAddress = $row['deAddress'];
 //$std->deEvent = $row['deEvent'];
@@ -97,6 +98,8 @@ class GuiaController extends stdClass {
             $std->deImg = $row['deImg'];
             $std->deRecurring = $row['deRecurring'];
             $std->printDate = printEventDate($row['dtFrom'], $row['dtUntil']);
+            $std->idPlace = $row['idPlace'];
+            $std->idEvent = $row['idEvent'];
             //Adiciona
             $stdGuia->e[] = $std;
         }
@@ -671,7 +674,7 @@ class GuiaController extends stdClass {
             //$stdGuia->query = $query;
             $eventos = DB::query($query); // misspelled SELECT
         } else {
-           // $stdGuia->query = $query2;
+            // $stdGuia->query = $query2;
             $eventos = DB::query($query2); // misspelled SELECT
         }
 //Return Object
@@ -682,6 +685,8 @@ class GuiaController extends stdClass {
             $std->nrPhone = $row['nrPhone'];
             $std->deLogo = $img;
             $std->deWebsite = $row['deWebsite'];
+            $std->idPlace = $row['idPlace'];
+            $std->idEvent = $row['idEvent'];
             $std->deAddress = $row['deAddress'];
             $std->deEvent = $row['deEvent'];
             $std->deDetail = $row['deDetail'];

@@ -170,7 +170,7 @@ $app->post('/facebook/', function (Request $request, Response $response) use ($a
     $data->userId = filter_var($dt['userID'], FILTER_SANITIZE_STRING);
     $data->pushToken = filter_var($dt['token'], FILTER_SANITIZE_STRING);
     $data->facebook = filter_var($dt['facebook'], FILTER_SANITIZE_STRING);
-    
+
     //var_dump($data);
     //Return Eventos by date interval
     //DB::debugMode();
@@ -182,20 +182,23 @@ $app->post('/facebook/', function (Request $request, Response $response) use ($a
 /**
  * @Add place or Event to favorite
  */
-$app->post('/favorite/{pId}/{eventID}/{email}', function (Request $request, Response $response) use ($app) {
+$app->post('/favorite/', function (Request $request, Response $response) use ($app) {
     $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
     $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     $data = new stdClass();
-    $data->placeID = $request->getAttribute('pId');
-    $data->eventID = $request->getAttribute('eventID');
-    $data->email = $request->getAttribute('email');
-    //var_dump($data);
+    //DB::debugMode();
+    $dt = $request->getParsedBody();
+    $data->placeID = filter_var($dt['pId'], FILTER_SANITIZE_STRING);
+    $data->eventID = filter_var($dt['eventID'], FILTER_SANITIZE_STRING);
+    $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING);
+ //  var_dump($data);
+ //   die;
     $data = ProfileController::favoriteOne($data);
     logActions("'/favorite/'");
-    return $newResponse->withJson($data, 201);
+    return $newResponse->withJson($data, 200);
 });
 /**
  * @Stats From Origin Destiny
