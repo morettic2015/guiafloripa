@@ -142,7 +142,7 @@ class ProfileController extends stdClass {
             }
 
             $std->contactName = DB::queryFirstField("select deName from Profile where idProfile = " . $std->userID);
-            $std->lead = LeadController::createContact($std->contactName, null, $email);
+            $std->lead = LeadController::createContact($std->contactName, null, $req->email);
             //echo $lead."...............";die;
             $std->response = LeadController::addContactToSegment($std->lead, $std->segmentID);
             //Save Config for Segment
