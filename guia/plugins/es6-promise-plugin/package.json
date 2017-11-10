@@ -10,7 +10,7 @@
         "spec": "4.1.0",
         "type": "version"
       },
-      "C:\\app\\guiafloripa\\guia\\node_modules"
+      "C:\\app\\guiafloripa\\guia"
     ]
   ],
   "_from": "es6-promise-plugin@4.1.0",
@@ -45,7 +45,7 @@
   "_shasum": "f06107399844509eaaba8ed07077d288a5ca697e",
   "_shrinkwrap": null,
   "_spec": "es6-promise-plugin@4.1.0",
-  "_where": "C:\\app\\guiafloripa\\guia\\node_modules",
+  "_where": "C:\\app\\guiafloripa\\guia",
   "author": "",
   "bugs": {
     "url": "https://github.com/vstirbu/PromisesPlugin/issues"

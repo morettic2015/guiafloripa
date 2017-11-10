@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-googlemaps" version="1.4.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>phonegap-googlemaps-plugin</name>
+<plugin id="cordova-plugin-googlemaps" version="1.4.5" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>cordova-googlemaps-plugin</name>
     <js-module name="cordova-plugin-googlemaps" src="www/googlemaps-cdv-plugin.js">
         <clobbers target="cordova-plugin-googlemaps" />
     </js-module>
@@ -24,11 +24,8 @@
         <preference name="API_KEY_FOR_ANDROID" />
 
         <info>
-             In order to run this plugin, you need to obtain Google Maps API key for Android.
-             Visit https://github.com/mapsplugin/cordova-plugin-googlemaps/wiki/Installation
-
-             Check our release notes.
-             https://github.com/wf9a5m75/phonegap-googlemaps-plugin/wiki/Release-Notes
+          This is version 1.4.5. The version 1.4.x will be shutdown soon.
+          Please use the v2.0-beta3. More details: https://goo.gl/A1e9EZ
         </info>
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -49,7 +46,6 @@
         <framework src="com.google.android.gms:play-services-location:11.+" />
 
         <!-- plugin src files -->
-        <source-file src="src/android/plugin/google/maps/AsyncLicenseInfo.java" target-dir="src/plugin/google/maps" />
         <source-file src="src/android/plugin/google/maps/AsyncKmlParser.java" target-dir="src/plugin/google/maps" />
         <source-file src="src/android/plugin/google/maps/AsyncLoadImage.java" target-dir="src/plugin/google/maps" />
         <source-file src="src/android/plugin/google/maps/AsyncLoadImageInterface.java" target-dir="src/plugin/google/maps" />
@@ -100,11 +96,8 @@
         <preference name="API_KEY_FOR_IOS" />
 
         <info>
-             In order to run this plugin, you need to obtain Google Maps API key for iOS.
-             Visit https://github.com/mapsplugin/cordova-plugin-googlemaps/wiki/Installation
-
-             Check our release notes.
-             https://github.com/mapsplugin/cordova-plugin-googlemaps/wiki/Release-Notes
+          This is version 1.4.5. The version 1.4.x will be shutdown soon.
+          Please use the v2.0-beta3. More details: https://goo.gl/A1e9EZ
         </info>
 
         <config-file target="config.xml" parent="/*">

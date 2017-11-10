@@ -215,7 +215,9 @@ h1 {
     word-break: break-all !important;
 }
 #fotterToolTip{
+    height: 68px;
     margin-bottom: 50px;
+    
 }
 
 .hideMeNow{
@@ -260,3 +262,4 @@ h1 {
     background: #3b5998 !important;
     color: #ffffff !important;
 }
+

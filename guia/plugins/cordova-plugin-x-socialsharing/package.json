@@ -2,25 +2,25 @@
   "_args": [
     [
       {
-        "raw": "cordova-plugin-x-socialsharing",
+        "raw": "cordova-plugin-x-socialsharing@^5.2.0",
         "scope": null,
         "escapedName": "cordova-plugin-x-socialsharing",
         "name": "cordova-plugin-x-socialsharing",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "^5.2.0",
+        "spec": ">=5.2.0 <6.0.0",
+        "type": "range"
       },
-      "C:\\app\\guiafloripa\\guia\\node_modules"
+      "C:\\app\\guiafloripa\\guia"
     ]
   ],
-  "_from": "cordova-plugin-x-socialsharing@latest",
-  "_id": "cordova-plugin-x-socialsharing@5.2.0",
+  "_from": "cordova-plugin-x-socialsharing@>=5.2.0 <6.0.0",
+  "_id": "cordova-plugin-x-socialsharing@5.2.1",
   "_inCache": true,
   "_location": "/cordova-plugin-x-socialsharing",
   "_nodeVersion": "6.10.3",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/cordova-plugin-x-socialsharing-5.2.0.tgz_1502539883309_0.31688803248107433"
+    "tmp": "tmp/cordova-plugin-x-socialsharing-5.2.1.tgz_1508348281484_0.49444950511679053"
   },
   "_npmUser": {
     "name": "eddyverbruggen",
@@ -29,23 +29,23 @@
   "_npmVersion": "3.10.10",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "cordova-plugin-x-socialsharing",
+    "raw": "cordova-plugin-x-socialsharing@^5.2.0",
     "scope": null,
     "escapedName": "cordova-plugin-x-socialsharing",
     "name": "cordova-plugin-x-socialsharing",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "^5.2.0",
+    "spec": ">=5.2.0 <6.0.0",
+    "type": "range"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/cordova-plugin-x-socialsharing/-/cordova-plugin-x-socialsharing-5.2.0.tgz",
-  "_shasum": "1a22476bc58d46c1d2a9a84c4f121e629cacab14",
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-x-socialsharing/-/cordova-plugin-x-socialsharing-5.2.1.tgz",
+  "_shasum": "dbc354b993f9b7b1600396822d8202b73cc581f3",
   "_shrinkwrap": null,
-  "_spec": "cordova-plugin-x-socialsharing",
-  "_where": "C:\\app\\guiafloripa\\guia\\node_modules",
+  "_spec": "cordova-plugin-x-socialsharing@^5.2.0",
+  "_where": "C:\\app\\guiafloripa\\guia",
   "author": {
     "name": "Eddy Verbruggen - @EddyVerbruggen"
   },
@@ -67,8 +67,8 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "1a22476bc58d46c1d2a9a84c4f121e629cacab14",
-    "tarball": "https://registry.npmjs.org/cordova-plugin-x-socialsharing/-/cordova-plugin-x-socialsharing-5.2.0.tgz"
+    "shasum": "dbc354b993f9b7b1600396822d8202b73cc581f3",
+    "tarball": "https://registry.npmjs.org/cordova-plugin-x-socialsharing/-/cordova-plugin-x-socialsharing-5.2.1.tgz"
   },
   "engines": [
     {
@@ -76,7 +76,7 @@
       "version": ">=3.0.0"
     }
   ],
-  "gitHead": "bb2aa2bbeda5e685d75aa165cae2706b1f6bd1cf",
+  "gitHead": "ea07539955202581db3e5f5a9f296fae96362521",
   "homepage": "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin#readme",
   "keywords": [
     "Social",
@@ -111,5 +111,5 @@
     "url": "git+https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git"
   },
   "scripts": {},
-  "version": "5.2.0"
+  "version": "5.2.1"
 }

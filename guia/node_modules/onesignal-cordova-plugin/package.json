@@ -2,25 +2,25 @@
   "_args": [
     [
       {
-        "raw": "onesignal-cordova-plugin",
+        "raw": "onesignal-cordova-plugin@^2.1.2",
         "scope": null,
         "escapedName": "onesignal-cordova-plugin",
         "name": "onesignal-cordova-plugin",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "^2.1.2",
+        "spec": ">=2.1.2 <3.0.0",
+        "type": "range"
       },
-      "C:\\tmp\\guiafloripa\\guia\\node_modules"
+      "C:\\app\\guiafloripa\\guia"
     ]
   ],
-  "_from": "onesignal-cordova-plugin@latest",
-  "_id": "onesignal-cordova-plugin@2.1.2",
+  "_from": "onesignal-cordova-plugin@>=2.1.2 <3.0.0",
+  "_id": "onesignal-cordova-plugin@2.2.2",
   "_inCache": true,
   "_location": "/onesignal-cordova-plugin",
   "_nodeVersion": "6.10.1",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/onesignal-cordova-plugin-2.1.2.tgz_1496963058001_0.4308536716271192"
+    "tmp": "tmp/onesignal-cordova-plugin-2.2.2.tgz_1507337298484_0.24902071640826762"
   },
   "_npmUser": {
     "name": "onesignal",
@@ -29,23 +29,23 @@
   "_npmVersion": "3.3.3",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "onesignal-cordova-plugin",
+    "raw": "onesignal-cordova-plugin@^2.1.2",
     "scope": null,
     "escapedName": "onesignal-cordova-plugin",
     "name": "onesignal-cordova-plugin",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "^2.1.2",
+    "spec": ">=2.1.2 <3.0.0",
+    "type": "range"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/onesignal-cordova-plugin/-/onesignal-cordova-plugin-2.1.2.tgz",
-  "_shasum": "dbacfc40c68bb257014b434731d6418d79b1577d",
+  "_resolved": "https://registry.npmjs.org/onesignal-cordova-plugin/-/onesignal-cordova-plugin-2.2.2.tgz",
+  "_shasum": "80ff97e5bde8bde086d93a55e6d38fc42bd48a58",
   "_shrinkwrap": null,
-  "_spec": "onesignal-cordova-plugin",
-  "_where": "C:\\tmp\\guiafloripa\\guia\\node_modules",
+  "_spec": "onesignal-cordova-plugin@^2.1.2",
+  "_where": "C:\\app\\guiafloripa\\guia",
   "author": {
     "name": "Josh Kasten"
   },
@@ -67,8 +67,8 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "dbacfc40c68bb257014b434731d6418d79b1577d",
-    "tarball": "https://registry.npmjs.org/onesignal-cordova-plugin/-/onesignal-cordova-plugin-2.1.2.tgz"
+    "shasum": "80ff97e5bde8bde086d93a55e6d38fc42bd48a58",
+    "tarball": "https://registry.npmjs.org/onesignal-cordova-plugin/-/onesignal-cordova-plugin-2.2.2.tgz"
   },
   "engines": [
     {
@@ -92,7 +92,7 @@
       "version": ">=4.3.0"
     }
   ],
-  "gitHead": "8147f93d5cb4232082a4121732f7d4dba2167e17",
+  "gitHead": "85fb15e16084a13cbab4ad0db99fc14ffd9ff032",
   "homepage": "https://github.com/onesignal/OneSignal-Cordova-SDK#readme",
   "keywords": [
     "push",
@@ -130,5 +130,5 @@
     "url": "git+https://github.com/onesignal/OneSignal-Cordova-SDK.git"
   },
   "scripts": {},
-  "version": "2.1.2"
+  "version": "2.2.2"
 }

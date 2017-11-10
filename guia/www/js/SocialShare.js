@@ -8,15 +8,24 @@
 
 var SocialShare = function () {
     this.options = null;
+    this.msg = null;
+    this.vet = [];
     this.url = "https://app.guiafloripa.com.br";
     this.setUrlShare = function (pUrl) {
         this.url = pUrl;
     }
+    this.setVet = function (pUrl) {
+        this.vet = pUrl;
+    }
+    this.setMessage = function (m) {
+        this.msg = m;
+        ;
+    }
     this.initShare = function (msg, subject) {
         this.options = {
-            message: msg, // not supported on some apps (Facebook, Instagram)
+            message: this.msg === null ? msg : this.msg, // not supported on some apps (Facebook, Instagram)
             subject: subject, // fi. for email
-            files: ['', ''], // an array of filenames either locally or remotely
+            files: this.vet, // an array of filenames either locally or remotely
             url: this.url,
             chooserTitle: 'GuiaFloripa APP Compartilhe com seus Amigos!' // Android only, you can override the default share sheet title
         }
@@ -29,9 +38,9 @@ var SocialShare = function () {
     }
     this.initShareURL = function (msg, subject, URL) {
         this.options = {
-            message: msg, // not supported on some apps (Facebook, Instagram)
+            message: this.msg === null ? msg : this.msg, // not supported on some apps (Facebook, Instagram)
             subject: subject, // fi. for email
-            files: ['', ''], // an array of filenames either locally or remotely
+            files: this.vet, // an array of filenames either locally or remotely
             url: URL,
             chooserTitle: 'GuiaFloripa APP Compartilhe com seus Amigos!' // Android only, you can override the default share sheet title
         }

@@ -281,22 +281,34 @@ var MapUtils = function () {
             }
         }, 100);
     }
+
     this.showList = function () {
+        this.showList1(null);
+    }
+    this.showList1 = function (o) {
         var jsonStr = localStorage.getItem("todayEvents");
+        $("#titFav").html("O que há pra hoje?");
+        if (o !== null) {
+            $("#titFav").html("Meus favoritos");
+            jsonStr = localStorage.getItem("fav");
+        }
         var lEventos = JSON.parse(jsonStr);
-        var contentList = '<div style="width: 350px">';
+        var contentList = '<div style="width: 300px">';
 
         for (i = 0; i < lEventos.length; i++) {
             var image = lEventos[i].deLogo === "default" ? "img/icone.png" : lEventos[i].deLogo;
-            var deEvent = lEventos[i].deEvent === undefined ? lEventos[i].movies.length + " Filmes em cartaz" : lEventos[i].deEvent;
+            var deEvent = lEventos[i].deEvent === undefined ? lEventos[i].dePlace : lEventos[i].deEvent;
             contentList += '<fieldset class="ui-grid-a">'
-                    + '<div class="ui-block-a" style="width: 30% !important;"><img width="96" height="96" src="' + image + '"></div>'
-                    + '<div class="ui-block-b" style="width: 70% !important;"><h3>' + lEventos[i].nmPlace + '</h3><p><small>' + deEvent + '</small></p></div>'
-                    + '</fieldset>'
-                    + '<hr>'
-        }   
+                    + '<div class="ui-block-a" style="width: 35% !important;"><img width="96" height="96" src="' + image + '"></div>'
+                    + '<div class="ui-block-b" style="width: 64% !important;"><h3>' + lEventos[i].nmPlace + '</h3><p><small>' + deEvent + '</small></p></div>'
+                    + '</fieldset><p><center class="smallTxt">'
+                    + lEventos[i].deAddress
+                    + "<br>"
+                    + lEventos[i].printDate
+                    + '</center></p><hr>'
+        }
         contentList += "</div>";
-        $(contentList).appendTo("#listViewTodayEvents");
+        $("#listViewTodayEvents").html(contentList);
 
         //$("#listViewTodayEvents").html(contentList);
     }
@@ -550,6 +562,9 @@ var MapUtils = function () {
         });
     }
     this.initSliderMenu = function () {
+        var dvjQuery = $("#flexiselDemo1").detach();
+        $("#flexiselOwner").html(dvjQuery);
+
         $("#flexiselDemo1").flexisel({
             visibleItems: 4,
             clone: false,
@@ -725,8 +740,6 @@ var MapUtils = function () {
 function InfoWindowT(obj, plat, plng) {
     zoom = map.getZoom();
 
-    mapUtils.showDistance(obj.nrLat, obj.nrLng, plat, plng);
-
     latZ = obj.nrLat;
     lngZ = obj.nrLng;
     document.getElementById('pageBt').click();
@@ -743,21 +756,22 @@ function InfoWindowT(obj, plat, plng) {
     var txtTmpData = obj.printDate;//obj.dtUntil == obj.dtFrom ? obj.dtUntil : obj.dtFrom + "-" + obj.dtUntil;
     $("#txtDateT").text(txtTmpData);
     $("#txtDistT").text(dist);
+    shareObj.setUrlShare("https://app.guiafloripa.com.br");
 
     if (obj.deWebsite === null || obj.deWebsite === undefined || obj.deWebsite === "N/A") {
         hideIt('txtURLT');
     } else {
         showIt('txtURLT');
         $("#txtURLT").attr("href", obj.deWebsite);
-        shareObj.setUrlShare(obj.deWebsite);
-        //$("#txtURLT").text("Website");
     }
 
     //ate Null Hide IT
     if (obj.dtUntil === null || obj.dtUntil === undefined) {
+        shareObj.setMessage("Venha conhecer " + obj.nmPlace + "? Quer mais opções? Download.");
         hideIt('txtDateT');
         hideIt('txtDateT1');
     } else {
+        shareObj.setMessage("Que tal " + obj.deEvent + " no dia " + obj.printDate + "? Quer mais opções? Download.");
         showIt('txtDateT');
         showIt('txtDateT1');
     }
@@ -794,9 +808,11 @@ function InfoWindowT(obj, plat, plng) {
     if (img === "default" || img === "" || img === undefined || img === null) {
         hideIt('deLogoPromo');
         hideIt('divImagem');
+        shareObj.setVet([]);
     } else {
         showIt('divImagem');
         showIt('deLogoPromo');
+        shareObj.setVet([img]);
         document.getElementById('deLogoPromo').src = img;
     }
     //Cinema
@@ -821,33 +837,9 @@ function InfoWindowT(obj, plat, plng) {
         //  content += "</ul>"
         content += "<br><br><br><br>";
         $("#txtDescT").html(content);
-        /**  $("#flexiselCinema").flexisel({
-         visibleItems: 1,
-         clone: true,
-         autoPlay: {
-         enable: false,
-         interval: 5000,
-         pauseOnHover: true
-         },
-         responsiveBreakpoints: {
-         portrait: {
-         changePoint: 480,
-         visibleItems: 1,
-         itemsToScroll: 1
-         },
-         landscape: {
-         changePoint: 640,
-         visibleItems: 1,
-         itemsToScroll: 1
-         },
-         tablet: {
-         changePoint: 1024,
-         visibleItems: 1,
-         itemsToScroll: 1
-         }
-         }
-         });*/
     }
+    myFavorites.setCurrentF(obj);
+    mapUtils.showDistance(obj.nrLat, obj.nrLng, plat, plng);
 }
 
 

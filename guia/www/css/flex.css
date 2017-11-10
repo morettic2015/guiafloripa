@@ -12,6 +12,13 @@ p {
     clear:both;
 }
 
+.smallTxt{
+    font-size: 10px;
+    word-wrap: break-word;
+    justify-content: center;
+    align-items: center;
+}
+
 #flexiselDemo1, #flexiselDemo2, #flexiselDemo3 {
     display:none;
 }

@@ -2,50 +2,50 @@
   "_args": [
     [
       {
-        "raw": "cordova-plugin-googlemaps",
+        "raw": "cordova-plugin-googlemaps@^1.4.1",
         "scope": null,
         "escapedName": "cordova-plugin-googlemaps",
         "name": "cordova-plugin-googlemaps",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "^1.4.1",
+        "spec": ">=1.4.1 <2.0.0",
+        "type": "range"
       },
-      "c:\\tmp\\cwguiafloripa\\guia\\node_modules"
+      "C:\\app\\guiafloripa\\guia"
     ]
   ],
-  "_from": "cordova-plugin-googlemaps@latest",
-  "_id": "cordova-plugin-googlemaps@1.4.1",
+  "_from": "cordova-plugin-googlemaps@>=1.4.1 <2.0.0",
+  "_id": "cordova-plugin-googlemaps@1.4.5",
   "_inCache": true,
   "_location": "/cordova-plugin-googlemaps",
-  "_nodeVersion": "7.10.0",
+  "_nodeVersion": "5.4.1",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/cordova-plugin-googlemaps-1.4.1.tgz_1498494931427_0.5386139787733555"
+    "tmp": "tmp/cordova-plugin-googlemaps-1.4.5.tgz_1503073120996_0.8382692423183471"
   },
   "_npmUser": {
     "name": "wf9a5m75",
     "email": "wf9a5m75@gmail.com"
   },
-  "_npmVersion": "4.2.0",
+  "_npmVersion": "3.3.12",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "cordova-plugin-googlemaps",
+    "raw": "cordova-plugin-googlemaps@^1.4.1",
     "scope": null,
     "escapedName": "cordova-plugin-googlemaps",
     "name": "cordova-plugin-googlemaps",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "^1.4.1",
+    "spec": ">=1.4.1 <2.0.0",
+    "type": "range"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/cordova-plugin-googlemaps/-/cordova-plugin-googlemaps-1.4.1.tgz",
-  "_shasum": "09e12156179a1258ce966fe2d0826a81966e78ae",
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-googlemaps/-/cordova-plugin-googlemaps-1.4.5.tgz",
+  "_shasum": "fa9ea3e29d39492ecf80d2c3811e40e0bc7e4b78",
   "_shrinkwrap": null,
-  "_spec": "cordova-plugin-googlemaps",
-  "_where": "c:\\tmp\\cwguiafloripa\\guia\\node_modules",
+  "_spec": "cordova-plugin-googlemaps@^1.4.1",
+  "_where": "C:\\app\\guiafloripa\\guia",
   "author": {
     "name": "Masashi Katsumata, Hirbod Mirjavadi"
   },
@@ -64,8 +64,8 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "09e12156179a1258ce966fe2d0826a81966e78ae",
-    "tarball": "https://registry.npmjs.org/cordova-plugin-googlemaps/-/cordova-plugin-googlemaps-1.4.1.tgz"
+    "shasum": "fa9ea3e29d39492ecf80d2c3811e40e0bc7e4b78",
+    "tarball": "https://registry.npmjs.org/cordova-plugin-googlemaps/-/cordova-plugin-googlemaps-1.4.5.tgz"
   },
   "engines": [
     {
@@ -77,7 +77,7 @@
       "version": ">=4.0.0"
     }
   ],
-  "gitHead": "aea9f5ff7f682062878e7bf4bc0a6c2680622f39",
+  "gitHead": "cae8126343e6bd9e08b7f88d36d757e9faa86774",
   "homepage": "https://github.com/mapsplugin/cordova-plugin-googlemaps#readme",
   "keywords": [
     "google",
@@ -108,5 +108,5 @@
     "url": "git+https://github.com/mapsplugin/cordova-plugin-googlemaps.git"
   },
   "scripts": {},
-  "version": "1.4.1"
+  "version": "1.4.5"
 }

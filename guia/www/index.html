@@ -41,10 +41,10 @@
                         <a class="ui-btn ui-btn-icon-left ui-icon-user" href="#popupInfo" data-rel="popup" data-position-to="window">Meu Perfil</a>
                     </li>
                     <li>
-                        <a class="ui-btn ui-btn-icon-left ui-icon-bullets" href="#popupListView" onclick="mapUtils.showList()" data-rel="popup" data-position-to="window">Lista de Eventos</a>
+                        <a class="ui-btn ui-btn-icon-left ui-icon-bullets" href="#popupListView" onclick="mapUtils.showList()" data-rel="popup" data-position-to="window">Lista do dia</a>
                     </li>
                     <li>
-                        <a class="ui-btn ui-btn-icon-left ui-icon-star" href="javascript:alert('Em Breve!')">Favoritos</a>
+                        <a class="ui-btn ui-btn-icon-left ui-icon-star" href="#popupListView" onclick="mapUtils.showList1('fav')" data-rel="popup" data-position-to="window">Favoritos</a>
                     </li>
                     <li>
                         <a class="ui-btn ui-btn-icon-left ui-icon-search" href="#popupSearchGuia" data-rel="popup" data-position-to="window">Pesquisar</a>
@@ -69,7 +69,7 @@
             <div data-role="footer" data-position="fixed" class="footerMainWin" data-tap-toggle="false">
                 <center>
                     <!-- <h4>Categorias</h4>-->
-                    <fieldset>
+                    <fieldset id="flexiselOwner">
                         <ul id="flexiselDemo1">
                             <li>
                                 <img id="bt_3" alt="Lazer" src="img/lazer_on.png" onclick="mapUtils.setBorderStyle(this, 'lazer', 7)" />
@@ -137,95 +137,12 @@
                     </form>
                 </div>
             </div>
-            <!-- Tooltips-->
-            <!-- -->
-            <div data-role="popup" id="popupListView" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true" style="height: 400px;max-width: 99%">
+            <!-- Tooltips List View-->
+            <div data-role="popup" id="popupListView" data-theme="a" class="ui-corner-all" data-transition="flip" data-overlay-theme="b" data-dismissible="true" style="height: 400px">
+                <h1 id="titFav">O que há pra você hoje!</h1>
                 <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-                <div role="main" class="ui-content" style="overflow-y:scroll;height: 350px !important;" id="listViewTodayEvents" >
-                  
-                        <!-- <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>
-                         <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>  <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>
-                         <li>
-                             <a href="#">
-                                 <img src="img/icone.png">
-                                 <h2>Broken Bells</h2>
-                                 <p>Broken Bells</p>
-                             </a>
-                         </li>-->
+                <div role="main" class="ui-content" style="overflow-y:scroll;height: 250px !important;" id="listViewTodayEvents" >
 
-                   
                 </div>
             </div>
             <!-- Dates Filter-->
@@ -253,13 +170,12 @@
                     <small>Confirme as datas e selecione uma categoria</small>
                     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" data-rel="back">Aplicar</a>
                     <p>Ou veja o que esta acontecendo</p>
-                    <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-clock"
-                       data-rel="back">Hoje</a>
+                    <a href="#" onclick="mapUtils.showWhatsGoingOn()" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-clock" data-rel="back">Hoje</a>
                 </div>
             </div>
             <!-- end page 1 footer -->
         </div>
-        <div data-role="page" id="popupToolTips" data-dom-cache="true">
+        <div data-role="page" id="popupToolTips" data-dom-cache="false" data-transition="none">
             <div data-role="header" class="whiteBkHeader" data-position="fixed">
                 <center>
                     <img src="img/header.png" />
@@ -275,6 +191,7 @@
                 <h1 id="txtTitT">Bar</h1>
                 <h6 id="txtPlaT" class="ui-btn ui-btn-inline blankButtons buttonTitle"></h6>
                 <div class="containerImagem" id="divImagem">
+
                     <center>
                         <img src="#" id="deLogoPromo" class="imgPopUp" />
                     </center>
@@ -314,6 +231,7 @@
             <button class="show-page-loading-msg hideMeNow" data-theme="a" data-textonly="false" data-textvisible="true" data-msgtext="Carregando"
                     data-inline="true" id="btLoaderICO">A</button>
             <div data-role="footer" id="fotterToolTip" data-position="fixed">
+                <a href="javascript:myFavorites.addFavorite()" data-role="button" data-theme="a" data-icon="star" data-iconpos="notext" class="ui-btn-right">Close</a>
                 <center>
                     <p id="txtAddrT" style="font-size: 12px" class="ui-corner-all ui-mini"></p>
                 </center>
@@ -329,7 +247,7 @@
                     $(document).on("mobileinit", function () {
                         $.mobile.defaultPageTransition = "none";
                         $.mobile.defaultDialogTransition = "none";
-                        $.mobile.page.prototype.options.domCache = true;
+                        $.mobile.page.prototype.options.domCache = false;
                     });
         </script>
         <script src="https://maps.google.com/maps/api/js?key=AIzaSyDR6CWuQxGRXUrbfWZNcPqABne7faU2U8s" type="text/javascript"></script>
@@ -343,7 +261,7 @@
         <script type="text/javascript" src="js/Toast.js"></script>
         <script type="text/javascript" src="js/Loader.js"></script>
         <script type="text/javascript" src="js/markerclusterer.js"></script>
-
+        <script type="text/javascript" src="js/Favorite.js"></script>
         <script type="text/javascript" src="js/jquery.flexisel.js"></script>
         <script type="text/javascript" src="js/mautic.js"></script>
 
