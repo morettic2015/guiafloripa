@@ -287,7 +287,13 @@ $app->get('/daily_tweet/', function (Request $request, Response $response) use (
     $tb = new TwitterBOT();
     $tb->connectTwitter();
     $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
+    $tb->searchTweetsReply("(#Bar OR #Restaurante OR #lagoa OR #Lazer OR #Cinema OR #Cultura OR #Comer OR #Turismo OR #hospedagem) #floripa");
 });
+/*$app->get('/filter_tweet/', function (Request $request, Response $response) use ($app) {
+    $tb = new TwitterBOT();
+    $tb->connectTwitter();
+    $tb->searchTweetsReply("(#Bar OR #Restaurante OR #lagoa OR #Lazer OR #Cinema OR #Cultura OR #Comer OR #Turismo OR #hospedagem) #floripa");
+});*/
 /**
  * @Cron Service runs every 3 days only
  * @Sync Comer & Beber

@@ -18,11 +18,45 @@ const AC = "PwAW0AObVAFzFU3BSj4DeVRq2klseARFj33WfTF9HN2JJ";
  *
  * @author Morettic LTDA
  */
+const PLACE_FLORIPA_ID = "19cb75100ad24124";
+
 class TwitterBOT {
 
     //put your code here
     public $connection = null;
     public $profileBot = null;
+
+    public function searchTweetsReply($q) {
+        $statuses = $this->connection->get(
+                "search/tweets", ["q" => $q]
+        );
+
+
+       // echo "<pre>";
+        $media1 = $this->connection->upload('media/upload', ['media' => 'img/moto-x.png']);
+        $hashtags = str_replace("OR", "|", $q);
+        foreach ($statuses->statuses as $row) {
+            //var_dump($row);
+            //echo $row->id;
+           // echo $row->user->screen_name;
+           // echo "<br>";
+            //die;
+            //die;
+            // $status_id = $row->id;
+            $twitt_reply = '@' . $row->user->screen_name . ' pensou '. $hashtags."? Download App https://app.guiafloripa.com.br!";
+
+            $replyVet = [
+                "in_reply_to_status_id" => $status_id,
+                "status" => $twitt_reply,
+                'media_ids' => implode(',', [$media1->media_id_string])
+            ];
+            //var_dump($replyVet);
+
+            $reply = $this->connection->post("statuses/update", $replyVet);
+            
+           // var_dump($reply);
+        }
+    }
 
     public function connectTwitter() {
         //echo "<pre>";
@@ -50,6 +84,7 @@ class TwitterBOT {
         ]);
         return $statues;
     }
+
     //"Oi eu sou um bot #bot #floripa #balada #iambot #android #life #free #beta #night https://app.guiafloripa.com.br."
     public function dailyNewsTweet($img1, $img2) {
         // DB::debugMode();
@@ -66,14 +101,14 @@ class TwitterBOT {
         $cines = CinemaController::countMovieTheaters();
         //  echo $counter;
         //Has events today
-        
+
         $tweet;
         if ($counter > 0) {
             $message = $counter . " eventos e " . $cines . " filmes em cartaz em #Floripa #night #Lazer #Festa #Android #beta #APP https://app.guiafloripa.com.br";
             $tweet = $this->tweetMedia($message, $img1, $img2);
         }
         DB::disconnect();
-        
+
         return $tweet;
     }
 
