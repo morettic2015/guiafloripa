@@ -30,6 +30,7 @@ require 'GeocoderController.php';
 require 'CinemaController.php';
 require 'BugTracker.php';
 require 'ZombieController.php';
+require 'TwitterBOT.php';
 
 
 /**
@@ -194,8 +195,8 @@ $app->post('/favorite/', function (Request $request, Response $response) use ($a
     $data->placeID = filter_var($dt['pId'], FILTER_SANITIZE_STRING);
     $data->eventID = filter_var($dt['eventID'], FILTER_SANITIZE_STRING);
     $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING);
- //  var_dump($data);
- //   die;
+    //  var_dump($data);
+    //   die;
     $data = ProfileController::favoriteOne($data);
     logActions("'/favorite/'");
     return $newResponse->withJson($data, 200);
@@ -282,6 +283,11 @@ $app->get('/issues/', function (Request $request, Response $response) use ($app)
  * @copyright (c) 2017, Moretto, LAMM <projetos@morettic.com.br>
  */
 //////////////////////////////////////////////////////////////////////////////
+$app->get('/daily_tweet/', function (Request $request, Response $response) use ($app) {
+    $tb = new TwitterBOT();
+    $tb->connectTwitter();
+    $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
+});
 /**
  * @Cron Service runs every 3 days only
  * @Sync Comer & Beber
