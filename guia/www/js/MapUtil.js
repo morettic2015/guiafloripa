@@ -113,9 +113,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        size: new google.maps.Size(40, 64), // size
+                        size: new google.maps.Size(32, 51), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 64) // anchor
+                        anchor: new google.maps.Point(0, 51) // anchor
                     },
                 });
                 /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -181,9 +181,9 @@ var MapUtils = function () {
                 animation: google.maps.Animation.DROP,
                 icon: {
                     url: mapUtils.getIcon(lEventos[i].idType),
-                    size: new google.maps.Size(40, 64), // size
+                    size: new google.maps.Size(32, 51), // size
                     origin: new google.maps.Point(0, 0), // origin
-                    anchor: new google.maps.Point(0, 64) // anchor
+                    anchor: new google.maps.Point(0, 51) // anchor
                 },
             });
             /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -239,9 +239,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        size: new google.maps.Size(40, 64), // size
+                        size: new google.maps.Size(32, 51), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 64) // anchor
+                        anchor: new google.maps.Point(0, 51) // anchor
                     },
                 });
                 google.maps.event.addListener(markers[i], 'click', function () {
@@ -297,16 +297,34 @@ var MapUtils = function () {
 
         for (i = 0; i < lEventos.length; i++) {
             var image = lEventos[i].deLogo === "default" ? "img/icone.png" : lEventos[i].deLogo;
-            var deEvent = lEventos[i].deEvent === undefined ? lEventos[i].dePlace : lEventos[i].deEvent;
+            var deEvent = lEventos[i].deEvent === undefined ? "" : lEventos[i].deEvent;
+            var printDate = (lEventos[i].printDate === undefined) ? "" : lEventos[i].printDate;
+            var nrPhone = (lEventos[i].nrPhone===null)?"":lEventos[i].nrPhone;
             contentList += '<fieldset class="ui-grid-a">'
                     + '<div class="ui-block-a" style="width: 35% !important;"><img width="96" height="96" src="' + image + '"></div>'
                     + '<div class="ui-block-b" style="width: 64% !important;"><h3>' + lEventos[i].nmPlace + '</h3><p><small>' + deEvent + '</small></p></div>'
                     + '</fieldset><p><center class="smallTxt">'
                     + lEventos[i].deAddress
-                    + "<br>"
-                    + lEventos[i].printDate
-                    + '</center></p><hr>'
+                    + "<br><br><b>"
+                    + printDate
+                    + '</b><br><br>'
+                    + nrPhone
+                    + '<br><br>'
+                    + mapUtils.calculateDistance(lat,lng,lEventos[i].nrLat,lEventos[i].nrLng)
+                    + '<fieldset class="ui-grid-c">'
+                    + '<div class="ui-block-a">'
+                    + '<a href="javascript:myFavorites.linkFavorite('+i+')" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-star ui-btn-icon-notext">Favoritos</a>'
+                    + '</div><div class="ui-block-b">'
+                    + '<a href="#" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-action ui-btn-icon-notext">Compartilhar</a></div>'
+                    + '<div class="ui-block-c">'
+                    + '<a target="_blank" href="'+lEventos[i].deWebsite+'" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-navigation ui-btn-icon-notext">Website</a>'
+                    + '</div>'
+                    + '<div class="ui-block-d">'
+                    + '<a href="javascript:alert(\"Aguarde...\")" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-comment ui-btn-icon-notext">Mensagem</a>'
+                    + '</div>'
+                    + '</fieldset></center></p><hr>';
         }
+
         contentList += "</div>";
         $("#listViewTodayEvents").html(contentList);
 
@@ -367,9 +385,9 @@ var MapUtils = function () {
                     animation: google.maps.Animation.BOUNCE,
                     icon: {
                         url: mapUtils.getIcon(lEventos[i].idType),
-                        size: new google.maps.Size(40, 64), // size
+                        size: new google.maps.Size(32, 51), // size
                         origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 64) // anchor
+                        anchor: new google.maps.Point(0, 51) // anchor
                     },
                 });
                 google.maps.event.addListener(markers[i], 'click', function () {
@@ -767,11 +785,11 @@ function InfoWindowT(obj, plat, plng) {
 
     //ate Null Hide IT
     if (obj.dtUntil === null || obj.dtUntil === undefined) {
-        shareObj.setMessage("Venha conhecer " + obj.nmPlace + "? Quer mais opções? Download.");
+        shareObj.setMessage("Venha conhecer " + obj.nmPlace + "! Quer mais opções? Guia Floripa App.");
         hideIt('txtDateT');
         hideIt('txtDateT1');
     } else {
-        shareObj.setMessage("Que tal " + obj.deEvent + " no dia " + obj.printDate + "? Quer mais opções? Download.");
+        shareObj.setMessage("Que tal " + obj.deEvent + " no dia " + obj.printDate + "? Quer mais opções? Guia Floripa App.");
         showIt('txtDateT');
         showIt('txtDateT1');
     }
@@ -832,7 +850,7 @@ function InfoWindowT(obj, plat, plng) {
                     + '<a class="ui-btn ui-mini ui-icon-calendar ui-mini ui-btn-inline ui-btn-icon-left blankButtons">' + mP.dtFrom + ' - ' + mP.dtUntil + '</a>'
                     + '<div id=' + id + ' class="txtCinema" readonly>'
                     + mP.deDetail
-                    + '</div><hr>';
+                    + '</div>';
         }
         //  content += "</ul>"
         content += "<br><br><br><br>";

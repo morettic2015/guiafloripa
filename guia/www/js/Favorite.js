@@ -7,6 +7,12 @@
 var Favorite = function () {
     this.lFavorites = [];
     this.obj = null
+
+    this.linkFavorite = function (o) {
+        this.obj = lEventos[o];
+        this.addFavorite();
+    }
+
     this.addFavorite = function () {
         //Block from add to favorite without login on facebook
         if (localStorage.getItem("facebook") === null) {

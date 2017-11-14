@@ -175,7 +175,9 @@ h1 {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
-
+.txtTitT{
+    text-transform:  uppercase!important;
+}
 .txtCinema{    
     padding: 0px 0px 0px 0px;
     background: transparent;
@@ -189,8 +191,8 @@ h1 {
     min-height: 10vh;
     max-height: 250vh;
     margin-bottom:80px;
-    overflow-y: auto;
-    text-transform: capitalize !important;
+    /** overflow-y: auto; **/
+    text-transform:  lowercase!important;
     line-height: 140% !important;
     text-align: justify !important;
     text-justify: inter-word !important;
