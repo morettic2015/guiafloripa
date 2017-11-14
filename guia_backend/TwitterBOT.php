@@ -10,8 +10,8 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 const CK = "GnNVtbzbh8Tkm1J9qaOttxoC0";
 const CS = "nENAHgpUrY8ZQxmDesMcyiwX6AinkPVCEoUZ9mKJ8tdzlPqGIQ";
-const AT = "887976115549208578-wIg1cwIvywVlGgP7rtVhDETI8PNBvpN";
-const AC = "PwAW0AObVAFzFU3BSj4DeVRq2klseARFj33WfTF9HN2JJ";
+const AT = "887976115549208578-TdOZ4GeIVSwaYC4S27oyX5SBHRivtfl";
+const AC = "2LNX7rEMSCDNihfocAiQuP8uWdZVd6Rft126mpLAKzZ7K";
 
 /**
  * Description of TwitterBOT
@@ -26,24 +26,57 @@ class TwitterBOT {
     public $connection = null;
     public $profileBot = null;
 
+    public function searchFollow($q) {
+        $statuses = $this->connection->get(
+                "search/tweets", ["q" => $q]
+        );
+        var_dump($statuses);
+        foreach ($statuses->statuses as $row) {
+            //var_dump($row);
+            $f = $this->connection->post("friendships/create", ["screen_name" => $row->user->screen_name, "follow" => true]);
+            var_dump($f);
+            
+        }
+    }
+
+    public function sendFollowersMessage($m) {
+        $folowers = $this->getFollowers();
+        echo "<pre>";
+        $list = $folowers->users;
+        foreach ($list as $p) {
+            $this->sendMessage($p->screen_name, $m);
+        }
+    }
+
+    public function getFollowers() {
+        return $this->connection->get("followers/list", ["count" => 200]);
+    }
+
+    /**
+     * @Send message to a follower
+     */
+    public function sendMessage($screen_name, $m) {
+        return $this->connection->post("direct_messages/new", ["screen_name" => $screen_name, "text" => $m]);
+    }
+
     public function searchTweetsReply($q) {
         $statuses = $this->connection->get(
                 "search/tweets", ["q" => $q]
         );
 
 
-       // echo "<pre>";
+        // echo "<pre>";
         $media1 = $this->connection->upload('media/upload', ['media' => 'img/moto-x.png']);
         $hashtags = str_replace("OR", "|", $q);
         foreach ($statuses->statuses as $row) {
             //var_dump($row);
             //echo $row->id;
-           // echo $row->user->screen_name;
-           // echo "<br>";
+            // echo $row->user->screen_name;
+            // echo "<br>";
             //die;
             //die;
             // $status_id = $row->id;
-            $twitt_reply = '@' . $row->user->screen_name . ' pensou '. $hashtags."? Download App https://app.guiafloripa.com.br!";
+            $twitt_reply = '@' . $row->user->screen_name . ' pensou ' . $hashtags . "? Download App https://app.guiafloripa.com.br!";
 
             $replyVet = [
                 "in_reply_to_status_id" => $status_id,
@@ -53,8 +86,8 @@ class TwitterBOT {
             //var_dump($replyVet);
 
             $reply = $this->connection->post("statuses/update", $replyVet);
-            
-           // var_dump($reply);
+
+            // var_dump($reply);
         }
     }
 
@@ -62,7 +95,7 @@ class TwitterBOT {
         //echo "<pre>";
 
         $this->connection = new TwitterOAuth(CK, CS, AT, AC);
-        $this->profileBot = $this->connection->get("account/verify_credentials");
+        //$this->profileBot = $this->connection->get("account/verify_credentials");
         //var_dump($this->profileBot);
     }
 

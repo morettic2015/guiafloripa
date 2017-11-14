@@ -43,27 +43,29 @@ class ProfileController extends stdClass {
         //echo "<pre>";
         //DB::debugMode();
         $userId = DB::queryFirstField("select idProfile from Profile where deEmail like '%" . $obj->email . "%'");
-       // echo $userId . "asdasd";
+        //echo $userId . "asdasd";
+        $userId = $userId < 1 ? null : $userId;
+        DB::$usenull = true;
         DB::insertUpdate('Profile', array(
             'idProfile' => $userId, //primary key
             'deName' => $obj->name,
             'deEmail' => $obj->email,
-            'userID' => $obj->userId,
-            'pushToken' => $obj->pushToken
+            'userID' => empty($obj->userId)?null:$obj->userId,
+            'pushToken' => empty($obj->pushToken)?null:$obj->pushToken
         ));
         $rt->userID = DB::insertId();
+        
+       // die;
+        
+        $configID = DB::queryFirstField("SELECT idConfig FROM guiafloripa_app.Config where profileID = " . $rt->userID . " and type = 'FACEBOOK' and placeID is null and eventID is null");
         //Add contact to Mautic Integration
         $rt->contactID = LeadController::createContact($obj->name, null, $obj->email);
         //Add Lead to Segment
         $rt->segmentID = LeadController::addContactToSegment($rt->contactID);
+
         $obj->contactID = $rt->contactID;
         $obj->segmentID = $rt->segmentID;
 
-        $configID = DB::queryFirstField("SELECT idConfig FROM guiafloripa_app.Config where profileID = $userId and type = 'FACEBOOK' and placeID is null and eventID is null");
-
-
-        // var_dump($obj);
-        //die;
         if (isset($obj->facebook)) {
             DB::insertUpdate('Config', array(
                 'idConfig' => $configID,
@@ -72,10 +74,8 @@ class ProfileController extends stdClass {
                 'type' => 'FACEBOOK')
             );
         }
-
         //Close connection
         DB::disconnect();
-
         return $rt;
     }
 

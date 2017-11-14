@@ -172,7 +172,7 @@ $app->post('/facebook/', function (Request $request, Response $response) use ($a
     $data->pushToken = filter_var($dt['token'], FILTER_SANITIZE_STRING);
     $data->facebook = filter_var($dt['facebook'], FILTER_SANITIZE_STRING);
 
-    //var_dump($data);
+    //var_dump($data);die;
     //Return Eventos by date interval
     //DB::debugMode();
     $data = ProfileController::insertUpdateProfile($data);
@@ -287,13 +287,27 @@ $app->get('/daily_tweet/', function (Request $request, Response $response) use (
     $tb = new TwitterBOT();
     $tb->connectTwitter();
     $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
-    $tb->searchTweetsReply("(#Bar OR #Restaurante OR #lagoa OR #Lazer OR #Cinema OR #Cultura OR #Comer OR #Turismo OR #hospedagem) #floripa");
+    $tb->searchTweetsReply("#floripa");
 });
-/*$app->get('/filter_tweet/', function (Request $request, Response $response) use ($app) {
+$app->get('/follow_tweet/', function (Request $request, Response $response) use ($app) {
+    //echo CinemaController::countMovieTheaters();
+    //GuiaController::reverseImagesFromWordress(8948);
+    //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
+    //echo "<pre>";
+    //var_dump($addr);
+
     $tb = new TwitterBOT();
     $tb->connectTwitter();
-    $tb->searchTweetsReply("(#Bar OR #Restaurante OR #lagoa OR #Lazer OR #Cinema OR #Cultura OR #Comer OR #Turismo OR #hospedagem) #floripa");
-});*/
+    $tb->searchFollow("#floripa");
+    $tb->searchFollow("#festa");
+    $tb->searchFollow("#beer");
+    $tb->searchFollow("#artesanal");
+});
+/* $app->get('/filter_tweet/', function (Request $request, Response $response) use ($app) {
+  $tb = new TwitterBOT();
+  $tb->connectTwitter();
+  $tb->searchTweetsReply("(#Bar OR #Restaurante OR #lagoa OR #Lazer OR #Cinema OR #Cultura OR #Comer OR #Turismo OR #hospedagem) #floripa");
+  }); */
 /**
  * @Cron Service runs every 3 days only
  * @Sync Comer & Beber
@@ -438,11 +452,17 @@ $app->get('/sync_zombie/', function (Request $request, Response $response) use (
  * @ignore it only for Test
  */
 $app->get('/test_case/', function (Request $request, Response $response) use ($app) {
-    echo CinemaController::countMovieTheaters();
+    //echo CinemaController::countMovieTheaters();
     //GuiaController::reverseImagesFromWordress(8948);
     //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
     //echo "<pre>";
     //var_dump($addr);
+
+    $tb = new TwitterBOT();
+    $tb->connectTwitter();
+    $tb->searchFollow("#floripa");
+    $tb->searchFollow("#beer");
+    $tb->sendFollowersMessage("Thanks for following! Visiting #floripa? https://app.guiafloripa.com.br/");
 }); //Run Slim Microservice
 $app->run();
 
