@@ -145,6 +145,73 @@ class GuiaController extends stdClass {
         $conn->closeConn();
     }
 
+    public static final function updatePrimaryCategory() {
+        DB::debugMode();
+        $conn = new MysqlDB();
+        $conn->execute("SET group_concat_max_len = 256000");
+        //Primarias Lazer
+        $queryLazer = "select GROUP_CONCAT(post_id,'') as cols ,count(*) as total from wp_postmeta"
+                . " where meta_key = '_category_permalink'"
+                . " and meta_value in (9,10,200,419,418,276,99)";
+        $conn->execute($queryLazer);
+        echo "<pre>";
+        if ($row = $conn->hasNext()) {
+            //var_dump($row);
+            $q = "update Event set idType = 7 where idEvent in (" . $row['cols'] . ")";
+            DB::query($q);
+        }
+        //Primarias Cult
+        $queryCult = "select GROUP_CONCAT(post_id,'') as cols from wp_postmeta"
+                . " where meta_key = '_category_permalink'"
+                . " and meta_value in (421,204)";
+        $conn->execute($queryCult);
+        // echo "<pre>";
+        if ($row = $conn->hasNext()) {
+            //var_dump($row);
+            $q = "update Event set idType = 4 where idEvent in (" . $row['cols'] . ")";
+            DB::query($q);
+        }
+        //Primarias free
+        $queryFree = "select GROUP_CONCAT(post_id,'') as cols from wp_postmeta"
+                . " where meta_key = '_category_permalink'"
+                . " and meta_value in (426)";
+
+        $conn->execute($queryFree);
+        //  echo "<pre>";
+        if ($row = $conn->hasNext()) {
+            //var_dump($row);
+            $q = "update Event set idType = 9 where idEvent in (" . $row['cols'] . ")";
+            DB::query($q);
+        }
+        //Primarias eventos
+        $queryEventos = "select GROUP_CONCAT(post_id,'') as cols from wp_postmeta"
+                . " where meta_key = '_category_permalink'"
+                . " and meta_value in (638,424,275,427,473,425)";
+
+        $conn->execute($queryEventos);
+        // echo "<pre>";
+        if ($row = $conn->hasNext()) {
+            //var_dump($row);
+            $q = "update Event set idType = 6 where idEvent in (" . $row['cols'] . ")";
+            DB::query($q);
+        }
+        //Primarias infantil
+        $queryInfantil = "select GROUP_CONCAT(post_id,'') as cols from wp_postmeta"
+                . " where meta_key = '_category_permalink'"
+                . " and meta_value in (277)";
+
+        $conn->execute($queryInfantil);
+        // echo "<pre>";
+        if ($row = $conn->hasNext()) {
+            //var_dump($row);
+            $q = "update Event set idType = 2 where idEvent in (" . $row['cols'] . ")";
+            DB::query($q);
+        }
+        //Close connection
+        DB::disconnect();
+        $conn->closeConn();
+    }
+
     /**
      * update Place set deLogo = '123123' where idPlace = 999999999999999;
      * @Places images from Encoded String to Php Object reverse from Wordpress MANUAL

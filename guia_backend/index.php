@@ -436,6 +436,7 @@ $app->get('/sync_prop/', function (Request $request, Response $response) use ($a
     GuiaController::updateURLS();
     GuiaController::reverseImagesFromWordress();
     GuiaController::updateReccuringDates();
+    GuiaController::updatePrimaryCategory();
     logActions("/sync_prop/");
     die();
 });
@@ -457,12 +458,12 @@ $app->get('/test_case/', function (Request $request, Response $response) use ($a
     //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
     //echo "<pre>";
     //var_dump($addr);
-
-    $tb = new TwitterBOT();
+    //GuiaController::updatePrimaryCategory();
+    /*$tb = new TwitterBOT();
     $tb->connectTwitter();
     $tb->searchFollow("#floripa");
     $tb->searchFollow("#beer");
-    $tb->sendFollowersMessage("Thanks for following! Visiting #floripa? https://app.guiafloripa.com.br/");
+    $tb->sendFollowersMessage("Thanks for following! Visiting #floripa? https://app.guiafloripa.com.br/");*/
 }); //Run Slim Microservice
 $app->run();
 
