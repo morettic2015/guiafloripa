@@ -19,34 +19,34 @@
 
     <?php
     @session_start();
-    //var_dump($_SESSION);
+    var_dump($_SESSION);
     if (isset($_POST['mail'])) {
-        //var_dump($_POST);
-    } else if (isset($_POST['username'])) {
+        //
+    } elseif (isset($_POST['username'])) {
         //echo "<pre>";
         $user = wp_login($_POST['username'], $_POST['password']);
 
 
         if (!empty($user->user_login)) {
-            $_SESSION['user'] = $user;
+            $_SESSION['user'] = json_encode($user);
 
        //      global $current_user;
 
-    //echo 'The current logged in user ID is: ' . $current_user->ID;die;
+            echo 'The current logged in user ID is: ' . $user->ID;
             include PLUGIN_ROOT_DIR . 'views/menu.php';
-        } else if (isset($_SESSION['user'])) {
-            include PLUGIN_ROOT_DIR . 'views/menu.php';
-        } else {
-            echo '<ons-icon icon="ion-close-circled">Falha na autenticação</ons-icon>';
-            include PLUGIN_ROOT_DIR . 'views/login.php';
         }
+    } elseif (isset($_SESSION['user'])) {
+            include PLUGIN_ROOT_DIR . 'views/menu.php';
+    } else {
+        echo '<ons-icon icon="ion-close-circled">Falha na autenticação</ons-icon>';
+        include PLUGIN_ROOT_DIR . 'views/login.php';
     }
     ?>
 
 
-    <ons-fab position="bottom right" onclick="showPopover(this)">
+   <!-- <ons-fab position="bottom right" onclick="showPopover(this)">
         <ons-icon icon="ion-android-add"></ons-icon>
-    </ons-fab>
+    </ons-fab> -->
     <ons-bottom-toolbar>
         <ons-row>
 

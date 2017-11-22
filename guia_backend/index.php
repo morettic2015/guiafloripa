@@ -368,6 +368,13 @@ $app->get('/sync_cinemas/', function (Request $request, Response $response) use 
 $app->get('/sync_free/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_gratuitos_ids", 9);
     logActions("EVENTS - FREE");
+    GuiaController::updatePrimaryCategory();
+    die();
+});
+$app->get('/sync_saude_beleza/', function (Request $request, Response $response) use ($app) {
+    //GuiaController::cronEventCategory("", 10);
+    logActions("EVENTS - BELEZA");
+    GuiaController::updatePlacesByCategory("view_saude_beleza", 10);
     die();
 });
 /**
@@ -376,6 +383,7 @@ $app->get('/sync_free/', function (Request $request, Response $response) use ($a
 $app->get('/sync_cultura/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_cultura_ids", 4);
     logActions("EVENTS - CULT");
+    GuiaController::updatePrimaryCategory();
     die();
 });
 /**
@@ -384,6 +392,7 @@ $app->get('/sync_cultura/', function (Request $request, Response $response) use 
 $app->get('/sync_lazer/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_lazer_ids", 7);
     logActions("EVENTS - LAZER");
+    GuiaController::updatePrimaryCategory();
     die();
 });
 /**
@@ -391,6 +400,7 @@ $app->get('/sync_lazer/', function (Request $request, Response $response) use ($
  */
 $app->get('/sync_eventos/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_eventos_ids", 6);
+    GuiaController::updatePrimaryCategory();
     logActions("EVENTS - EVENTS");
     die();
 });
@@ -399,6 +409,7 @@ $app->get('/sync_eventos/', function (Request $request, Response $response) use 
  */
 $app->get('/sync_infantil/', function (Request $request, Response $response) use ($app) {
     GuiaController::cronEventCategory("view_infantil_ids", 2);
+    GuiaController::updatePrimaryCategory();
     logActions("EVENTS - CHILD");
     die();
 });
@@ -458,12 +469,12 @@ $app->get('/test_case/', function (Request $request, Response $response) use ($a
     //$addr = GeocoderController::geocodeQuery("Rua Major Costa, 66, Centro, Florianópolis");
     //echo "<pre>";
     //var_dump($addr);
-    //GuiaController::updatePrimaryCategory();
-    /*$tb = new TwitterBOT();
-    $tb->connectTwitter();
-    $tb->searchFollow("#floripa");
-    $tb->searchFollow("#beer");
-    $tb->sendFollowersMessage("Thanks for following! Visiting #floripa? https://app.guiafloripa.com.br/");*/
+    GuiaController::updatePrimaryCategory();
+    /* $tb = new TwitterBOT();
+      $tb->connectTwitter();
+      $tb->searchFollow("#floripa");
+      $tb->searchFollow("#beer");
+      $tb->sendFollowersMessage("Thanks for following! Visiting #floripa? https://app.guiafloripa.com.br/"); */
 }); //Run Slim Microservice
 $app->run();
 

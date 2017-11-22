@@ -492,7 +492,7 @@ class GuiaController extends stdClass {
                 continue;
             }
             echo "<br>";
-
+            //var_dump($row);die;
             $titulo = $row['titulo'];
             //$titulo
             $titulo_original = @imap_utf7_decode($row['titulo_original']) === "" ? $row['titulo_original'] : @imap_utf7_decode($row['titulo_original']);
@@ -518,8 +518,8 @@ class GuiaController extends stdClass {
             $eventRow->city = $row['city'];
             $eventRow->addressID = @imap_utf7_decode($row['address']);
             $eventRow->post_content = $row['post_content'];
-            $eventRow->outras_informacoes_clean = @imap_utf7_decode(strip_tags($row['outras_informacoes']));
-            $eventRow->outras_informacoes_html = @imap_utf7_decode($row['outras_informacoes']);
+            $eventRow->outras_informacoes_clean = strip_tags($row['outras_informacoes']);
+            $eventRow->outras_informacoes_html = $row['outras_informacoes'];
             @$eventRow->ID = $row['ID_POST_'];
             $eventRow->salas_horarios = $row['salas_horarios'];
 
@@ -794,7 +794,7 @@ class GuiaController extends stdClass {
         //DB::debugMode();
         $conn = new MysqlDB();
         $query = "select * from $view where endereco is not null order by ID desc";
-        //echo $query;
+       // echo $query;die;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         $i = 0;
