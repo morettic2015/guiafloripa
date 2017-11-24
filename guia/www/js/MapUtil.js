@@ -54,6 +54,9 @@ var MapUtils = function () {
             case 9:
                 icon = "./img/pin_9.png";
                 break;
+            case 10:
+                icon = "./img/pin_10.png";
+                break;
         }
         return icon;
     }
@@ -299,30 +302,31 @@ var MapUtils = function () {
             var image = lEventos[i].deLogo === "default" ? "img/icone.png" : lEventos[i].deLogo;
             var deEvent = lEventos[i].deEvent === undefined ? "" : lEventos[i].deEvent;
             var printDate = (lEventos[i].printDate === undefined) ? "" : lEventos[i].printDate;
-            var nrPhone = (lEventos[i].nrPhone===null)?"":lEventos[i].nrPhone;
+            var nrPhone = (lEventos[i].nrPhone === null) ? "" : lEventos[i].nrPhone;
             contentList += '<fieldset class="ui-grid-a">'
                     + '<div class="ui-block-a" style="width: 35% !important;"><img width="96" height="96" src="' + image + '"></div>'
-                    + '<div class="ui-block-b" style="width: 64% !important;"><h3>' + lEventos[i].nmPlace + '</h3><p><small>' + deEvent + '</small></p></div>'
-                    + '</fieldset><p><center class="smallTxt">'
-                    + lEventos[i].deAddress
-                    + "<br><br><b>"
+                    + '<div class="ui-block-b" style="width: 64% !important;"><p>' + deEvent
+                    + '<small class="detailGridList">'
+                    + "<br>"
+                    + lEventos[i].nmPlace
+                    + "<br>"
                     + printDate
-                    + '</b><br><br>'
-                    + nrPhone
-                    + '<br><br>'
-                    + mapUtils.calculateDistance(lat,lng,lEventos[i].nrLat,lEventos[i].nrLng)
+                    + '<br>'
+                    + mapUtils.calculateDistance(lat, lng, lEventos[i].nrLat, lEventos[i].nrLng)
+                    + '</small></p></div>'
+                    + '</fieldset><center class="smallTxt">'
                     + '<fieldset class="ui-grid-c">'
                     + '<div class="ui-block-a">'
-                    + '<a href="javascript:myFavorites.linkFavorite('+i+')" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-star ui-btn-icon-notext">Favoritos</a>'
+                    + '<a href="javascript:myFavorites.linkFavorite(' + i + ')" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-star ui-btn-icon-notext">Favoritos</a>'
                     + '</div><div class="ui-block-b">'
                     + '<a href="#" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-action ui-btn-icon-notext">Compartilhar</a></div>'
                     + '<div class="ui-block-c">'
-                    + '<a target="_blank" href="'+lEventos[i].deWebsite+'" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-navigation ui-btn-icon-notext">Website</a>'
+                    + '<a target="_blank" href="' + lEventos[i].deWebsite + '" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-navigation ui-btn-icon-notext">Website</a>'
                     + '</div>'
                     + '<div class="ui-block-d">'
-                    + '<a href="javascript:alert(\"Aguarde...\")" style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-comment ui-btn-icon-notext">Mensagem</a>'
+                    + '<a href=javascript:alert("Aguarde...") style="margin:0.5em 10px;" class="ui-btn ui-corner-all ui-icon-comment ui-btn-icon-notext">Mensagem</a>'
                     + '</div>'
-                    + '</fieldset></center></p><hr>';
+                    + '</fieldset></center><hr>';
         }
 
         contentList += "</div>";
