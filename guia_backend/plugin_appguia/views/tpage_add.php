@@ -1,53 +1,3 @@
-<style>
-    input[type="checkbox"]{
-        appearance:none;
-        width:40px;
-        height:16px;
-        border:1px solid #aaa;
-        border-radius:2px;
-        background:#ebebeb;
-        position:relative;
-        display:inline-block;
-        overflow:hidden;
-        vertical-align:middle;
-        transition: background 0.3s;
-        box-sizing:border-box;
-    }
-    input[type="checkbox"]:after{
-        content:'';
-        position:absolute;
-        top:-1px;
-        left:-1px;
-        width:14px;
-        height:14px;
-        background:white;
-        border:1px solid #aaa;
-        border-radius:2px;
-        transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
-    }
-    input[type="checkbox"]:checked{
-        background:#a6c7ff;
-        border-color:#8daee5;
-    }
-    input[type="checkbox"]:checked:after{
-        left:23px;
-        border-color:#8daee5;
-    }
-
-    input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
-    input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
-        left:0px;
-    }
-
-    input[type="checkbox"]:hover:checked:not(:disabled):after,
-    input[type="checkbox"]:focus:checked:not(:disabled):after{
-        left:22px;
-    }
-
-    input[type="checkbox"]:disabled{
-        opacity:0.5;
-    }
-</style>
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?> <a href="admin.php?page=app_guiafloripa_twitter" class="page-title-action">Listar Hashtags</a></h1>
     <?php
@@ -57,13 +7,11 @@
     $tc->verifyConfig();
 
     $hashTag = $tc->loadByUmetaId($_GET);
-   // var_dump($hashTag);
+    // var_dump($hashTag);
     $json = json_decode($hashTag->meta_value);
-   // var_dump($json);
+    // var_dump($json);
     ?>
-
-    <h2>Adicione uma hashtag</h2>
-    <div style="background:#ececec;border:1px solid #ccc;padding:0 10px;margin-top:5px;margin-bottom: 10px;border-radius:5px;"  class="pressthis-bookmarklet" >
+    <div class="notice notice-info"> 
         <p>  Adicione uma <code>HashTag</code> vinculada ao seu <code>negócio.</code> <br>Configure as <code>ações</code> desejadas e salve a sua <code>HashTag</code>.<br> Alternativamente você pode adicionar hashtags a serem <code>ignoradas</code>.</p>
     </div>
     <div id="message-term"></div>
@@ -83,53 +31,53 @@
                     <table class="form-table editcomment">
                         <tbody>
                             <tr>
-                                <td class="first"> Ignorar?</td>
+                                <td class="first" style="text-align: right"> Ignorar?</td>
                                 <td>
                                     <input onclick="disableChecks(this)" type="checkbox" name="ignore" value="SIM">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first"><label for="name">Hashtag:</label></td>
-                                <td><input type="text" name="hashtag" id="title" value="" spellcheck="true"  size="30"></td>
+                                <td class="first" style="text-align: right"><label for="name">Hashtag:</label></td>
+                                <td><input type="text" name="hashtag" id="title" value="" spellcheck="true"  size="30"  placeholder="Ex: #floripa #festa #balada #cultura"></td>
                             </tr>
                             <tr>
-                                <td class="first">Adicionar aos favoritos</td>
+                                <td class="first" style="text-align: right">Adicionar aos favoritos</td>
                                 <td><input type="checkbox" name="favoritos" value="SIM"></td>
                             </tr>
                             <tr>
-                                <td class="first">Retweetar</td>
+                                <td class="first" style="text-align: right">Retweetar</td>
                                 <td> <input type="checkbox" name="retweetar" value="SIM"></td>
                             </tr>
                             <tr>
-                                <td class="first"> Seguir autor</td>
+                                <td class="first" style="text-align: right"> Seguir autor</td>
                                 <td>
                                     <input type="checkbox" name="follow" value="SIM">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first">Parar de seguir depois de 72 horas </td>
+                                <td class="first" style="text-align: right">Parar de seguir em 72 horas </td>
                                 <td>
                                     <input type="checkbox" name="unfollow" value="SIM">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first">Tirar dos favoritos depois de 72 horas </td>
+                                <td class="first" style="text-align: right">Tirar dos favoritos em 72 horas </td>
                                 <td>
                                     <input type="checkbox" name="unfavorite" value="SIM">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first"> 
-                                    Remover retweet depois de 72 horas
+                                <td class="first" style="text-align: right"> 
+                                    Remover retweet em 72 horas
                                 </td>
                                 <td>
                                     <input type="checkbox" name="unretweet" value="SIM">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first">Menção no twitter</td>
+                                <td class="first" style="text-align: right">Menção no twitter</td>
                                 <td>
-                                    <input type="text" name="quote" value="" max="50" maxlength="50" spellcheck="true" size="30">
+                                    <input type="text" name="quote" value="" max="50" maxlength="50" spellcheck="true" size="30"  placeholder="Ex: Chops e Nachos? #Floripa">
                                 </td>
                             </tr>
 
@@ -194,7 +142,57 @@
             return false;
         }
     }
-    
-    <?php $tc->disableCheck($json); ?>
-    
+
+<?php $tc->disableCheck($json); ?>
+
 </script>
+<style>
+    input[type="checkbox"]{
+        appearance:none;
+        width:40px;
+        height:16px;
+        border:1px solid #aaa;
+        border-radius:2px;
+        background:#ebebeb;
+        position:relative;
+        display:inline-block;
+        overflow:hidden;
+        vertical-align:middle;
+        transition: background 0.3s;
+        box-sizing:border-box;
+    }
+    input[type="checkbox"]:after{
+        content:'';
+        position:absolute;
+        top:-1px;
+        left:-1px;
+        width:14px;
+        height:14px;
+        background:white;
+        border:1px solid #aaa;
+        border-radius:2px;
+        transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    }
+    input[type="checkbox"]:checked{
+        background:#a6c7ff;
+        border-color:#8daee5;
+    }
+    input[type="checkbox"]:checked:after{
+        left:23px;
+        border-color:#8daee5;
+    }
+
+    input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
+    input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
+        left:0px;
+    }
+
+    input[type="checkbox"]:hover:checked:not(:disabled):after,
+    input[type="checkbox"]:focus:checked:not(:disabled):after{
+        left:22px;
+    }
+
+    input[type="checkbox"]:disabled{
+        opacity:0.5;
+    }
+</style>

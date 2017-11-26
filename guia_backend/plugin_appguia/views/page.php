@@ -1,7 +1,7 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Importar</a></h1>
 
-    <div style="background:#ececec;border:1px solid #ccc;padding:0 10px;margin-top:5px;border-radius:5px;"  class="pressthis-bookmarklet" >
+    <div class="notice notice-info"> 
         <p>Lista de <code>Eventos</code> vinculados ao seu perfil.</p>
     </div>
 

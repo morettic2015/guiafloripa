@@ -413,6 +413,16 @@ $app->get('/sync_infantil/', function (Request $request, Response $response) use
     logActions("EVENTS - CHILD");
     die();
 });
+
+/**
+ * @Sync Point
+ */
+$app->get('/sync_saude_beleza_manual/{id}', function (Request $request, Response $response) use ($app) {
+    $id = $request->getAttribute('id');
+    GuiaController::updatePlacesByCategoryID("view_saude_beleza", 10, $id);
+    logActions("/sync_saude_beleza_manual/{id}");
+    die();
+});
 /**
  * @Sync Point
  */

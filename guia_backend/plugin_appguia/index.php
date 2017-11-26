@@ -116,6 +116,9 @@ function wpse_91693_register() {
             'app_guiafloripa_eventos', // menu slug
             'wpse_91693_events', null, 6
     );
+    add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
+    add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
+    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_push_map');
     add_menu_page(
             'Campanhas', // page title
             'Campanhas', // menu title
@@ -123,6 +126,8 @@ function wpse_91693_register() {
             'app_guiafloripa_campaigns', // menu slug
             'wpse_91693_campaign', null, 6
     );
+    add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
     add_menu_page(
             'Leads', // page title
             'Leads', // menu title
@@ -130,6 +135,9 @@ function wpse_91693_register() {
             'app_guiafloripa_leads', // menu slug
             'asd', null, 6
     );
+    add_submenu_page('app_guiafloripa_leads', 'Adicionar Lead', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_leads', 'Importar Leads', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_push_map');
+
     add_menu_page(
             'Mensagens', // page title
             'Mensagens', // menu title
@@ -138,12 +146,13 @@ function wpse_91693_register() {
             'asd', null, 6
     );
     add_menu_page(
-            'Notificações', // page title
-            'Notificações', // menu title
+            'Dispositivos Ativos', // page title
+            'Dispositivos', // menu title
             'read', // capability
             'app_guiafloripa_push', // menu slug
             'wpse_91693_push', null, 6
     );
+    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Alcance', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map');
     add_menu_page(
             'Emails', // page title
             'Emails', // menu title
@@ -151,6 +160,8 @@ function wpse_91693_register() {
             'app_guiafloripa_mail', // menu slug
             'asd', null, 6
     );
+    add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_push_map');
+
     add_menu_page(
             'Chatbot', // page title
             'Chatbot', // menu title
@@ -166,26 +177,37 @@ function wpse_91693_register() {
             'asd', null, 6
     );
     add_menu_page(
-            'Twitter bot', // page title
-            'Twitter bot', // menu title
+            'Minhas Hashtags', // page title
+            'Twitter', // menu title
             'read', // capability
             'app_guiafloripa_twitter', // menu slug
             'wpse_91693_twitter', null, 6
     );
-    add_submenu_page('app_guiafloripa_twitter', 'Hashtags', 'Adicionar Hashtag', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
-   // add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
-
+    add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar Hashtag', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
+    // add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
     //add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Sincronizar', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_render');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Estatisticas', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_stats');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');
 }
 
+function app_guiafloripa_eventos_cal() {
+    include_once PLUGIN_ROOT_DIR . 'views/events_calendar.php';
+}
+
+function app_guiafloripa_eventos_add() {
+    include_once PLUGIN_ROOT_DIR . 'views/events_add.php';
+}
+
 function wpse_91693_push() {
-    include_once 'views/notifications.php';
+    include_once PLUGIN_ROOT_DIR . 'views/notific.php';
 }
 
 function app_guiafloripa_twitter_cloud_tag() {
     include_once PLUGIN_ROOT_DIR . 'views/tpage_cloud.php';
+}
+
+function app_guiafloripa_push_map() {
+    include_once PLUGIN_ROOT_DIR . 'views/notifications_map.php';
 }
 
 function app_guiafloripa_twitter_add_term() {
@@ -304,7 +326,7 @@ function add_email_dashboard_widgets() {
     );
     wp_add_dashboard_widget(
             'wppush_dashboard_widget', // Widget slug.
-            'Notificações', // Title.
+            'Dispositivos', // Title.
             'push_dashboard_widget_content' // Display function.
     );
     global $wp_meta_boxes;
@@ -360,8 +382,17 @@ function remove_dashboard_widgets() {
     remove_meta_box('dashboard_activity', 'dashboard', 'normal');
 }
 
-function hid_wordpress_thankyou() {
+function header_options_guia_app() {
     echo '<style type="text/css">#wpfooter {display:none;} </style>';
+    wp_enqueue_style('full-css', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.3/fullcalendar.min.css');
+    wp_register_script('js', 'https://code.jquery.com/jquery-1.7.min.js');
+    wp_register_script('moment-js', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js');
+    wp_register_script('ui-js', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"');
+    wp_register_script('full-js', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js');
+    wp_enqueue_script('js');
+    wp_enqueue_script('moment-js');
+    wp_enqueue_script('ui-js');
+    wp_enqueue_script('full-js');
 }
 
 //Remove visit site menu
@@ -417,6 +448,21 @@ function myplugin_register_routes() {
     ));
 }
 
+/*
+  function fullcalendar() {
+  wp_enqueue_style('full-css', 'http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.3/fullcalendar.min.css');
+  wp_register_script('js', 'https://code.jquery.com/jquery-1.7.min.js');
+  wp_register_script('moment-js', 'http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js');
+  wp_register_script('ui-js', 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"');
+  wp_register_script('full-js', 'http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js');
+  wp_enqueue_script('js');
+  wp_enqueue_script('moment-js');
+  wp_enqueue_script('ui-js');
+  wp_enqueue_script('full-js');
+  }
+
+  add_action('admin_enqueue_scripts', array($this, 'fullcalendar')); */
+
 /**
  * Generate results for the /wp-json/twitterbot/v1/bot route.
  *
@@ -452,9 +498,8 @@ add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
 add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 add_action('wp_dashboard_setup', 'add_email_dashboard_widgets');
 add_action('admin_menu', 'wpse_91693_register');
-add_action('admin_head', 'hid_wordpress_thankyou');
+add_action('admin_head', 'header_options_guia_app');
 add_shortcode('guia_app', 'guia_app_redirect');
 add_shortcode('guia_event', 'fguia_event');
 add_shortcode('guia_panel', 'fguia_panel');
-// Hooking up our functions to WordPress filters 
 ?>

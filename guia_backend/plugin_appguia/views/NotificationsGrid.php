@@ -1,7 +1,9 @@
 <?php
-//995044427162-3i20lnkl1r4tp72hpqh7gcgb5tu9g5co.apps.googleusercontent.com
-//995044427162-frej7i577t6b40581cifugpssvdkhjkk.apps.googleusercontent.com
-//6QdxlcMCFfzcPRKG4ajFAJL8
+
+const FREEGEOIP = "https://freegeoip.net/json/";
+const ONESIGNAL = "https://onesignal.com/api/v1/";
+const ONE_SIGNAL_REST_API = "_onesignal_rest_api_key";
+const ONE_SIGNAL_APP_ID = "_onesignal_app_id";
 /**
  * WP List Table Example class
  *
@@ -28,31 +30,7 @@
  * @package WPListTableExample
  * @author  Matt van Andel
  */
-class TT_Example_List_Table extends WP_List_Table {
-
-    /**
-     * ***********************************************************************
-     * Normally we would be querying data from a database and manipulating that
-     * for use in your list table. For this example, we're going to simplify it
-     * slightly and create a pre-built array. Think of this as the data that might
-     * be returned by $wpdb->query()
-     *
-     * In a real-world scenario, you would run your own custom query inside
-     * the prepare_items() method in this class.
-     *
-     * @var array
-     * ************************************************************************
-     */
-    protected $example_data = array(
-        array(
-            'ID' => 1,
-            'title' => 'Festa da Cocada',
-            'rating' => '21/11/2017 18:30',
-            'director' => '21/11/2017 23:30',
-            'category' => 'Lazer',
-            'deplace' => 'Parque de Coqueiros'
-        )
-    );
+class NotificationsGrid extends WP_List_Table {
 
     /**
      * TT_Example_List_Table constructor.
@@ -63,8 +41,8 @@ class TT_Example_List_Table extends WP_List_Table {
     public function __construct() {
         // Set parent defaults.
         parent::__construct(array(
-            'singular' => 'movie', // Singular name of the listed records.
-            'plural' => 'movies', // Plural name of the listed records.
+            'singular' => 'push', // Singular name of the listed records.
+            'plural' => 'pushes', // Plural name of the listed records.
             'ajax' => false, // Does this table support ajax?
         ));
     }
@@ -88,12 +66,15 @@ class TT_Example_List_Table extends WP_List_Table {
     public function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
-            'title' => _x('Titulo', 'Column label', 'wp-list-table-example'),
-            'rating' => _x('Inicio', 'Column label', 'wp-list-table-example'),
-            'director' => _x('Fim', 'Column label', 'wp-list-table-example'),
-            'category' => _x('Categoria', 'Column label', 'wp-list-table-example'),
-            'deplace' => _x('Local', 'Column label', 'wp-list-table-example'),
-            'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
+            'title' => _x('Dispositivo', 'Hashtag de busca', 'wp-list-table-example'),
+            'follow' => _x('Primeira sessão', 'Seguir autor', 'wp-list-table-example'),
+            'rating' => _x('Última sessão', 'Adicionar aos favoritos', 'wp-list-table-example'),
+            'director' => _x('Sessões', 'Retwittar post', 'wp-list-table-example'),
+            'quote' => _x('Linguagem', 'Menção no retweet', 'wp-list-table-example'),
+            'ip' => _x('IP', 'Ignorar tweet', 'wp-list-table-example'),
+            'city' => _x('Cidade', 'Ignorar tweet', 'wp-list-table-example'),
+            'uf' => _x('UF', 'Ignorar tweet', 'wp-list-table-example'),
+            'pais' => _x('Pais', 'Ignorar tweet', 'wp-list-table-example'),
         );
 
         return $columns;
@@ -124,7 +105,13 @@ class TT_Example_List_Table extends WP_List_Table {
         $sortable_columns = array(
             'title' => array('title', false),
             'rating' => array('rating', false),
+            'follow' => array('follow', false),
             'director' => array('director', false),
+            'ignore' => array('ignore', false),
+            'ip' => array('ignore', false),
+            'city' => array('ignore', false),
+            'uf' => array('ignore', false),
+            'pais' => array('ignore', false),
         );
 
         return $sortable_columns;
@@ -157,9 +144,13 @@ class TT_Example_List_Table extends WP_List_Table {
         switch ($column_name) {
             case 'rating':
             case 'director':
-            case 'category':
-            case 'deplace':
-            case 'published':
+            case 'quote':
+            case 'follow':
+            case 'ignore':
+            case 'ip':
+            case 'uf':
+            case 'city':
+            case 'pais':
                 return $item[$column_name];
             default:
                 return print_r($item, true); // Show the whole array for troubleshooting purposes.
@@ -202,30 +193,18 @@ class TT_Example_List_Table extends WP_List_Table {
      */
     protected function column_title($item) {
         $page = wp_unslash($_REQUEST['page']); // WPCS: Input var ok.
-        // Build edit row action.
-        $edit_query_args = array(
-            'page' => $page,
-            'action' => 'edit',
-            'movie' => $item['ID'],
-        );
-
-        $actions['edit'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($edit_query_args, 'admin.php'), 'editmovie_' . $item['ID'])), _x('Edit', 'List table row action', 'wp-list-table-example')
-        );
-
-        // Build delete row action.
         $delete_query_args = array(
             'page' => $page,
-            'action' => 'delete',
-            'movie' => $item['ID'],
+            'action' => 'segment',
+            'push' => $item['ID'],
         );
 
-        $actions['delete'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'deletemovie_' . $item['ID'])), _x('Publicar', 'List table row action', 'wp-list-table-example')
+        $actions['segment'] = sprintf(
+                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Segmentar', 'List table row action', 'wp-list-table-example')
         );
 
         // Return the title contents.
-        return sprintf('%1$s <span style="color:silver;">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
+        return sprintf('%1$s <br><span style="color:silver;font-size:10px">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
     }
 
@@ -248,8 +227,8 @@ class TT_Example_List_Table extends WP_List_Table {
      */
     protected function get_bulk_actions() {
         $actions = array(
-            'delete' => _x('Cancelar', 'List table bulk action', 'wp-list-table-example'),
-            'export' => _x('Publica', 'List table bulk action', 'wp-list-table-example'),
+            'segment' => _x('Segmentar', 'List table bulk action', 'wp-list-table-example'),
+                //  'export' => _x('Desabilitar', 'List table bulk action', 'wp-list-table-example'),
         );
 
         return $actions;
@@ -265,10 +244,8 @@ class TT_Example_List_Table extends WP_List_Table {
      * @see $this->prepare_items()
      */
     protected function process_bulk_action() {
+        global $wpdb;
         // Detect when a bulk action is being triggered.
-        if ('delete' === $this->current_action()) {
-            wp_die('Items deleted (or they would be if we had items to delete)!');
-        }
     }
 
     /**
@@ -294,7 +271,7 @@ class TT_Example_List_Table extends WP_List_Table {
         /*
          * First, lets decide how many records per page to show
          */
-        $per_page = 5;
+        $per_page = 20;
 
         /*
          * REQUIRED. Now we need to define our column headers. This includes a complete
@@ -321,25 +298,115 @@ class TT_Example_List_Table extends WP_List_Table {
          */
         $this->process_bulk_action();
 
-        /*
-         * GET THE DATA!
-         * 
-         * Instead of querying a database, we're going to fetch the example data
-         * property we created for use in this plugin. This makes this example
-         * package slightly different than one you might build on your own. In
-         * this example, we'll be using array manipulation to sort and paginate
-         * our dummy data.
-         * 
-         * In a real-world situation, this is probably where you would want to 
-         * make your actual database query. Likewise, you will probably want to
-         * use any posted sort or pagination data to build a custom query instead, 
-         * as you'll then be able to use the returned query data immediately.
-         *
-         * For information on making queries in WordPress, see this Codex entry:
-         * http://codex.wordpress.org/Class_Reference/wpdb
-         */
-        $data = $this->example_data;
 
+
+        $OneSignalWPSetting = get_option('OneSignalWPSetting');
+//var_dump($OneSignalWPSetting);
+        $OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
+        $OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
+        $pluginList = get_option('active_plugins');
+        $plugin = 'onesignal-free-web-push-notifications/onesignal.php';
+        if (in_array($plugin, $pluginList) && $OneSignalWPSetting_app_id && $OneSignalWPSetting_rest_api_key) {
+            //$onesignal_extra_info = get_option('oss_settings_page');
+            $args = array(
+                'headers' => array(
+                    'Authorization' => 'Basic ' . $OneSignalWPSetting_rest_api_key,
+                    'Cache-Control' => 'max-age=31536000'
+                )
+            );
+            $url = ONESIGNAL . "players?app_id=" . $OneSignalWPSetting_app_id . "&limit=500&offset=0";
+            $response = wp_remote_get($url, $args);
+            $response_to_arrays = json_decode(wp_remote_retrieve_body($response), true);
+            //var_dump($response_to_arrays);
+            //Verify if has keys
+            $user_custom_api_key = get_user_meta(get_current_user_id(), ONE_SIGNAL_REST_API, true);
+            
+            //var_dump($user_custom_api_key);die;
+            $user_custom_app_id = get_user_meta(get_current_user_id(), ONE_SIGNAL_APP_ID, true);
+            if (!empty($user_custom_api_key) && !empty($user_custom_api_key)) {
+                $args = array(
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . $user_custom_api_key,
+                        'Cache-Control' => 'max-age=31536000'
+                    )
+                );
+               // echo "Não tem a porra da chave..... mane";
+                $url = ONESIGNAL . "players?app_id=" . $user_custom_app_id . "&limit=500&offset=0";
+                $response1 = wp_remote_get($url, $args);
+                $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response1), true);
+                //echo "<pre>";
+                //var_dump($response_to_arrays1);
+                //die;
+                $total = array_merge($response_to_arrays['players'], $response_to_arrays1['players']);
+                // echo(count($response_to_arrays1));
+                // var_dump($response_to_arrays1);die;
+                $response_to_arrays = $total;
+                
+               // var_dump($response_to_arrays);die;
+                //echo(count($response_to_arrays));die;
+            }else{
+                $response_to_arrays = $response_to_arrays['players'];
+            }
+            //echo $user_custom_api_key;die;
+            //ar_dump($user_custom_api_key);die;
+            $response_counter = 0;
+            $vet = [];
+            foreach (array_reverse($response_to_arrays) as $response_array) {
+
+                //  echo "<pre>";
+                //   var_dump($response_array);die;
+                $ip = $response_array['ip'];
+                $user_sessions = $response_array['session_count'];
+                $user_language = $response_array['language'];
+                $user_device = $response_array['device_model'];
+                $user_status = $response_array['invalid_identifier'];
+                $final_readable_last_active = date('d/m/y h:i:s', $response_array['last_active']);
+                $final_readable_first_session = date('d/m/y h:i:s', $response_array['created_at']);
+                $did = $response_array['id'];
+                $geo = get_option($ip);
+
+                if ($geo === false) {
+                    $urlFreeGeoIp = FREEGEOIP . $ip;
+                    $args = array('headers' => array(
+                            'If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT',
+                            'Cache-Control: max-age=31536000',
+                        ),
+                    );
+                    $r1 = wp_remote_get($urlFreeGeoIp, $args);
+                    $jsGeo = json_decode(wp_remote_retrieve_body($r1), true);
+                    //Save IP to Wp_options //lesss io resource...faster from database
+                    add_option($ip, json_encode($jsGeo), '', false);
+                    //var_dump($jsGeo);
+                } else {
+                    $jsGeo = get_object_vars(json_decode($geo));
+                }
+
+                $obj = json_decode($t->meta_value);
+                //var_dump($obj);
+
+
+                $vet[] = array(
+                    'ID' => $did,
+                    'title' => $user_device,
+                    'rating' => $final_readable_last_active,
+                    'director' => $user_sessions,
+                    'quote' => $user_language,
+                    'follow' => $final_readable_first_session,
+                    'ignore' => $ign,
+                    'ip' => $ip,
+                    'city' => $jsGeo['city'],
+                    'uf' => $jsGeo['region_name'],
+                    'pais' => $jsGeo['country_code'],
+                );
+            }
+        }
+
+
+        //  foreach ($twitterMeta as $t) {
+        //var_dump($t);
+        //   }
+
+        $data = $vet;
         /*
          * This checks for sorting input and sorts the data in our array of dummy
          * data accordingly (using a custom usort_reorder() function). It's for 
@@ -410,4 +477,8 @@ class TT_Example_List_Table extends WP_List_Table {
         return ( 'asc' === $order ) ? $result : - $result;
     }
 
+}
+
+function isSerialized($str) {
+    return ($str == serialize(false) || @unserialize($str) !== false);
 }
