@@ -1,8 +1,9 @@
 <?php
-
+include_once '/var/www/guiafloripa.morettic.com.br/vendor/autoload.php';
 /**
  * @Plugin Name: Guiafloripa APP REDIRECT
- * @Description: <p>PLUGIN REDIRECT DO APP GUIA - <b>www.experienciasdigitais.com.br</b>. <br>Utilize o Shorcode [guia_app]</p>
+ * @Description: <p>PLUGIN REDIRECT DO APP GUIA - <b>www.experienciasdigitais.com.br</b>. 
+ * <br>Utilize o Shorcode [guia_app]</p>
  * @author Luis Augusto Machado Moretto <projetos@morettic.com.br>
  * */
 /* Start Adding Functions Below this Line */
@@ -13,6 +14,15 @@ const DEFAULT_REST_PLACE = "https://guiafloripa.morettic.com.br/place/";
 const DEFAULT_REST_ISSUE = "https://guiafloripa.morettic.com.br/issues/";
 const DEFAULT_REST_STATS = "https://guiafloripa.morettic.com.br/sync_stats/";
 const CACHE_FILE = "guia_cache.json";
+const APP_USER = 'guia';
+const APP_PASS = 'Gu14Fl0r1p@';
+const APP_DBNM = 'guiafloripa_app';
+const APP_HOST = 'localhost';
+const APP_PORT = '3306';
+const GUIA_host = "guiafloripa.com.br"; // Nome ou IP do Servidor
+const GUIA_user = "appguia"; // Usuário do Servidor MySQL
+const GUIA_senha = "#4ppgu14Fl0r1p4!"; // Senha do Usuário MySQL
+const GUIA_dbase = "guiafloripa"; // Nome do seu Banco de Dados
 
 /**
  * @Redirect URL using Javascript Script
@@ -32,8 +42,64 @@ function guia_app_redirect() {
     exit;
 }
 
-//Register Shortcode on Wordpress
+/**
+ * Ajax request
+ */
+function findPlacesAjax() {
+    @session_start();
+    $app_db = new wpdb(APP_USER, APP_PASS, APP_DBNM, APP_HOST);
+    //var_dump($app_db);die;
+    $query = "SELECT idPlace as placeID, upper(nmPlace) as placeName FROM guiafloripa_app.Place Where nmPlace like '%" . $_GET['q'] . "%'";
+    $data = $app_db->get_results($query);
+    // var_dump($data);
+    // $results = array();
+    $_SESSION['place'] = json_encode($data);
+    foreach ($data as $r1) {
+        echo $r1->placeName;
+        echo "\n";
+    }
+    //  }
+    die();
+}
 
+/**
+ * @ajax for beach names
+ * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
+ */
+function findBeachsAjax() {
+    @session_start();
+    $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+    // var_dump($app_db);
+    $query = "select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php') and post_title like '%" . $_GET['q'] . "%';";
+    $data = $app_db->get_results($query);
+    $_SESSION['findBeachsAjax'] = json_encode($data);
+    foreach ($data as $r1) {
+        echo $r1->post_title;
+        echo "\n";
+    }
+    //  }
+    die();
+}
+
+/**
+ * Ajax request
+ */
+function findNeighoodAjax() {
+    @session_start();
+    $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+    // var_dump($app_db);
+    $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and post_title like '%" . $_GET['q'] . "%' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') order by post_title asc;";
+    $data = $app_db->get_results($query);
+    //var_dump($data);die;
+    // $results = array();
+    $_SESSION['findNeighoodAjax'] = json_encode($data);
+    foreach ($data as $r1) {
+        echo $r1->title;
+        echo "\n";
+    }
+    //  }
+    die();
+}
 
 /* Stop Adding Functions Below this Line */
 
@@ -118,7 +184,8 @@ function wpse_91693_register() {
     );
     add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
     add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
-    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
+    add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
     add_menu_page(
             'Campanhas', // page title
             'Campanhas', // menu title
@@ -174,7 +241,7 @@ function wpse_91693_register() {
             'Plano', // menu title
             'read', // capability
             'app_guiafloripa_money', // menu slug
-            'asd', null, 6
+            'app_guiafloripa_money', null, 6
     );
     add_menu_page(
             'Minhas Hashtags', // page title
@@ -195,7 +262,16 @@ function app_guiafloripa_eventos_cal() {
 }
 
 function app_guiafloripa_eventos_add() {
+    wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
+    wp_enqueue_style('thickbox');
     include_once PLUGIN_ROOT_DIR . 'views/events_add.php';
+}
+
+function app_guiafloripa_money() {
+    include_once PLUGIN_ROOT_DIR . 'views/table_price.php';
 }
 
 function wpse_91693_push() {
@@ -362,6 +438,53 @@ function add_email_dashboard_widgets() {
 }
 
 /**
+ * @Show only current user Media on Wordpress
+ */
+function wpse_72278_current_author_media($query) {
+    global $pagenow, $user_ID;
+
+
+    $query->set('author', $user_ID);
+
+    return $query;
+}
+
+function wpse_72278_custom_view_count($views) {
+    global $user_ID, $wpdb;
+
+    if (!current_user_can('editor'))
+        return $views;
+
+    $total = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts 
+        WHERE post_author = '$user_ID'
+        AND post_type = 'attachment' ");
+    $image = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts 
+        WHERE post_author = '$user_ID' 
+        AND post_mime_type LIKE 'image/%' ");
+    $video = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts 
+        WHERE post_author = '$user_ID' 
+        AND post_mime_type LIKE 'video/%' ");
+    $detached = $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts 
+        WHERE post_author = '$user_ID' 
+        AND post_type = 'attachment' AND post_parent = '0' ");
+
+    $views['all'] = preg_replace('/\(.+\)/U', '(' . $total . ')', $views['all']);
+    $views['image'] = preg_replace('/\(.+\)/U', '(' . $image . ')', $views['image']);
+    $views['video'] = preg_replace('/\(.+\)/U', '(' . $video . ')', $views['video']);
+    $views['detached'] = preg_replace('/\(.+\)/U', '(' . $detached . ')', $views['detached']);
+
+    return $views;
+}
+
+/**
+ * Remove WooCommerce Autommatic Redirect
+ */
+function wc_login_redirect($redirect_to) {
+    $redirect_to = 'https://app.guiafloripa.com.br/wp-admin/admin.php';
+    return $redirect_to;
+}
+
+/**
  * Create the function to output the contents of your Dashboard Widget.
  */
 function share_dashboard_widget_content() {
@@ -393,6 +516,9 @@ function header_options_guia_app() {
     wp_enqueue_script('moment-js');
     wp_enqueue_script('ui-js');
     wp_enqueue_script('full-js');
+    wp_enqueue_script('suggest');
+    wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
+    wp_enqueue_style('wp-jquery-ui-dialog');
 }
 
 //Remove visit site menu
@@ -439,29 +565,22 @@ function twitter_dashboard_widget_content() {
 }
 
 /**
- * Register the /wp-json/twitterbot/v1/foo route
+ * Register the /wp-json/ route
  */
-function myplugin_register_routes() {
-    register_rest_route('twitterbot/v1', 'bot', array(
+function appguia_register_routes() {
+    register_rest_route('twitterbot/v1', 'list', array(
         'methods' => WP_REST_Server::READABLE,
         'callback' => 'twitter_bot_route',
     ));
+    register_rest_route('places/v1', 'list', array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => 'places_route',
+    ));
+    register_rest_route('event_type/v1', 'list', array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => 'event_type_route',
+    ));
 }
-
-/*
-  function fullcalendar() {
-  wp_enqueue_style('full-css', 'http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.3/fullcalendar.min.css');
-  wp_register_script('js', 'https://code.jquery.com/jquery-1.7.min.js');
-  wp_register_script('moment-js', 'http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js');
-  wp_register_script('ui-js', 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"');
-  wp_register_script('full-js', 'http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js');
-  wp_enqueue_script('js');
-  wp_enqueue_script('moment-js');
-  wp_enqueue_script('ui-js');
-  wp_enqueue_script('full-js');
-  }
-
-  add_action('admin_enqueue_scripts', array($this, 'fullcalendar')); */
 
 /**
  * Generate results for the /wp-json/twitterbot/v1/bot route.
@@ -482,6 +601,44 @@ function twitter_bot_route(WP_REST_Request $request) {
 }
 
 /**
+ * Generate results for the /wp-json/places/v1/pid route.
+ *
+ * @param WP_REST_Request $request Full details about the request.
+ *
+ * @return WP_REST_Response|WP_Error The response for the request.
+ */
+function places_route(WP_REST_Request $request) {
+    //var_dump($request);
+    //die;
+    $app_db = new wpdb(APP_USER, APP_PASS, APP_DBNM, APP_HOST);
+    //var_dump($app_db);die;
+    $query = "SELECT idPlace as placeID, upper(nmPlace) as placeName, nrLat as latitude, nrLng as longitude FROM guiafloripa_app.Place order by idPlace desc;";
+    $data = $app_db->get_results($query);
+    $response = new WP_REST_Response($data);
+    $response->set_status(201);
+    return $response;
+}
+
+/**
+ * Generate results for the /wp-json/event_type/v1/eid route.
+ *
+ * @param WP_REST_Request $request Full details about the request.
+ *
+ * @return WP_REST_Response|WP_Error The response for the request.
+ */
+function event_type_route(WP_REST_Request $request) {
+    //var_dump($request);
+    //die;
+    $app_db = new wpdb(APP_USER, APP_PASS, APP_DBNM, APP_HOST);
+    //var_dump($app_db);die;
+    $query = "SELECT idType as typeID , deType as typeName FROM guiafloripa_app.Type;";
+    $data = $app_db->get_results($query);
+    $response = new WP_REST_Response($data);
+    $response->set_status(200);
+    return $response;
+}
+
+/**
  * Custom Actions
  * @Shortcodes
  * @Filters
@@ -493,7 +650,7 @@ add_filter('wp_mail_from', 'wpb_sender_email');
 add_filter('wp_mail_from_name', 'wpb_sender_name');
 add_filter('wp_editor_settings', 'my_post_type_editor_settings');
 add_action('init', 'create_event_post');
-add_action('rest_api_init', 'myplugin_register_routes');
+add_action('rest_api_init', 'appguia_register_routes');
 add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
 add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 add_action('wp_dashboard_setup', 'add_email_dashboard_widgets');
@@ -502,4 +659,11 @@ add_action('admin_head', 'header_options_guia_app');
 add_shortcode('guia_app', 'guia_app_redirect');
 add_shortcode('guia_event', 'fguia_event');
 add_shortcode('guia_panel', 'fguia_panel');
+add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
+add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
+add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
+add_filter('pre_get_posts', 'wpse_72278_current_author_media');
+add_filter('views_upload', 'wpse_72278_custom_view_count', 10, 1);
+add_filter('woocommerce_prevent_admin_access', '__return_false');
+add_filter('woocommerce_login_redirect', 'wc_login_redirect');
 ?>

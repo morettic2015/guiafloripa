@@ -68,7 +68,7 @@ class GuiaController extends stdClass {
         $dayOfWeek = date("D");
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $query = " select * from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d')>= (DATE_FORMAT((now()- INTERVAL  360 MINUTE),'%Y-%m-%d')) 
-								and DATE_FORMAT(dtUntil,'%Y-%m-%d H')<DATE_FORMAT(NOW() + INTERVAL 600 MINUTE,'%Y-%m-%d')))
+								and DATE_FORMAT(dtUntil,'%Y-%m-%d')<DATE_FORMAT(NOW() + INTERVAL 600 MINUTE,'%Y-%m-%d')))
                     union
                     select * from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
                     and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil DESC";
@@ -726,15 +726,22 @@ class GuiaController extends stdClass {
         $tomorrow = date('Y-m-d', $time);
         $dayOfWeek = date("D");
 //If date is empty or another shit
-        $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
+     /*   $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
                 . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
                 . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type
-                . " and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]')";
+                . " and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]')";*/
+         $query = "select * from viewEventPlaceType where idType = '$type' and DATE(dtFrom) >= date('$today') AND DATE(dtUntil)<= date('$today')
+                    union
+                   select * from viewEventPlaceType where (NOW() between dtFrom and dtUntil) and idType =$type and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil  DESC";
+    
 //      
         //echo $query;die();
-        $query2 = "select * from viewEventPlaceType where idType = " . $type
-                . " and DATE(dtFrom) >= date('" . $dtOrigem
-                . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";
+        //$query2 = "select * from viewEventPlaceType where idType = " . $type
+         //       . " and DATE(dtFrom) >= date('" . $dtOrigem
+         //       . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";
+        $query2 = "select * from viewEventPlaceType where idType = '$type' and DATE(dtFrom) >= date('$dtOrigem') AND DATE(dtUntil)<= date('$dtFim')
+                    union
+                   select * from viewEventPlaceType where (NOW() between dtFrom and dtUntil) and idType =$type and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil  DESC";
         $stdGuia = new stdClass();
 
         if ($dtOrigem === "-1" || $dtFim === "-1") {

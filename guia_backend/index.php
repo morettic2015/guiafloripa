@@ -31,6 +31,7 @@ require 'CinemaController.php';
 require 'BugTracker.php';
 require 'ZombieController.php';
 require 'TwitterBOT.php';
+require 'PortalController.php';
 
 
 /**
@@ -202,6 +203,26 @@ $app->post('/favorite/', function (Request $request, Response $response) use ($a
     return $newResponse->withJson($data, 200);
 });
 /**
+ * @SaveUpdate Event on Portal
+ */
+$app->post('/event_persist/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $request->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = new stdClass();
+    //DB::debugMode();
+    $dt = $request->getParsedBody();
+ /*   $data->placeID = filter_var($dt['pId'], FILTER_SANITIZE_STRING);
+    $data->eventID = filter_var($dt['eventID'], FILTER_SANITIZE_STRING);
+    $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING);*/
+    //  var_dump($data);
+    //   die;
+  //  $data = ProfileController::favoriteOne($data);
+    logActions("'/event_persist/'");
+    return $newResponse->withJson($data, 200);
+});
+/**
  * @Stats From Origin Destiny
  */
 $app->get('/sync_stats/', function (Request $request, Response $response) use ($app) {
@@ -225,6 +246,19 @@ $app->get('/push/', function (Request $request, Response $response) use ($app) {
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     $data = PushController::dailyNotification();
     logActions("PUSH");
+    return $newResponse->withJson($data, 201);
+});
+/**
+ * @Portal Categories
+ * * */
+$app->get('/portal_categorias/', function (Request $request, Response $response) use ($app) {
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 760);
+    $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = PortalController::getCategoriasPortal();
+    logActions("portal_categorias");
     return $newResponse->withJson($data, 201);
 });
 /**
