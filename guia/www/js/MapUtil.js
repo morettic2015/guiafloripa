@@ -7,7 +7,7 @@
  * @UIX: João GUilherme de Oliveira
  * @EMAIL: jgoliveira78@hotmail.com
  */
-var zoom = 10;
+var zoom = 8;
 var map;
 var lat, latZ;
 var lng, lngZ;
@@ -156,8 +156,11 @@ var MapUtils = function () {
         mapUtils.clearAllPinsFromMap();
         var url1 = "https://guiafloripa.morettic.com.br/estabelecimentos/" + pinType;
         var lcache = localStorage.getItem("estabelecimentos/" + pinType);
+        var lDateE = localStorage.getItem("expires_" + pinType);
+        var expira = parseInt(lDateE)+86400000;
+        var today = new Date().getTime();
         var lEventos;
-        if (lcache !== null) {
+        if (lcache !== null&&today<expira) {
             lEventos = JSON.parse(lcache);
             mapUtils.makeMarkersFromPlaces(lEventos);
         } else {
@@ -166,6 +169,7 @@ var MapUtils = function () {
                 //Lista de eventos
                 lEventos = data.e;
                 localStorage.setItem("estabelecimentos/" + pinType, JSON.stringify(lEventos));
+                localStorage.setItem("expires_" + pinType, new Date().getTime());
                 mapUtils.makeMarkersFromPlaces(lEventos);
             });
         }
@@ -353,7 +357,7 @@ var MapUtils = function () {
         var myLatlng = new google.maps.LatLng(-27.59226, -48.54902);
         //Set map options
         var mapOptions = {
-            zoom: 16,
+            zoom: 13,
             center: myLatlng,
             styles: this.getMapStyle(),
             mapTypeControl: false,
@@ -605,6 +609,15 @@ var MapUtils = function () {
         //alert(pdtInit);
         //alert(pdtFim);
         this.requestPin(id, pdtInit, pdtFim);
+    }
+    this.todayEvents = function (element, name, id) {
+        //zoom = zoom == undefined ? 10 : zoom;
+        // map.setZoom(10);
+        res = element.src.split("_");
+        pos = res.length - 1;
+        element.src = res[pos] == "on.png" ? "./img/" + name + "_off.png" : "./img/" + name + "_on.png";
+        //alert($('#dtinicio').val());
+        mapUtils.showWhatsGoingOn();
     }
     this.setBorderStyle1 = function (element, name, id) {
         // zoom = map.getZoom();
