@@ -43,6 +43,87 @@ function guia_app_redirect() {
 }
 
 /**
+ * @Wordpress user save custom fields
+ */
+function save_extra_user_profile_fields($user_id) {
+    if (!current_user_can('edit_user', $user_id)) {
+        return false;
+    }
+    update_user_meta($user_id, '_ck', $_POST['_ck']);
+    update_user_meta($user_id, '_cs', $_POST['_cs']);
+    update_user_meta($user_id, '_at', $_POST['_at']);
+    update_user_meta($user_id, '_ac', $_POST['_ac']);
+    update_user_meta($user_id, '_onesignal_rest_api_key', $_POST['_onesignal_rest_api_key']);
+    update_user_meta($user_id, '_onesignal_app_id', $_POST['_onesignal_app_id']);
+}
+
+/**
+ * @Wordpress Profile custom fields
+ */
+function extra_user_profile_fields($user) {
+    ?>
+    <a name="twitter"/>
+    <h2><?php _e("Configurações do twitter", "blank"); ?></h2>
+
+    <table class="form-table">
+        <tr>
+            <th><label for="_ck"><?php _e("Twitter API KEY"); ?></label></th>
+            <td>
+                <input type="text" name="_ck" id="_ck" value="<?php echo esc_attr(get_the_author_meta('_ck', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Esta chave de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_cs"><?php _e("Twitter API Secret"); ?></label></th>
+            <td>
+                <input placeholder="" type="text" name="_cs" id="_cs" value="<?php echo esc_attr(get_the_author_meta('_cs', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Esta senha de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_at"><?php _e("Access Token"); ?></label></th>
+            <td>
+                <input type="text" name="_at" id="_at" value="<?php echo esc_attr(get_the_author_meta('_at', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Este Token de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_ac"><?php _e("Access Token Secret"); ?></label></th>
+            <td>
+                <input type="text" name="_ac" id="_ac" value="<?php echo esc_attr(get_the_author_meta('_ac', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Este token pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+            </td>
+        </tr>
+    </table>
+    <h2><?php _e("Configurações do OneSignal", "blank"); ?></h2>
+    <table class="form-table">
+        <tr>
+            <th><label for="_onesignal_app_id"><?php _e("OneSignal APP ID"); ?></label></th>
+            <td>
+                <input placeholder="c452ff74-3bc4-44ca-a015-bfdaf0812313" type="text" name="_onesignal_app_id" id="_onesignal_app_id" value="<?php echo esc_attr(get_the_author_meta('_onesignal_app_id', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Sua chave de identificação do app ID com 36 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_onesignal_rest_api_key"><?php _e("Access Token"); ?></label></th>
+            <td>
+                <input type="text" name="_onesignal_rest_api_key" id="_onesignal_rest_api_key" value="<?php echo esc_attr(get_the_author_meta('_onesignal_rest_api_key', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Sua chave REST com 48 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+
+/**
+ * @ajax upload image
+ * @PhpxmlRpc
+ */
+function mediaXmlRPCAjax() {
+    
+}
+
+/**
  * Ajax request
  */
 function findPlacesAjax() {
@@ -58,6 +139,7 @@ function findPlacesAjax() {
         echo $r1->placeName;
         echo "\n";
     }
+    $app_db->close();
     //  }
     die();
 }
@@ -77,6 +159,7 @@ function findBeachsAjax() {
         echo $r1->post_title;
         echo "\n";
     }
+    $app_db->close();
     //  }
     die();
 }
@@ -98,6 +181,7 @@ function findNeighoodAjax() {
         echo "\n";
     }
     //  }
+    $app_db->close();
     die();
 }
 
@@ -184,8 +268,8 @@ function wpse_91693_register() {
     );
     add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
     add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
-    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
-    add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
+    //add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
+    //add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
     add_menu_page(
             'Campanhas', // page title
             'Campanhas', // menu title
@@ -195,6 +279,7 @@ function wpse_91693_register() {
     );
     add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
     add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
+
     add_menu_page(
             'Leads', // page title
             'Leads', // menu title
@@ -205,13 +290,13 @@ function wpse_91693_register() {
     add_submenu_page('app_guiafloripa_leads', 'Adicionar Lead', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_push_map');
     add_submenu_page('app_guiafloripa_leads', 'Importar Leads', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_push_map');
 
-    add_menu_page(
-            'Mensagens', // page title
-            'Mensagens', // menu title
-            'read', // capability
-            'app_guiafloripa_msg', // menu slug
-            'asd', null, 6
-    );
+    /*   add_menu_page(
+      'Mensagens', // page title
+      'Mensagens', // menu title
+      'read', // capability
+      'app_guiafloripa_msg', // menu slug
+      'asd', null, 6
+      ); */
     add_menu_page(
             'Dispositivos Ativos', // page title
             'Dispositivos', // menu title
@@ -229,13 +314,13 @@ function wpse_91693_register() {
     );
     add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_push_map');
 
-    add_menu_page(
-            'Chatbot', // page title
-            'Chatbot', // menu title
-            'read', // capability
-            'app_guiafloripa_chatbot', // menu slug
-            'asd', null, 6
-    );
+    /*    add_menu_page(
+      'Chatbot', // page title
+      'Chatbot', // menu title
+      'read', // capability
+      'app_guiafloripa_chatbot', // menu slug
+      'asd', null, 6
+      ); */
     add_menu_page(
             'Plano', // page title
             'Plano', // menu title
@@ -519,6 +604,7 @@ function header_options_guia_app() {
     wp_enqueue_script('suggest');
     wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
     wp_enqueue_style('wp-jquery-ui-dialog');
+    wp_enqueue_script('jquery-ui-datepicker');
 }
 
 //Remove visit site menu
@@ -649,6 +735,10 @@ remove_action('admin_color_scheme_picker', 'admin_color_scheme_picker');
 add_filter('wp_mail_from', 'wpb_sender_email');
 add_filter('wp_mail_from_name', 'wpb_sender_name');
 add_filter('wp_editor_settings', 'my_post_type_editor_settings');
+add_filter('pre_get_posts', 'wpse_72278_current_author_media');
+add_filter('views_upload', 'wpse_72278_custom_view_count', 10, 1);
+add_filter('woocommerce_prevent_admin_access', '__return_false');
+add_filter('woocommerce_login_redirect', 'wc_login_redirect');
 add_action('init', 'create_event_post');
 add_action('rest_api_init', 'appguia_register_routes');
 add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
@@ -656,14 +746,15 @@ add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 add_action('wp_dashboard_setup', 'add_email_dashboard_widgets');
 add_action('admin_menu', 'wpse_91693_register');
 add_action('admin_head', 'header_options_guia_app');
-add_shortcode('guia_app', 'guia_app_redirect');
-add_shortcode('guia_event', 'fguia_event');
-add_shortcode('guia_panel', 'fguia_panel');
+add_action('wp_ajax_mediaXmlRPCAjax', 'mediaXmlRPCAjax');
 add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
 add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
-add_filter('pre_get_posts', 'wpse_72278_current_author_media');
-add_filter('views_upload', 'wpse_72278_custom_view_count', 10, 1);
-add_filter('woocommerce_prevent_admin_access', '__return_false');
-add_filter('woocommerce_login_redirect', 'wc_login_redirect');
+add_action('show_user_profile', 'extra_user_profile_fields');
+add_action('edit_user_profile', 'extra_user_profile_fields');
+add_action('personal_options_update', 'save_extra_user_profile_fields');
+add_action('edit_user_profile_update', 'save_extra_user_profile_fields');
+add_shortcode('guia_app', 'guia_app_redirect');
+add_shortcode('guia_event', 'fguia_event');
+add_shortcode('guia_panel', 'fguia_panel');
 ?>

@@ -156,7 +156,7 @@ class TwitterControl {
 
         if (empty($t_ck[0]) || empty($t_cs[0]) || empty($t_at[0]) || empty($t_ac[0])) {
             echo '<div class="notice notice-error is-dismissible"> 
-                    <p><strong>Verifique as credencias do<a href="profile.php"> twitter em seu perfil </a>para ativar o Twitter BOT</strong></p>
+                    <p><strong>Verifique as credencias do<a href="profile.php#twitter"> twitter em seu perfil </a>para ativar o Twitter BOT</strong></p>
                  </div>';
             return false;
         }

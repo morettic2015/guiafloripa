@@ -1,4 +1,6 @@
 <?php
+include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+$ec = new EventControl();
 
 //PortalController::inserPost();
 // var_dump($json);
@@ -7,90 +9,30 @@
  */
 function updateEvent($p) {
     if (isset($_POST['placeName'])) {
-        @session_start();
-        echo "<pre>";
-        var_dump($_POST);
-        var_dump($_SESSION);
+        //echo "<pre>";
+        //var_dump($_POST);
+        //var_dump($_SESSION);
 
-
-        $query = "INSERT INTO `guiafloripa`.`wp_posts`
-                        (
-                        `post_author`,
-                        `post_date`,
-                        `post_date_gmt`,
-                        `post_content`,
-                        `post_title`,
-                        `post_excerpt`,
-                        `post_status`,
-                        `comment_status`,
-                        `ping_status`,
-                        `post_name`,
-                        `to_ping`,
-                        `pinged`,
-                        `post_modified`,
-                        `post_modified_gmt`,
-                        `post_content_filtered`,
-                        `post_parent`,
-                        `guid`,
-                        `menu_order`,
-                        `post_type`,
-                        `post_mime_type`,
-                        `comment_count`)
-                        VALUES
-                        (
-                        NULL,
-                        57,
-                        now(),
-                        now(),
-                        'CONTEUDO DO POST',
-                        'TITULO DO POST',
-                        'EXCREPCT DO POST',
-                        'draft',
-                        'closed',
-                        'closed',
-                        'Conteudo do post teste 1',
-                        0,
-                        0,
-                        now(),
-                        now(),
-                        'TESTE DE PAMONHA',
-                        NULL,
-                        'TESTE_DE_PAMINHA',
-                        0,
-                        'teste',
-                        'post',
-                        0);";
-        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-        // var_dump($app_db);
-        $data = $app_db->get_results($query);
-
-        var_dump($app_db);
-        echo "</pre>";
-
+        $ec = new EventControl();
+        $post1 = $ec->insertEvent($_POST);
+        //var_dump($post1);
+        ?>
+        <div class="notice notice-info" > 
+            <p>Seu evento foi criado com sucesso.</p>
+            <p>Uma <a href="admin.php?page=app_guiafloripa_campaigns">campanha</a> modelo foi criada. Edite para promover seu evento</p>
+        </div>
+        <?php
         die;
         return true;
     }
     return false;
 }
 
-function loadCategories() {
-
-    $args = array(
-        'user-agent' => 'GuiaFloripaAPP',
-        'headers' => array(),
-    );
-    $response = wp_remote_get("https://guiafloripa.morettic.com.br/portal_categorias/");
-    // echo "<pre>";
-    // var_dump($response['body']);
-    // echo "</pre>";
-    return json_decode($response['body']);
-}
-
-$categories = loadCategories();
+$categories = $ec->loadCategories();
 ?>
 <a name="top"/>
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?> <a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Importar Evento</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?> <!--<a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Importar Evento</a>--></h1>
     <?php
     if (updateEvent($p)) {
         
@@ -111,7 +53,8 @@ $categories = loadCategories();
                                     <td class="first" style="text-align: right">Estabelecimento</td>
                                     <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input type="text" name="placeName" id="placeName" style="width: 40%"  placeholder="Digite o nome do estabelecimento" onblur="validateOnBlur(jQuery('#placeName'))">
-                                        <a href="javascript:addPlace()" class="button button-primary">Adicionar</a>
+                                        <a href="javascript:addPlace()" class="button button-primary">Adicionar</a><br>
+                                        <span class="description">Informe o nome do estabelecimento onde vai ocorrer o evento</span>
                                     </td>
                                 </tr>
 
@@ -119,6 +62,7 @@ $categories = loadCategories();
                                     <td class="first" style="text-align: right">Título</td>
                                     <td>
                                         <input type="text" id="titEvent" name="titEvent"  placeholder="Titulo do Evento"   onblur="validateOnBlur(jQuery('#titEvent'))"/>
+                                        <span class="description">Informe o título como vai aparecer no Site e no APP</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -127,14 +71,7 @@ $categories = loadCategories();
                                     </td>
                                     <td>
                                         <textarea id="txtDesc"  name="txtDesc" class="tinymce_data" style="width:100%;" rows="8"  placeholder="Descrição do seu evento com informações para o seu público"  onblur="validateOnBlur(jQuery('#txtDesc'))"></textarea>
-                                        <small>caracteres<code id="counterChar">500</code></small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="first" style="text-align: right">Datas (inicio e fim)</td>
-                                    <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input type="datetime-local" name="dtStart" id="dtStart" style="width:30%"   onblur="validateOnBlur(jQuery('#dtStart'))"/>
-                                        <input type="datetime-local" name="dtEnd" id="dtEnd" style="width:30%"  onblur="validateOnBlur(jQuery('#dtEnd'))"/>
+                                        <span class="description">caracteres restantes<code id="counterChar">500</code></span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -148,6 +85,44 @@ $categories = loadCategories();
                                         <div id="imgPreview"></div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="first" style="text-align: right">Data e hora (inicio e fim)</td>
+                                    <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                        <input type="date" name="dtStart" id="dtStart" style="width:25%"   onblur="validateOnBlur(jQuery('#dtStart'))"/>
+                                        <input type="time" name="hrStart" id="hrStart" style="width:10%"   onblur="validateOnBlur(jQuery('#hrStart'))"/>
+                                        <input type="date" name="dtEnd" id="dtEnd" style="width:25%"  onblur="validateOnBlur(jQuery('#dtEnd'))"/>
+                                        <input type="time" name="hrEnd" id="hrEnd" style="width:10%"   onblur="validateOnBlur(jQuery('#hrEnd'))"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="first" style="text-align: right">Recorrência semanal</td>
+                                    <td>
+                                        <div style="width: 100%">
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Mon" style="height: 15px;width: 20px">Segunda-Feira
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Tue" style="height: 15px;width: 20px">Terça-Feira
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Wed" style="height: 15px;width: 20px">Quarta-Feira
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Thu" style="height: 15px;width: 20px">Quinta-Feira
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Fri" style="height: 15px;width: 20px">Sexta-Feira
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Sat" style="height: 15px;width: 20px">Sábado
+                                            </div>
+                                            <div style="width: 20%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                                <input type="checkbox" name="dayofweek[]" id="dayofweek" value="Sun" style="height: 15px;width: 20px">Domingo
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
                                 <tr >
                                     <td class="first" style="text-align: right">Categorias</td>
                                     <td>
@@ -190,31 +165,42 @@ $categories = loadCategories();
                                     <td class="first" style="text-align: right">Bairro</td>
                                     <td>
                                         <input type="text" id="neigh" name="neigh" style="width: 200px" placeholder="Bairro do Evento"  onblur="validateOnBlur(jQuery('#neigh'))"/>
+                                        <br><span class="description">Informe o bairro</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Praia</td>
                                     <td>
                                         <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia do Evento" />
+                                        <br><span class="description">Praia proxima</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Ingresso</td>
                                     <td style="width: 33%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input type="text"  placeholder="Ex: Convite, Promoção" style="width: 40%"/>
-                                        <input type="text"  placeholder="Valor, free" style="width: 40%"/>
+                                        <input type="text" name="vevent_info"  placeholder="Ex: Convite, Promoção" style="width: 40%"/>
+                                        <input type="text" name="vevent_price" placeholder="Valor, free" style="width: 40%"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="first" style="text-align: right">Email de contato</td>
+                                    <td>
+                                        <input style="width: 50%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br"  onblur="validateOnBlur(jQuery('#email'))"/><br>
+                                        <span class="description">Email para receber mensagens dos clientes</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Whatsapp</td>
                                     <td>
-                                        <input type="text" id="whats" name="whats" placeholder="Telefone para contato"/>
+                                        <input type="text"  style="width: 50%" id="whats" name="whats" placeholder="Telefone para contato"/><br>
+                                        <span class="description">Whats ou celular de contato</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Link para ingressos</td>
                                     <td>
                                         <input type="text" id="ingresso" name="ingresso"  placeholder="Link para a compra de ingressos"/>
+                                        <span class="description">URL do link para o ingresso</span>
                                     </td>
                                 </tr>
 
@@ -222,24 +208,27 @@ $categories = loadCategories();
                                     <td class="first" style="text-align: right">Youtube / Vimeo</td>
                                     <td>
                                         <input type="text" name="youtube" id="youtube" placeholder="Vídeo promocional"/>
+                                        <span class="description">Endereço do video começando com http...</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Facebook</td>
                                     <td>
                                         <input type="text" id="linkFace" name="linkFace"  placeholder="Endereço do Evento no Facebook"/>
+                                        <span class="description">Endereço no face começando com http...</span>
                                     </td>
                                 </tr>
-                                <tr>
+                               <!-- <tr>
                                     <td class="first" style="text-align: right">Criar campanha para este evento?</td>
                                     <td>
                                         <input type="checkbox" name="createCampaign" value="SIM" style="width: 40px">
                                     </td>
-                                </tr>
+                                </tr> -->
                                 <tr>
-                                    <td class="first"  style="text-align: right">Desconto por compartilhamento?</td>
-                                    <td>
+                                    <td class="first"  style="text-align: right">Desconto promocional</td>
+                                    <td  style="width: 33%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input type="checkbox" name="discount" value="SIM" style="width: 40px">
+                                        <label>Percentual de desconto<input type="number" name="discountAmount" id="discountAmount" style="width: 50px"/>%</label>
                                     </td>
                                 </tr>
 
@@ -355,9 +344,9 @@ $categories = loadCategories();
          * @JQuery UI elements
          * */
         jQuery(function ($) {
-            $("#placeName").suggest(ajaxurl + "?action=wpwines-dist-regions", {delay: 500, minchars: 3});
-            $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 500, minchars: 3});
-            $("#neigh").suggest(ajaxurl + "?action=findNeighoodAjax", {delay: 500, minchars: 2});
+            $("#placeName").suggest(ajaxurl + "?action=wpwines-dist-regions", {delay: 500, minchars: 4});
+            $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 500, minchars: 4});
+            $("#neigh").suggest(ajaxurl + "?action=findNeighoodAjax", {delay: 500, minchars: 4});
             mdialog = $("#dialog").dialog({
                 autoOpen: false,
                 resizable: false,
@@ -392,6 +381,9 @@ $categories = loadCategories();
                 }
                 return true;
             });
+
+            $("#dtStart").datepicker("option", "dateFormat", "dd/mm/yy");
+
         });
         function addPlace() {
             var show = mdialog.dialog("open", "true");
@@ -418,6 +410,20 @@ $categories = loadCategories();
                     errorField(jQuery('#titEvent'));
                 } else {
                     defaultField(jQuery('#titEvent'));
+                }
+                if (jQuery('#vevent_info').val() === "") {
+                    this.hasErrors = true;
+                    this.str += " - Informe o preço<br>";
+                    errorField(jQuery('#vevent_info'));
+                } else {
+                    defaultField(jQuery('#vevent_info'));
+                }
+                if (jQuery('#vevent_price').val() === "") {
+                    this.hasErrors = true;
+                    this.str += " - Informe o preço do evento<br>";
+                    errorField(jQuery('#vevent_price'));
+                } else {
+                    defaultField(jQuery('#vevent_price'));
                 }
                 if (jQuery('#txtDesc').val() === "") {
                     this.hasErrors = true;
@@ -450,6 +456,13 @@ $categories = loadCategories();
                     errorField(jQuery('#dtEnd'));
                 } else {
                     defaultField(jQuery('#dtEnd'));
+                }
+                if (jQuery('#email').val() === "") {
+                    this.hasErrors = true;
+                    this.str += " - Informe o email de contato<br>";
+                    errorField(jQuery('#email'));
+                } else {
+                    defaultField(jQuery('#email'));
                 }
                 var hasChecked = false;
                 jQuery('input:checkbox[id=categories]:checked').each(function () {
@@ -484,7 +497,7 @@ $categories = loadCategories();
                 console.log(jQuery('#dtEnd').val());
                 //  mdialog.dialog("open", "true");
                 if (!this.hasErrors) {
-                    jQuery("#dialog_content").html("<p class='notice-info'>Falta um passo para salvar as alterações em seu evento. <br><code>Confirme</code> para prosseguir ou <code>Revise</code> seu evento</p>")
+                    jQuery("#dialog_content").html("<p class='notice-info'>Falta um passo para você começar a divulgar oseu evento. <br><code>Confirme</code> para prosseguir ou <code>Revise</code>&nbsp;seu evento</p>")
                     show = mdialog.dialog("open", "true");
                 }
             }
