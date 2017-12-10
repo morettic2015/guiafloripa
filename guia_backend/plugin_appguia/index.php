@@ -55,6 +55,9 @@ function save_extra_user_profile_fields($user_id) {
     update_user_meta($user_id, '_ac', $_POST['_ac']);
     update_user_meta($user_id, '_onesignal_rest_api_key', $_POST['_onesignal_rest_api_key']);
     update_user_meta($user_id, '_onesignal_app_id', $_POST['_onesignal_app_id']);
+    update_user_meta($user_id, '_whatsapp', $_POST['_whatsapp']);
+    update_user_meta($user_id, '_fixo', $_POST['_fixo']);
+    update_user_meta($user_id, '_comercial', $_POST['_comercial']);
 }
 
 /**
@@ -62,8 +65,35 @@ function save_extra_user_profile_fields($user_id) {
  */
 function extra_user_profile_fields($user) {
     ?>
+    <a name="m_phones"/>
+    <h2><?php _e("Telefones para Contatos", "blank"); ?><br><span class="description">Informe seus números para contatos **Opcional**</span></h2>
+
+    <table class="form-table">
+        <tr>
+            <th><label for="_whatsapp"><?php _e("Número do whatsapp"); ?></label></th>
+            <td>
+                <input placeholder="+55(48)996004929" type="text" name="_whatsapp" id="_whatsapp" value="<?php echo esc_attr(get_the_author_meta('_whatsapp', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Número do seu Whatsapp com DDD. Ex: +55 48 999996064"); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_fixo"><?php _e("Telefone Fixo"); ?></label></th>
+            <td>
+                <input placeholder="+55(48)32220617" type="text" name="_fixo" id="_fixo" value="<?php echo esc_attr(get_the_author_meta('_fixo', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Número do seu telefone fixo com DDD. Ex: +55 48 32220617"); ?></span>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="_comercial"><?php _e("Telefone Comercial"); ?></label></th>
+            <td>
+                <input placeholder="+55(48)32220617" type="text" name="_comercial" id="_comercial" value="<?php echo esc_attr(get_the_author_meta('_comercial', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Número do seu telefone comercial DDD. Ex: +55 48 32220617"); ?></span>
+            </td>
+        </tr>
+    </table>
     <a name="twitter"/>
-    <h2><?php _e("Configurações do twitter", "blank"); ?></h2>
+    <h2><?php _e("Configurações do twitter", "blank"); ?><br><span class="description">Serviço integração com o Twitter **Opcional**</span></h2>
+
 
     <table class="form-table">
         <tr>
@@ -95,7 +125,8 @@ function extra_user_profile_fields($user) {
             </td>
         </tr>
     </table>
-    <h2><?php _e("Configurações do OneSignal", "blank"); ?></h2>
+    <h2><?php _e("Configurações do OneSignal", "blank"); ?><br><span class="description">Serviço de notificações **Opcional**</span></h2>
+
     <table class="form-table">
         <tr>
             <th><label for="_onesignal_app_id"><?php _e("OneSignal APP ID"); ?></label></th>
@@ -149,39 +180,50 @@ function findPlacesAjax() {
  * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
  */
 function findBeachsAjax() {
-    @session_start();
-    $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-    // var_dump($app_db);
-    $query = "select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php') and post_title like '%" . $_GET['q'] . "%';";
-    $data = $app_db->get_results($query);
-    $_SESSION['findBeachsAjax'] = json_encode($data);
+    $data = wp_cache_get('findBeachsAjax');
+    if (false === $data) {
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        // var_dump($app_db);
+        $query = "select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php') and post_title like '%" . $_GET['q'] . "%';";
+        $data = $app_db->get_results($query);
+        wp_cache_set('findBeachsAjax', $data);
+        $app_db->close();
+        @session_start();
+        $_SESSION['findBeachsAjax'] = json_encode($data);
+    }
     foreach ($data as $r1) {
         echo $r1->post_title;
         echo "\n";
     }
-    $app_db->close();
-    //  }
     die();
+}
+
+/**
+ * @Ajax to load dinamyc content from forms
+ */
+function loadEventEdit() {
+    include_once PLUGIN_ROOT_DIR . 'views/events_edit.php';
 }
 
 /**
  * Ajax request
  */
 function findNeighoodAjax() {
-    @session_start();
-    $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-    // var_dump($app_db);
-    $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and post_title like '%" . $_GET['q'] . "%' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') order by post_title asc;";
-    $data = $app_db->get_results($query);
-    //var_dump($data);die;
-    // $results = array();
-    $_SESSION['findNeighoodAjax'] = json_encode($data);
+    $data = wp_cache_get('findNeighoodAjax');
+    if (false === $data) {
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        // var_dump($app_db);
+        $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and post_title like '%" . $_GET['q'] . "%' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') group by post_title order by post_title asc;";
+        $data = $app_db->get_results($query);
+        wp_cache_set('findNeighoodAjax', $data);
+        $app_db->close();
+        @session_start();
+        $_SESSION['findNeighoodAjax'] = json_encode($data);
+    }
     foreach ($data as $r1) {
         echo $r1->title;
         echo "\n";
     }
-    //  }
-    $app_db->close();
     die();
 }
 
@@ -578,12 +620,12 @@ function share_dashboard_widget_content() {
 }
 
 function wpb_sender_email($original_email_address) {
-    return 'comercial@guiafloripa.com.br';
+    return 'noreply@experienciasdigitais.com.br';
 }
 
 // Function to change sender name
 function wpb_sender_name($original_email_from) {
-    return 'Comercial';
+    return 'noreply@experienciasdigitais.com.br';
 }
 
 function remove_dashboard_widgets() {
@@ -750,6 +792,7 @@ add_action('wp_ajax_mediaXmlRPCAjax', 'mediaXmlRPCAjax');
 add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
 add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
+add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');
 add_action('personal_options_update', 'save_extra_user_profile_fields');

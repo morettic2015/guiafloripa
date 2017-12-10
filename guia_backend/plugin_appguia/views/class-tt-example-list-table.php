@@ -1,4 +1,5 @@
 <?php
+
 //995044427162-3i20lnkl1r4tp72hpqh7gcgb5tu9g5co.apps.googleusercontent.com
 //995044427162-frej7i577t6b40581cifugpssvdkhjkk.apps.googleusercontent.com
 //6QdxlcMCFfzcPRKG4ajFAJL8
@@ -10,7 +11,6 @@
  * @copyright 2016 Matthew van Andel
  * @license   GPL-2.0+
  */
-
 /**
  * Example List Table Child Class
  *
@@ -28,31 +28,13 @@
  * @package WPListTableExample
  * @author  Matt van Andel
  */
-class TT_Example_List_Table extends WP_List_Table {
+wp_enqueue_media('media-upload');
+wp_enqueue_media('thickbox');
+wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+wp_enqueue_media('my-upload');
+wp_enqueue_style('thickbox');
 
-    /**
-     * ***********************************************************************
-     * Normally we would be querying data from a database and manipulating that
-     * for use in your list table. For this example, we're going to simplify it
-     * slightly and create a pre-built array. Think of this as the data that might
-     * be returned by $wpdb->query()
-     *
-     * In a real-world scenario, you would run your own custom query inside
-     * the prepare_items() method in this class.
-     *
-     * @var array
-     * ************************************************************************
-     */
-    protected $example_data = array(
-        array(
-            'ID' => 1,
-            'title' => 'Festa da Cocada',
-            'rating' => '21/11/2017 18:30',
-            'director' => '21/11/2017 23:30',
-            'category' => 'Lazer',
-            'deplace' => 'Parque de Coqueiros'
-        )
-    );
+class TT_Example_List_Table extends WP_List_Table {
 
     /**
      * TT_Example_List_Table constructor.
@@ -63,8 +45,8 @@ class TT_Example_List_Table extends WP_List_Table {
     public function __construct() {
         // Set parent defaults.
         parent::__construct(array(
-            'singular' => 'movie', // Singular name of the listed records.
-            'plural' => 'movies', // Plural name of the listed records.
+            'singular' => 'evento', // Singular name of the listed records.
+            'plural' => 'eventos', // Plural name of the listed records.
             'ajax' => false, // Does this table support ajax?
         ));
     }
@@ -88,12 +70,12 @@ class TT_Example_List_Table extends WP_List_Table {
     public function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
-            'title' => _x('Titulo', 'Column label', 'wp-list-table-example'),
-            'rating' => _x('Inicio', 'Column label', 'wp-list-table-example'),
-            'director' => _x('Fim', 'Column label', 'wp-list-table-example'),
-            'category' => _x('Categoria', 'Column label', 'wp-list-table-example'),
-            'deplace' => _x('Local', 'Column label', 'wp-list-table-example'),
-            'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
+            'title' => _x('Titulo', 'Titulo', 'wp-list-table-example'),
+            'director' => _x('Status', 'Column label', 'wp-list-table-example'),
+            'rating' => _x('Editado', 'Column label', 'wp-list-table-example'),
+            'category' => _x('Inicio', 'Column label', 'wp-list-table-example'),
+            'deplace' => _x('Fim', 'Column label', 'wp-list-table-example'),
+                //'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
         );
 
         return $columns;
@@ -203,27 +185,18 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function column_title($item) {
         $page = wp_unslash($_REQUEST['page']); // WPCS: Input var ok.
         // Build edit row action.
-        $edit_query_args = array(
-            'page' => $page,
-            'action' => 'edit',
-            'movie' => $item['ID'],
-        );
-
-        $actions['edit'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($edit_query_args, 'admin.php'), 'editmovie_' . $item['ID'])), _x('Edit', 'List table row action', 'wp-list-table-example')
-        );
-
-        // Build delete row action.
-        $delete_query_args = array(
-            'page' => $page,
-            'action' => 'delete',
-            'movie' => $item['ID'],
-        );
-
-        $actions['delete'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'deletemovie_' . $item['ID'])), _x('Publicar', 'List table row action', 'wp-list-table-example')
-        );
-
+        //showPop(action,id)
+        //trial cannot upload images
+        $actions['general'] = '<a href="javascript:showPop(\'general\',' . $item['ID'] . ')">' . _x('Geral') . '</a>';
+        $actions['edit'] = '<a href="javascript:showPop(\'place\',' . $item['ID'] . ')">' . _x('Estabelecimento') . '</a>';
+        $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
+        $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
+        $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
+if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+            $actions['pic'] = '<a href="javascript:showPop(\'image\',' . $item['ID'] . ')">' . _x('Imagem') . '</a>';
+        }
+        $actions['comp'] = '<a href="javascript:showPop(\'comp\',' . $item['ID'] . ')">' . _x('Complemento') . '</a>';
+        
         // Return the title contents.
         return sprintf('%1$s <span style="color:silver;">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
@@ -247,10 +220,20 @@ class TT_Example_List_Table extends WP_List_Table {
      * @return array An associative array containing all the bulk actions.
      */
     protected function get_bulk_actions() {
-        $actions = array(
-            'delete' => _x('Cancelar', 'List table bulk action', 'wp-list-table-example'),
-            'export' => _x('Publica', 'List table bulk action', 'wp-list-table-example'),
-        );
+        $actions = "";
+        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+            $actions = array(
+                'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
+                'revision' => _x('Revisão', 'List table bulk action', 'wp-list-table-example'),
+                'publish' => _x('Publicar', 'List table bulk action', 'wp-list-table-example'),
+            );
+        } else {
+            $actions = array(
+                'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
+                'revision' => _x('Revisão', 'List table bulk action', 'wp-list-table-example'),
+            );
+        }
+
 
         return $actions;
     }
@@ -267,7 +250,17 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function process_bulk_action() {
         // Detect when a bulk action is being triggered.
         if ('delete' === $this->current_action()) {
-            wp_die('Items deleted (or they would be if we had items to delete)!');
+            include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+            $ec = new EventControl();
+            $ec->updatePostStatus($_GET, 'trash');
+        } else if ('publish' === $this->current_action()) {
+            include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+            $ec = new EventControl();
+            $ec->updatePostStatus($_GET, 'publish');
+        } else if ('revision' === $this->current_action()) {
+            include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+            $ec = new EventControl();
+            $ec->updatePostStatus($_GET, 'draft');
         }
     }
 
@@ -294,7 +287,7 @@ class TT_Example_List_Table extends WP_List_Table {
         /*
          * First, lets decide how many records per page to show
          */
-        $per_page = 5;
+        $per_page = 15;
 
         /*
          * REQUIRED. Now we need to define our column headers. This includes a complete
@@ -338,7 +331,12 @@ class TT_Example_List_Table extends WP_List_Table {
          * For information on making queries in WordPress, see this Codex entry:
          * http://codex.wordpress.org/Class_Reference/wpdb
          */
-        $data = $this->example_data;
+        include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+        $ec = new EventControl();
+
+
+
+        $data = $ec->loadMyEvents();
 
         /*
          * This checks for sorting input and sorts the data in our array of dummy

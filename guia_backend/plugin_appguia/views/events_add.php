@@ -22,12 +22,20 @@ function updateEvent($p) {
             <p>Uma <a href="admin.php?page=app_guiafloripa_campaigns">campanha</a> modelo foi criada. Edite para promover seu evento</p>
         </div>
         <?php
+        if (empty(get_user_meta(get_current_user_id(), "_plano_type", true))) {
+            ?>
+            <div class="notice notice-warning"> 
+                <p>Conta trial</p>
+                <p>Seu evento entrou na fila de aprovação do Guia Floripa. Em breve será publicado.</p>
+            </div>
+            <?php
+        }
         die;
-        return true;
     }
     return false;
 }
 
+$current_user = wp_get_current_user();
 $categories = $ec->loadCategories();
 ?>
 <a name="top"/>
@@ -53,8 +61,8 @@ $categories = $ec->loadCategories();
                                     <td class="first" style="text-align: right">Estabelecimento</td>
                                     <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input type="text" name="placeName" id="placeName" style="width: 40%"  placeholder="Digite o nome do estabelecimento" onblur="validateOnBlur(jQuery('#placeName'))">
-                                        <a href="javascript:addPlace()" class="button button-primary">Adicionar</a><br>
-                                        <span class="description">Informe o nome do estabelecimento onde vai ocorrer o evento</span>
+                                        <!--<a href="javascript:addPlace()" class="button button-primary">Adicionar</a><br>-->
+                                        <br><span class="description">Informe o nome ou parte do nome e selecione o estabelecimento da lista de resultados</span>
                                     </td>
                                 </tr>
 
@@ -75,16 +83,30 @@ $categories = $ec->loadCategories();
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right"> 
-                                        Foto destaque
+                                    <td class="first" style="text-align: right">
+                                        Mais informações
                                     </td>
-                                    <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input id="content_url" name="content_url" type="hidden" readonly="readonly"/>
-                                        <input type="button" value="Selecione" class="button button-primary" style="width: 25%" onclick="upload_new_img(this)"/>   
-                                        <a href="javascript:void(0);" onclick="remove_image(this);" style="width: 25%" class="button button-primary">Remover</a>
-                                        <div id="imgPreview"></div>
+                                    <td>
+                                        <input type="text" id="more_info" name="more_info" maxlength="120"  placeholder="Mais informações"/>
+                                        <span class="description">Informações complementares sobre o evento</span>
                                     </td>
                                 </tr>
+                                <?php
+                                if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+                                    ?>
+                                    <tr>
+                                        <td class="first" style="text-align: right"> 
+                                            Foto destaque
+                                        </td>
+                                        <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                            <input id="content_url" name="content_url" type="hidden" readonly="readonly"/>
+                                            <input type="button" value="Selecione" class="button button-primary" style="width: 25%" onclick="upload_new_img(this)"/>   
+                                            <a href="javascript:void(0);" onclick="remove_image(this);" style="width: 25%" class="button button-primary">Remover</a>
+                                            <div id="imgPreview"></div>
+                                        </td>
+                                    </tr>
+                                <?php }
+                                ?>
                                 <tr>
                                     <td class="first" style="text-align: right">Data e hora (inicio e fim)</td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
@@ -165,42 +187,42 @@ $categories = $ec->loadCategories();
                                     <td class="first" style="text-align: right">Bairro</td>
                                     <td>
                                         <input type="text" id="neigh" name="neigh" style="width: 200px" placeholder="Bairro do Evento"  onblur="validateOnBlur(jQuery('#neigh'))"/>
-                                        <br><span class="description">Informe o bairro</span>
+                                        <br><span class="description">Informe o bairro e selecione o resultado</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Praia</td>
                                     <td>
                                         <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia do Evento" />
-                                        <br><span class="description">Praia proxima</span>
+                                        <br><span class="description">Informe a praia proxima e selecione o resultado</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Ingresso</td>
-                                    <td style="width: 33%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input type="text" name="vevent_info"  placeholder="Ex: Convite, Promoção" style="width: 40%"/>
-                                        <input type="text" name="vevent_price" placeholder="Valor, free" style="width: 40%"/>
+                                    <td class="first" style="text-align: right">Informações do ingresso</td>
+                                    <td >
+                                       <!-- <input type="text" name="vevent_info"  placeholder="Ingresso" value='Ingresso' style="width: 15%"/>-->
+                                        <input type="text" name="vevent_price" placeholder="Valores (pista, área vip, camarotes, etc)" style="width: 50%"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Email de contato</td>
                                     <td>
-                                        <input style="width: 50%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br"  onblur="validateOnBlur(jQuery('#email'))"/><br>
+                                        <input style="width: 50%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br" value="<?php echo $current_user->user_email; ?>"  onblur="validateOnBlur(jQuery('#email'))"/><br>
                                         <span class="description">Email para receber mensagens dos clientes</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right">Whatsapp</td>
                                     <td>
-                                        <input type="text"  style="width: 50%" id="whats" name="whats" placeholder="Telefone para contato"/><br>
-                                        <span class="description">Whats ou celular de contato</span>
+                                        <input type="text"  style="width: 50%" id="whats" name="whats" value="<?php echo get_user_meta(get_current_user_id(), "_whatsapp", true); ?>" placeholder="Telefone para contato"/><br>
+                                        <span class="description">Prencha no seu <a href="profile.php#m_phones" target="_blank">perfil</a> para carregar automaticamente</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Link para ingressos</td>
+                                    <td class="first" style="text-align: right">Website ou link evento</td>
                                     <td>
-                                        <input type="text" id="ingresso" name="ingresso"  placeholder="Link para a compra de ingressos"/>
-                                        <span class="description">URL do link para o ingresso</span>
+                                        <input type="text" id="ingresso" name="ingresso"  placeholder="http://"/>
+                                        <span class="description">URL do link para o ingresso ou site do evento</span>
                                     </td>
                                 </tr>
 
@@ -235,7 +257,13 @@ $categories = $ec->loadCategories();
                                 <tr>
                                     <td class="first"  style="text-align: right">Publicado?</td>
                                     <td>
-                                        <input type="checkbox" name="published" value="SIM" style="width: 40px">
+                                        <?php
+                                        $canCheck = "disabled='disabled'";
+                                        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+                                            $canCheck = "";
+                                        }
+                                        ?>
+                                        <input type="checkbox" <?php echo $canCheck; ?> name="published" value="SIM" style="width: 40px">
                                     </td>
                                 </tr>
 
@@ -308,6 +336,9 @@ $categories = $ec->loadCategories();
     </style>
 
     <script>
+        var placeIsSelected = false;
+        var bairroIsSelected = false;
+        var praiaIsSelected = false;
         function upload_new_img(obj)
         {
             var file_frame;
@@ -340,13 +371,29 @@ $categories = $ec->loadCategories();
             document.getElementById('content_url').value = "";
         }
         var mdialog;
+        function isPlaceValid() {
+            if (!placeIsSelected) {
+
+            }
+            validateOnBlur(jQuery("#placeName"));
+        }
+
         /**
          * @JQuery UI elements
          * */
         jQuery(function ($) {
-            $("#placeName").suggest(ajaxurl + "?action=wpwines-dist-regions", {delay: 500, minchars: 4});
-            $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 500, minchars: 4});
-            $("#neigh").suggest(ajaxurl + "?action=findNeighoodAjax", {delay: 500, minchars: 4});
+            $("#placeName").suggest(ajaxurl + "?action=wpwines-dist-regions", {delay: 400, minchars: 4});
+            $("#placeName").change(function (e) {
+                placeIsSelected = true;
+            });
+            $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 400, minchars: 4});
+            $("#beach").change(function (e) {
+                bairroIsSelected = true;
+            });
+            $("#neigh").suggest(ajaxurl + "?action=findNeighoodAjax", {delay: 400, minchars: 4});
+            $("#neigh").change(function (e) {
+                praiaIsSelected = true;
+            });
             mdialog = $("#dialog").dialog({
                 autoOpen: false,
                 resizable: false,
@@ -404,6 +451,13 @@ $categories = $ec->loadCategories();
                 } else {
                     defaultField(jQuery('#placeName'));
                 }
+                if (!placeIsSelected) {
+                    this.hasErrors = true;
+                    this.str += " - O estabelecimento não foi localizado na base do Guia.<br>";
+                    errorField(jQuery('#placeName'));
+                } else {
+                    defaultField(jQuery('#placeName'));
+                }
                 if (jQuery('#titEvent').val() === "") {
                     this.hasErrors = true;
                     this.str += " - Informe o título do evento<br>";
@@ -411,13 +465,13 @@ $categories = $ec->loadCategories();
                 } else {
                     defaultField(jQuery('#titEvent'));
                 }
-                if (jQuery('#vevent_info').val() === "") {
+                /*if (jQuery('#vevent_info').val() === "") {
                     this.hasErrors = true;
                     this.str += " - Informe o preço<br>";
                     errorField(jQuery('#vevent_info'));
                 } else {
                     defaultField(jQuery('#vevent_info'));
-                }
+                }*/
                 if (jQuery('#vevent_price').val() === "") {
                     this.hasErrors = true;
                     this.str += " - Informe o preço do evento<br>";
@@ -457,13 +511,13 @@ $categories = $ec->loadCategories();
                 } else {
                     defaultField(jQuery('#dtEnd'));
                 }
-                if (jQuery('#email').val() === "") {
-                    this.hasErrors = true;
-                    this.str += " - Informe o email de contato<br>";
-                    errorField(jQuery('#email'));
-                } else {
-                    defaultField(jQuery('#email'));
-                }
+                /*      if (jQuery('#email').val() === "") {
+                 this.hasErrors = true;
+                 this.str += " - Informe o email de contato<br>";
+                 errorField(jQuery('#email'));
+                 } else {
+                 defaultField(jQuery('#email'));
+                 }*/
                 var hasChecked = false;
                 jQuery('input:checkbox[id=categories]:checked').each(function () {
                     console.log($(this).val());
@@ -497,7 +551,7 @@ $categories = $ec->loadCategories();
                 console.log(jQuery('#dtEnd').val());
                 //  mdialog.dialog("open", "true");
                 if (!this.hasErrors) {
-                    jQuery("#dialog_content").html("<p class='notice-info'>Falta um passo para você começar a divulgar oseu evento. <br><code>Confirme</code> para prosseguir ou <code>Revise</code>&nbsp;seu evento</p>")
+                    jQuery("#dialog_content").html("<p class='notice-info'>Falta um passo para você começar a divulgar o seu evento. <br><code>Confirme</code> para prosseguir ou <code>Revise</code>&nbsp;seu evento</p>")
                     show = mdialog.dialog("open", "true");
                 }
             }

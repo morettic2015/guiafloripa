@@ -38,7 +38,7 @@ class PortalController extends GuiaController {
         while ($row = $conn->hasNext()) {
             $ret->regions[] = $row;
         }
-        $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') order by post_title asc;";
+        $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') group by post_title order by post_title asc;";
         $conn->execute($query); // misspelled SELECT
         $i = 0;
         $ret->neighborhoods = array();
