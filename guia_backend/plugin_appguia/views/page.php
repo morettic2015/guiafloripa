@@ -34,24 +34,25 @@
         //showPop(null,1);
     });
     function showPop(page, id) {
+        mdialog.html("<center><br><br><br><img src='https://app.guiafloripa.com.br/wp-content/uploads/2017/12/SpecificCharmingLeafcutterant-max-1mb.gif'/></center>")
         loadDynamicContentModal(page, id);
     }
     function loadDynamicContentModal(page, id) {
         var titulo = "";
         if(page==="general"){
-            titulo = "Informações gerais";
+            titulo = "Informações";
         }else if(page==="image"){
             titulo = "Imagem do Evento";
         }else if(page==="comp"){
-            titulo = "Informações complementares";
+            titulo = "Complemento";
         }else if(page==="place"){
-            titulo = "Estabelecimento do Evento";
+            titulo = "Estabelecimento";
         }else if(page==="dates"){
             titulo = "Datas do Evento";
         }else if(page==="categ"){
-            titulo = "Gategorias do Evento";
+            titulo = "Categorias";
         }else if(page==="local"){
-            titulo = "Localização do Evento";
+            titulo = "Localização";
         }
         var options = {
             autoOpen: false,

@@ -192,7 +192,7 @@ class TT_Example_List_Table extends WP_List_Table {
         $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
         $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
         $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
-if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
             $actions['pic'] = '<a href="javascript:showPop(\'image\',' . $item['ID'] . ')">' . _x('Imagem') . '</a>';
         }
         $actions['comp'] = '<a href="javascript:showPop(\'comp\',' . $item['ID'] . ')">' . _x('Complemento') . '</a>';

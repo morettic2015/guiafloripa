@@ -24,6 +24,7 @@ const _BAIRROS = 'bairros';
 const _MY_EVENTS = 'my_events';
 const _DURACAO = 'duracao';
 const _MOREINFO = "vevent_moreinfo";
+const _PRAIAS = "praias";
 
 global $app_db;
 
@@ -213,6 +214,10 @@ class EventControl extends stdClass {
         return $query;
     }
 
+    public function loadComplement($request) {
+        
+    }
+
     public function insertEvent($request) {
         //var_dump($_SESSION);
 
@@ -253,7 +258,7 @@ class EventControl extends stdClass {
         //BEach nearby
         $ne = json_decode($_SESSION['findBeachsAjax']);
         if (count($ne) > 0) {
-            $app_db->get_results($this->insertMeta($postID, 'praias', $ne[0]->id));
+            $app_db->get_results($this->insertMeta($postID, _PRAIAS, $ne[0]->id));
         }
         //Place owner
         $ne = json_decode($_SESSION['place']);
@@ -305,6 +310,99 @@ class EventControl extends stdClass {
     }
 
     /**
+     * @Load Ajax with cached query for beachs
+     */
+    public function loadSearchBeachs($request) {
+        $data = wp_cache_get('findBeachsAjax');
+        if (false === $data) {
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            // var_dump($app_db);
+            $query = "select id,post_title from wp_posts where post_parent = 2311 and post_title like '%" . $request['q'] . "%';";
+            $data = $app_db->get_results($query);
+            wp_cache_set('findBeachsAjax', $data);
+            $app_db->close();
+            @session_start();
+            $_SESSION['findBeachsAjax'] = json_encode($data);
+        }
+        return $data;
+    }
+
+    /**
+     * @Load Ajax with cached query for neighbhood
+     */
+    public function loadSearchNeigh($request) {
+        $data = wp_cache_get('findNeighoodAjax');
+        if (false === $data) {
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            // var_dump($app_db);
+            $query = "select id as postID,post_title as title from wp_posts where post_parent = 2191 and post_title like '%" . $request['q'] . "%' and post_title <> '' order by post_title asc;";
+            $data = $app_db->get_results($query);
+            wp_cache_set('findNeighoodAjax', $data);
+            $app_db->close();
+            @session_start();
+            $_SESSION['findNeighoodAjax'] = json_encode($data);
+        }
+        return $data;
+    }
+
+    /**
+     * @Load Regions
+     */
+    public function loadRegions($request) {
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $query = "select distinct meta_key from wp_postmeta where meta_key like 'regi%'";
+        $date = new stdClass();
+        $date->regions = $app_db->get_results($query);
+        $query = "select id as postID,post_title as title from wp_posts where post_parent = 2191 and post_title <> '' order by post_title asc;";
+        $date->neigh = $app_db->get_results($query);
+        $query = "select id,post_title from wp_posts where post_parent = 2311 and post_title <> '' order by post_title asc;";
+        $date->beach = $app_db->get_results($query);
+        $query = "select meta_value from wp_postmeta where post_id = " . $request['id'] . " and meta_key = '" . _BAIRROS . "'";
+        $date->bairros = $app_db->get_results($query);
+        $query = "select meta_value from wp_postmeta where post_id = " . $request['id'] . " and meta_key = '" . _PRAIAS . "'";
+        $date->praias = $app_db->get_results($query);
+        // var_dump($date);
+        $app_db->close();
+        return $date;
+    }
+
+    /**
+     * @Load Events Image
+     */
+    public function loadImage($postId) {
+        $query = "select guid as img from wp_posts where id = (select meta_value from wp_postmeta where post_id = $postId and meta_key ='_thumbnail_id');";
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        //insert post evento
+        $result = $app_db->get_results($query);
+        $app_db->close();
+        return $result;
+    }
+
+    /**
+     * @Load Events dates for edition
+     */
+    public function loadDates($postID) {
+        $query = " select "
+                . " (select meta_value from wp_postmeta where meta_key = 'Mon' and post_id = $postID) as Mon, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Tue' and post_id = $postID) as Tue, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Wed' and post_id = $postID) as Wed, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Thu' and post_id = $postID) as Thu, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Fri' and post_id = $postID) as Fri, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Sat' and post_id = $postID) as Sat, "
+                . " (select meta_value from wp_postmeta where meta_key = 'Sun' and post_id = $postID) as Sun, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID) ), '%Y-%m-%d')as dtStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID) ), '%Y-%m-%d')as dtEnd, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID) ), '%H:%i')as hrStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID) ), '%H:%i')as hrEnd "
+                . " from dual;";
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        //insert post evento
+        $result = $app_db->get_results($query);
+        $app_db->close();
+        return $result;
+    }
+
+    /**
      * @Create campaign and Email Modelo from default description
      */
     public function createCampaign($request, $postID, $dtStart, $dtEnd) {
@@ -348,6 +446,15 @@ class EventControl extends stdClass {
             'post_author' => get_current_user_id()
         );
         $emailID = wp_insert_post($email);
+    }
+
+    public function loadMyCategories($request) {
+        //select 
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $query = "select term_id from wp_term_taxonomy as a left join wp_term_relationships as b on a.term_taxonomy_id = b.term_taxonomy_id where a.taxonomy = 'segmento' and b.object_id =". $request['id'];
+        $ret = $app_db->get_results($query);
+        $app_db->close();
+        return $ret;
     }
 
     public function insertCategory($postID, $catID) {

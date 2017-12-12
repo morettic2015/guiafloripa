@@ -66,33 +66,33 @@ function save_extra_user_profile_fields($user_id) {
 function extra_user_profile_fields($user) {
     ?>
     <a name="m_phones"/>
-    <h2><?php _e("Telefones para Contatos", "blank"); ?><br><span class="description">Informe seus números para contatos **Opcional**</span></h2>
+    <h2><?php _e("Telefones para Contatos", "blank"); ?><p><span class="description">Informe seus números para contatos **Opcional**</span></p></h2>
 
     <table class="form-table">
         <tr>
             <th><label for="_whatsapp"><?php _e("Número do whatsapp"); ?></label></th>
             <td>
-                <input placeholder="+55(48)996004929" type="text" name="_whatsapp" id="_whatsapp" value="<?php echo esc_attr(get_the_author_meta('_whatsapp', $user->ID)); ?>" class="regular-text" /><br />
+                <input type="text" name="_whatsapp" id="_whatsapp" value="<?php echo esc_attr(get_the_author_meta('_whatsapp', $user->ID)); ?>" class="regular-text" /><br />
                 <span class="description"><?php _e("Número do seu Whatsapp com DDD. Ex: +55 48 999996064"); ?></span>
             </td>
         </tr>
         <tr>
             <th><label for="_fixo"><?php _e("Telefone Fixo"); ?></label></th>
             <td>
-                <input placeholder="+55(48)32220617" type="text" name="_fixo" id="_fixo" value="<?php echo esc_attr(get_the_author_meta('_fixo', $user->ID)); ?>" class="regular-text" /><br />
+                <input type="text" name="_fixo" id="_fixo" value="<?php echo esc_attr(get_the_author_meta('_fixo', $user->ID)); ?>" class="regular-text" /><br />
                 <span class="description"><?php _e("Número do seu telefone fixo com DDD. Ex: +55 48 32220617"); ?></span>
             </td>
         </tr>
         <tr>
             <th><label for="_comercial"><?php _e("Telefone Comercial"); ?></label></th>
             <td>
-                <input placeholder="+55(48)32220617" type="text" name="_comercial" id="_comercial" value="<?php echo esc_attr(get_the_author_meta('_comercial', $user->ID)); ?>" class="regular-text" /><br />
+                <input type="text" name="_comercial" id="_comercial" value="<?php echo esc_attr(get_the_author_meta('_comercial', $user->ID)); ?>" class="regular-text" /><br />
                 <span class="description"><?php _e("Número do seu telefone comercial DDD. Ex: +55 48 32220617"); ?></span>
             </td>
         </tr>
     </table>
     <a name="twitter"/>
-    <h2><?php _e("Configurações do twitter", "blank"); ?><br><span class="description">Serviço integração com o Twitter **Opcional**</span></h2>
+    <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
 
 
     <table class="form-table">
@@ -125,7 +125,7 @@ function extra_user_profile_fields($user) {
             </td>
         </tr>
     </table>
-    <h2><?php _e("Configurações do OneSignal", "blank"); ?><br><span class="description">Serviço de notificações **Opcional**</span></h2>
+    <h2><?php _e("Configurações do OneSignal", "blank"); ?><p><span class="description">Serviço de notificações **Opcional**</span></p></h2>
 
     <table class="form-table">
         <tr>
@@ -180,17 +180,9 @@ function findPlacesAjax() {
  * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
  */
 function findBeachsAjax() {
-    $data = wp_cache_get('findBeachsAjax');
-    if (false === $data) {
-        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-        // var_dump($app_db);
-        $query = "select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php') and post_title like '%" . $_GET['q'] . "%';";
-        $data = $app_db->get_results($query);
-        wp_cache_set('findBeachsAjax', $data);
-        $app_db->close();
-        @session_start();
-        $_SESSION['findBeachsAjax'] = json_encode($data);
-    }
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $data = $ec->loadSearchBeachs($_GET);
     foreach ($data as $r1) {
         echo $r1->post_title;
         echo "\n";
@@ -209,17 +201,10 @@ function loadEventEdit() {
  * Ajax request
  */
 function findNeighoodAjax() {
-    $data = wp_cache_get('findNeighoodAjax');
-    if (false === $data) {
-        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-        // var_dump($app_db);
-        $query = "select id as postID,post_title as title from wp_posts where post_type = 'cidade' and post_title like '%" . $_GET['q'] . "%' and id in (select post_id from wp_postmeta where meta_key = 'mf_page_type' and meta_value='Cidade') group by post_title order by post_title asc;";
-        $data = $app_db->get_results($query);
-        wp_cache_set('findNeighoodAjax', $data);
-        $app_db->close();
-        @session_start();
-        $_SESSION['findNeighoodAjax'] = json_encode($data);
-    }
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $data = $ec->loadSearchNeigh($_GET);
+
     foreach ($data as $r1) {
         echo $r1->title;
         echo "\n";
