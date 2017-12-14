@@ -25,10 +25,44 @@ const _MY_EVENTS = 'my_events';
 const _DURACAO = 'duracao';
 const _MOREINFO = "vevent_moreinfo";
 const _PRAIAS = "praias";
+const _LOCATION = 'vevent_location';
+const _EVENTPRICE = 'vevent_price';
+const _EVENTMAIL = 'vevent_email';
+const _SECTION = 'section';
+const _DISCOUNT = "discount";
+const _LINKFACE = "linkFace";
 
 global $app_db;
 
 class EventControl extends stdClass {
+
+    public function updateDates($request) {
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
+        $qtfim = $this->getTimeFromString($request['dtEnd'], $request['hrEnd']);
+        //Query timestamp from database
+        $dtinit = $app_db->get_results($qtinit);
+        $dtfim = $app_db->get_results($qtfim);
+        //Insert new dates
+        $request['dtinit'] = $dtinit;
+        $request['dtfim'] = $dtfim;
+        //update init date
+        $query = "update wp_postmeta set meta_value = '" . $dtinit[0]->DT . "' where meta_key = 'vevent_dtstart' and post_id = " . $request['eventID'];
+        $app_db->get_results($query);
+        //Update finish date
+        $query = "update wp_postmeta set meta_value = '" . $dtfim[0]->DT . "' where meta_key = 'vevent_dtend' and post_id = " . $request['eventID'];
+        $app_db->get_results($query);
+        //Insert event duration variable
+        $timeAmnt = (double) ($dtfim[0]->DT + (3600 * 6)) - (double) $dtinit[0]->DT;
+        $app_db->get_results($this->insertMeta($request['eventID'], _DURACAO, $timeAmnt));
+        $query = "delete from wp_postmeta where meta_value = 'on' and post_id = " . $request['eventID'];
+        $app_db->get_results($query); //Remove days of week
+        if (isset($request['dayofweek'])) {//inser days of week
+            foreach ($request['dayofweek'] as $d1) {
+                $app_db->get_results($this->insertMeta($request['eventID'], $d1, 'on'));
+            }
+        }
+    }
 
     public function updatePostStatus($request, $status) {
 
@@ -263,7 +297,7 @@ class EventControl extends stdClass {
         //Place owner
         $ne = json_decode($_SESSION['place']);
         if (count($ne) > 0) {
-            $app_db->get_results($this->insertMeta($postID, 'vevent_location', $ne[0]->placeID));
+            $app_db->get_results($this->insertMeta($postID, _LOCATION, $ne[0]->placeID));
         }
         //Evento more info
 
@@ -271,11 +305,11 @@ class EventControl extends stdClass {
         //Meta regiao_central
         $app_db->get_results($this->insertMeta($postID, $request['region'], '1'));
         //Meta Evento price & Info
-        $app_db->get_results($this->insertMeta($postID, 'vevent_price', $request['vevent_price']));
+        $app_db->get_results($this->insertMeta($postID, _EVENTPRICE, $request['vevent_price']));
         $app_db->get_results($this->insertMeta($postID, 'vevent_price_label', "Ingresso:"));
         //Meta email
         if (!empty($request['email'])) {
-            $app_db->get_results($this->insertMeta($postID, 'vevent_email', $request['email']));
+            $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $request['email']));
         }
         //Dates
         $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
@@ -310,6 +344,27 @@ class EventControl extends stdClass {
     }
 
     /**
+     * @Load complemento
+     */
+    public function loadComplemento($request) {
+        global $wpdb;
+        $query = "select "
+                . " (select meta_value from wp_postmeta where meta_key='vevent_email' and post_id =" . $request['id'] . ") as email, "
+                . " (select meta_value from wp_postmeta where meta_key='vevent_price' and post_id =" . $request['id'] . ") as price, "
+                . " (select meta_value from wp_postmeta where meta_key='vevent_price_label' and post_id =" . $request['id'] . ") as plabel , "
+                . " (select meta_value from wp_postmeta where meta_key='vevent_moreinfo' and post_id =" . $request['id'] . ") as info "
+                . "from dual";
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $data = new stdClass();
+        $data->event = $app_db->get_results($query);
+        $app_db->close();
+        $query = "select meta_id,meta_key,meta_value from wp_posts as a left join wp_postmeta as b on a.ID = b.post_id where post_parent = " . $request['id'];
+        $data->campaign = $wpdb->get_results($query);
+        $wpdb->close();
+        return $data;
+    }
+
+    /**
      * @Load Ajax with cached query for beachs
      */
     public function loadSearchBeachs($request) {
@@ -323,6 +378,39 @@ class EventControl extends stdClass {
             $app_db->close();
             @session_start();
             $_SESSION['findBeachsAjax'] = json_encode($data);
+        }
+        return $data;
+    }
+
+    /**
+     * @Load Places by name
+     */
+    public function loadPlacesByName($request) {
+        //var_dump($request);;
+        $app_db = new wpdb(APP_USER, APP_PASS, APP_DBNM, APP_HOST);
+        $query = "SELECT idPlace as placeID, upper(nmPlace) as placeName FROM guiafloripa_app.Place Where nmPlace like '%" . $request['name'] . "%' order by nmPlace ASC";
+        $data = $app_db->get_results($query);
+
+        // var_dump($data);
+        $json = json_encode($data);
+        ;
+        //echo $json;
+        $app_db->close();
+        return $json;
+    }
+
+    /**
+     * @Load MyPlace
+     */
+    public function loadMyPlace($request) {
+        $data = wp_cache_get('loadMyPlace');
+        if (false === $data) {
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            // var_dump($app_db);
+            $query = "select id,post_title from wp_posts where id = (select meta_value from wp_postmeta where meta_key = 'vevent_location' and post_id=" . $request['id'] . ");";
+            $data = $app_db->get_results($query);
+            wp_cache_set('loadMyPlace', $data);
+            $app_db->close();
         }
         return $data;
     }
@@ -345,13 +433,81 @@ class EventControl extends stdClass {
         return $data;
     }
 
+    public function updateEventInfo($request) {
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        if ($request[_SECTION] === "place") {
+            if (!empty($request['pResult'])) {
+                $request['update2'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _LOCATION, $request['pResult']);
+            }
+        } else if ($request[_SECTION] === "comp") {
+            global $wpdb;
+            $request['update1'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _EVENTPRICE, $request['vevent_price']);
+            $request['update2'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _EVENTMAIL, $request['email']);
+            $request['pID'] = $wpdb->get_results("SELECT id FROM wp_posts where post_parent = " . $request['eventID']);
+
+
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, _DISCOUNT, $request['discountAmount']);
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, _LINKFACE, $request[_LINKFACE]);
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "youtube", $request['youtube']);
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "ticket", $request['ingresso']);
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "whats", $request['whats']);
+            $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "email", $request['email']);
+
+        } else if ($request[_SECTION] === "image") {
+            if (!empty($request['content_url'])) {
+                $request['image'] = $this->uploadImage($request['content_url']);
+                $request['response'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _THUMB, $request['image']['id']);
+                $query = "update wp_posts set post_parent = " . $request['eventID'] . " where post_id = " . $request['image']['id'];
+                $app_db->get_results($query);
+            } else {
+                $query = "delete from wp_postmeta where meta_key = '" . _THUMB . "' and post_id = " . $request['eventID'];
+                $request['delete'] = $app_db->get_results($query);
+            }
+        } else if ($request[_SECTION] === "local") {//
+            $request['update1'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _BAIRROS, $request['neigh']);
+            $request['update2'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _PRAIAS, $request['beach']);
+            $query = "update wp_postmeta set meta_key = '" . $request['region'] . "' where meta_key like 'regiao_%' and post_id = " . $request['eventID'];
+            $request['update3'] = $app_db->get_results($query);
+        } else if ($request[_SECTION] === "categ") {//Remove categories
+            $this->removeCategories($app_db, $request['eventID'], $request['oldCategories']);
+            $request['removes'] = array();
+            foreach ($request['categories'] as $cat) {
+                $q1 = $this->insertCategory($request['eventID'], $cat);
+                $request['removes'][] = $app_db->get_results($q1);
+            }
+        } else if ($request[_SECTION] === "dates") {
+            $this->updateDates($request);
+        } else if ($request[_SECTION] === "general") {
+            $request['query1'] = "update wp_posts set post_title = '" . $request['titEvent'] . "', post_content = '" . $request['txtDesc'] . "' where id = " . $request['eventID'];
+            $request['update'] = $app_db->get_results($request['query1']);
+            $request['query2'] = "update wp_postmeta set meta_value = '" . $request['more_info'] . "' where meta_key = '" . _MOREINFO . "' and post_id = " . $request['eventID'];
+            $request['update2'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _MOREINFO, $request['more_info']);
+        }
+        $app_db->close();
+        // var_dump($request);die;
+        return json_encode($request);
+    }
+
+    public function insertOrUpdateMeta(&$conn, $postID, $metaKey, $metaValue) {
+        $query = "SELECT meta_id FROM wp_postmeta where post_id = " . $postID . " and meta_key='$metaKey'";
+        $result = $conn->get_results($query);
+        if ($result) {
+            $query = "UPDATE wp_postmeta set meta_value = '" . $metaValue . "' where meta_id = " . $result[0]->meta_id;
+            $result = $conn->get_results($query);
+        } else {
+            $query = $this->insertMeta($postID, $metaKey, $metaValue);
+            $result = $conn->get_results($query);
+        }
+        return $result;
+    }
+
     /**
      * @Load Regions
      */
     public function loadRegions($request) {
+        $date = new stdClass();
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         $query = "select distinct meta_key from wp_postmeta where meta_key like 'regi%'";
-        $date = new stdClass();
         $date->regions = $app_db->get_results($query);
         $query = "select id as postID,post_title as title from wp_posts where post_parent = 2191 and post_title <> '' order by post_title asc;";
         $date->neigh = $app_db->get_results($query);
@@ -361,6 +517,8 @@ class EventControl extends stdClass {
         $date->bairros = $app_db->get_results($query);
         $query = "select meta_value from wp_postmeta where post_id = " . $request['id'] . " and meta_key = '" . _PRAIAS . "'";
         $date->praias = $app_db->get_results($query);
+        $query = "select meta_key from wp_postmeta where meta_key like 'regi%' and post_id=" . $request['id'];
+        $date->mRegion = $app_db->get_results($query);
         // var_dump($date);
         $app_db->close();
         return $date;
@@ -390,10 +548,10 @@ class EventControl extends stdClass {
                 . " (select meta_value from wp_postmeta where meta_key = 'Fri' and post_id = $postID) as Fri, "
                 . " (select meta_value from wp_postmeta where meta_key = 'Sat' and post_id = $postID) as Sat, "
                 . " (select meta_value from wp_postmeta where meta_key = 'Sun' and post_id = $postID) as Sun, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID) ), '%Y-%m-%d')as dtStart, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID) ), '%Y-%m-%d')as dtEnd, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID) ), '%H:%i')as hrStart, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID) ), '%H:%i')as hrEnd "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3*3600) ), '%Y-%m-%d')as dtStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3*3600) ), '%Y-%m-%d')as dtEnd, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3*3600) ), '%H:%i')as hrStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3*3600) ), '%H:%i')as hrEnd "
                 . " from dual;";
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         //insert post evento
@@ -420,10 +578,10 @@ class EventControl extends stdClass {
         add_post_meta($campaignID, "vevent_dtstart", $dtStart, true);
         add_post_meta($campaignID, "vevent_dtend", $dtEnd, true);
         if (!empty($request['discount'])) {
-            add_post_meta($campaignID, "discount", $request['discountAmount'], true);
+            add_post_meta($campaignID, _DISCOUNT, $request['discountAmount'], true);
         }
-        if (!empty($request['linkFace'])) {
-            add_post_meta($campaignID, "linkFace", $request['linkFace'], true);
+        if (!empty($request[_LINKFACE])) {
+            add_post_meta($campaignID, _LINKFACE, $request[_LINKFACE], true);
         }
         if (!empty($request['youtube'])) {
             add_post_meta($campaignID, "youtube", $request['youtube'], true);
@@ -451,10 +609,15 @@ class EventControl extends stdClass {
     public function loadMyCategories($request) {
         //select 
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-        $query = "select term_id from wp_term_taxonomy as a left join wp_term_relationships as b on a.term_taxonomy_id = b.term_taxonomy_id where a.taxonomy = 'segmento' and b.object_id =". $request['id'];
+        $query = "select term_id from wp_term_taxonomy as a left join wp_term_relationships as b on a.term_taxonomy_id = b.term_taxonomy_id where a.taxonomy = 'segmento' and b.object_id =" . $request['id'];
         $ret = $app_db->get_results($query);
         $app_db->close();
         return $ret;
+    }
+
+    public function removeCategories(&$conn, $postID, $categorie) {
+        $query = "delete from wp_term_relationships where object_id =$postID and term_taxonomy_id in (select term_taxonomy_id from wp_term_taxonomy where term_id in ($categorie) and taxonomy='segmento')";
+        return $conn->get_results($query);
     }
 
     public function insertCategory($postID, $catID) {

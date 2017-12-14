@@ -155,6 +155,28 @@ function mediaXmlRPCAjax() {
 }
 
 /**
+ * @Update Event by fragments
+ **/
+function update_evento_data() {
+    header("Content-type:application/json");
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $data = $ec->updateEventInfo($_POST);
+    echo $data;
+    die;
+}
+
+function findPlacesEdit() {
+    //  echo "Shit";
+    header("Content-type:application/json");
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $data = $ec->loadPlacesByName($_GET);
+    echo $data;
+    die;
+}
+
+/**
  * Ajax request
  */
 function findPlacesAjax() {
@@ -775,7 +797,9 @@ add_action('admin_menu', 'wpse_91693_register');
 add_action('admin_head', 'header_options_guia_app');
 add_action('wp_ajax_mediaXmlRPCAjax', 'mediaXmlRPCAjax');
 add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
+add_action('wp_ajax_findPlacesEdit', 'findPlacesEdit');
 add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
+add_action('wp_ajax_update_evento_data', 'update_evento_data');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');

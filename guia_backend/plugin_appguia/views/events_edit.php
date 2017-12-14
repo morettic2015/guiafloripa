@@ -4,29 +4,57 @@ include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
 $current_user = wp_get_current_user();
 $ec = new EventControl();
 ?>
-<form id="events_crud" name="terms">
+<form id="events_crud" name="events_crud" action="admin-ajax.php?action=load_event_edit">
+    <input type="hidden" name="action" value="update_evento_data">
     <input type="hidden" name="eventID" value="<?php echo $_GET['id']; ?>">
     <input type="hidden" name="section" value="<?php echo $_GET['page']; ?>">
     <?php
     if ($_GET['page'] === "place") {
+        $mPlace = $ec->loadMyPlace($_GET);
+        //var_dump($mPlace);
         ?>
         <label>
             <h3>Estabelecimento</h3>
             <input type="text" name="placeName" id="placeName" style="width: 60%"  placeholder="Digite o nome do estabelecimento" />
-            <input class="button button-primary" type="button" value="Localizar"/>
-            <select multiple="false" size="12" style="width: 100%">
-
+            <input class="button button-primary" type="button" value="Localizar" onclick="loadPlaces()"/>
+            <select size="12" id="pResult" name="pResult" style="width: 100%;height: 250px">
+                <?php
+                if (count($mPlace) > 0) {
+                    echo "<option value='" . $mPlace[0]->id . "'>" . $mPlace[0]->post_title . "</option>";
+                }
+                ?>
             </select>
         </label>
+        <script>
+            function loadPlaces() {
+                url = "admin-ajax.php?action=findPlacesEdit&name=" + $("#placeName").val();
+                $.ajax({
+                    url: url,
+                    context: document.body
+                }).done(function (data) {
+                    $('#pResult').find('option').remove();
+                    $.each(data, function (i, item) {
+                        $('#pResult').append($('<option>', {
+                            value: item.placeID,
+                            text: item.placeName
+                        }));
+                    });
+                });
+            }
+        </script>
         <!--<a href="javascript:addPlace()" class="button button-primary">Adicionar</a><br>-->
         <?php
     } else if ($_GET['page'] === "comp") {
+        $data = $ec->loadComplemento($_GET);
+        /*  echo "<pre>";
+          var_dump($data);
+          echo "</pre>"; */
         ?>
         <h3>Informações do ingresso</h3>
-        <input style="width:100%" type="text" name="vevent_price" placeholder="Valores (pista, área vip, camarotes, etc)" />
+        <input style="width:100%" type="text" name="vevent_price" placeholder="Valores (pista, área vip, camarotes, etc)" value="<?php echo $data->event[0]->price; ?>" />
         <span class="description">Valor custo tipo do ingresso número de itens</span>
         <h3>Email para contato</h3>
-        <input style="width:100%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br" value="<?php echo $current_user->user_email; ?>" /><br>
+        <input style="width:100%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br" value="<?php echo $data->event[0]->email; ?>" /><br>
         <span class="description">Email para receber mensagens dos clientes</span>
         <h3>Whatsapp</h3>
         <input type="text"  style="width: 100%" id="whats" name="whats" value="<?php echo get_user_meta(get_current_user_id(), "_whatsapp", true); ?>" placeholder="Telefone para contato"/><br>
@@ -35,7 +63,7 @@ $ec = new EventControl();
         <input type="text" id="ingresso"  style="width: 100%"  name="ingresso"  placeholder="http://"/>
         <span class="description">URL do link para o ingresso ou site do evento **Apenas para assinantes</span>
         <h3>Youtube ou Vimeo</h3>
-        <input type="text" name="youtube"  style="width: 100%"  id="youtube" placeholder="Vídeo promocional"/>
+        <input type="text" name="youtube" id="youtube"  style="width: 100%"  id="youtube" placeholder="Vídeo promocional"/>
         <span class="description">Endereço do video começando com http **Apenas para assinantes</span>
         <h3>Facebook</h3>
         <input type="text" id="linkFace"  style="width: 100%"  name="linkFace"  placeholder="Endereço do Evento no Facebook"/>
@@ -43,18 +71,38 @@ $ec = new EventControl();
         <h3>Desconto</h3>
         <span class="description">Desconto para ingresso ou promoção **Apenas para assinantes</span><br>
         Informe o desconto
-        <input type="checkbox" name="discount" value="SIM" style="width: 20px">
+        <input type="checkbox" id="discount" name="discount" value="SIM" style="width: 20px">
         <input type="number" name="discountAmount" id="discountAmount" style="width: 40px"/>%</label>
 
     <?php
+    echo "<script>";
+    echo "jQuery(function($){\n";
+    foreach ($data->campaign as $c) {
+        if ($c->meta_key === "discount") {
+            echo "$('#discountAmount').val('" . $c->meta_value . "');\n";
+            echo "$('#discount').prop('checked', true);\n";
+        } else if ($c->meta_key === "linkFace") {
+            echo "$('#linkFace').val('" . $c->meta_value . "');\n";
+        } else if ($c->meta_key === "youtube") {
+            echo "$('#youtube').val('" . $c->meta_value . "');\n";
+        } else if ($c->meta_key === "whats") {
+            echo "$('#whats').val('" . $c->meta_value . "');\n";
+        } else if ($c->meta_key === "email") {
+            echo "$('#email').val('" . $c->meta_value . "');\n";
+        } else if ($c->meta_key === "ticket") {
+            echo "$('#ingresso').val('" . $c->meta_value . "');\n";
+        }
+    }
+    echo "\n});\n"
+    . "</script>";
 } else if ($_GET['page'] === "image") {
     $imge = $ec->loadImage($_GET['id']);
     ?>
-    <table style="width: 100%">
+    <table style = "width: 100%">
         <tr>
             <td >
                 <h3>Foto Destaque</h3>
-                <input id="content_url" name="content_url" type="hidden" readonly="readonly"/>
+                <input id="content_url" name="content_url" type="hidden" readonly="read                    only"/>
                 <input type="button" value="Selecione" class="button button-primary" style="width: 100%;margin-bottom: 10px" onclick="upload_new_img(this)"/>   
                 <input type="button" onclick="remove_image(this);" style="width: 100%" value="Remover" class="button button-primary">
                 <hr>
@@ -112,7 +160,7 @@ $ec = new EventControl();
         ?>
 
     </select>
-    <span class="description">Selecione uma praia proxima</span>
+    <span class="description">Selecione um                                            a praia proxima</span>
     </p>
     <script>
         jQuery(function ($) {
@@ -121,6 +169,7 @@ $ec = new EventControl();
             });
             $("#neigh").val('<?php echo $categories->bairros[0]->meta_value; ?>').prop('selected', true);
             $("#beach").val('<?php echo $categories->praias[0]->meta_value; ?>').prop('selected', true);
+            $("input[value='<?php echo $categories->mRegion[0]->meta_key; ?>']").prop('checked', true);
         })
     </script>
     <?php
@@ -132,6 +181,7 @@ $ec = new EventControl();
         <h3>Escolha as categorias /tags</h3>
         <span class="description"></span>Selecione as categorias / tags relacionadas com seu evento<br>
         <?php
+        $mList = "-1";
         $categories = $ec->loadCategories();
         foreach ($categories->list as $cat) {
             //var_dump($cat);
@@ -140,8 +190,10 @@ $ec = new EventControl();
                 <input type="checkbox" id="categories" name="categories[]" value="<?php echo $cat->termID; ?>" style="height: 15px;width: 20px"><?php echo $cat->name; ?> 
             </div>
             <?php
+            $mList.=",".$cat->termID;
         }
         ?>
+        <input type="hidden" name="oldCategories" id="oldCategories" value="<?php echo $mList; ?>"/>
     </div>
 
     <script>
@@ -223,37 +275,48 @@ $ec = new EventControl();
     <span class="description">Informe o título como vai aparecer no Site e no APP</span>
     <h3>Descrição</h3>
     <textarea id="txtDesc"  name="txtDesc" class="tinymce_data" style="width:100%;" rows="8"  placeholder="Descrição do seu evento com informações para o seu público"><?php echo $data[0]->post_content; ?></textarea>
-    <span class="description">caracteres restantes<code id="counterChar">500</code></span>
+    <span class="description">caracteres restantes<code id="counterChar"><?php echo 500-strlen($data[0]->post_content); ?></code></span>
     <h3>Mais informações</h3>
     <input type="text" id="more_info" name="more_info" maxlength="120" style="width:100%;" value="<?php echo $data[0]->more_info; ?>"  placeholder="Mais informações"/>
     <span class="description">Informações sobre locais paraa venda de ingressos e promoters</span>
     <script>
 
-
-        jQuery(function ($) {
-            $('#txtDesc').keyup(function () {
-                length = 500 - $('#txtDesc').val().length;
-                $('#counterChar').text(length);
-            });
-            $('#txtDesc').keydown(function (e) {
-                var text = $(this).val();
-                var chars = text.length;
-                if (chars > 499) {
-                    if (e.keyCode == 46 || e.keyCode == 8 || e.keyCode == 37 || e.keyCode == 38 || e.keyCode == 39 || e.keyCode == 40) {
-                        return true;
-                    }
-                    return false;
-                }
-                return true;
-            });
+        var length = 0;
+        // jQuery(function ($) {
+        $('#txtDesc').keyup(function () {
+            length = 500 - $('#txtDesc').val().length;
+            $('#counterChar').text(length);
         });
+        $('#txtDesc').keydown(function (e) {
+            console.log(e.keyCode);
+            var text = $(this).val();
+            var chars = text.length;
+            if (chars > 499) {
+                switch (e.keyCode) {
+                    case 46:
+                        return true;
+                        break;
+                    case 8:
+                        return true;
+                        break;
+                    case 88:
+                        return true;
+                        break;
+                    default :
+                        return false;
+                        break;
+                }
+                return false;
+            }
+            return true;
+        });
+        //  });
     </script>
     <?php
 }
 ?>
 
 </form>
-
 
 <?php
 wp_die();

@@ -28,6 +28,19 @@
             modal: true,
             buttons: {
                 "Atualizar": function () {
+                    $.ajax({
+                        url: $("#events_crud").attr('action'),
+                        type: 'POST',
+                        data: $("#events_crud").serialize(),
+                        success: function (result) {
+                            console.log(JSON.stringify(result));
+                            mdialog.html('<div class="notice notice-info"><p>Evento atualizado com sucesso.</p></div>');
+                        },
+                        error: function (e) {
+                            console.log(JSON.stringify(e));
+                            mdialog.html('<div class="notice notice-error"><p>Ocorreu um erro ao atualizar o evento. Por favor tente mais tarde.</p></div>');
+                        }
+                    });
                 }
             }
         });
@@ -39,19 +52,19 @@
     }
     function loadDynamicContentModal(page, id) {
         var titulo = "";
-        if(page==="general"){
+        if (page === "general") {
             titulo = "Informações";
-        }else if(page==="image"){
+        } else if (page === "image") {
             titulo = "Imagem do Evento";
-        }else if(page==="comp"){
+        } else if (page === "comp") {
             titulo = "Complemento";
-        }else if(page==="place"){
+        } else if (page === "place") {
             titulo = "Estabelecimento";
-        }else if(page==="dates"){
+        } else if (page === "dates") {
             titulo = "Datas do Evento";
-        }else if(page==="categ"){
+        } else if (page === "categ") {
             titulo = "Categorias";
-        }else if(page==="local"){
+        } else if (page === "local") {
             titulo = "Localização";
         }
         var options = {
