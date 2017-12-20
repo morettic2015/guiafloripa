@@ -31,6 +31,10 @@ const _EVENTMAIL = 'vevent_email';
 const _SECTION = 'section';
 const _DISCOUNT = "discount";
 const _LINKFACE = "linkFace";
+const _PLANOTYPE = "_plano_type";
+const _VEVENT_PRICE_LABEL = 'vevent_price_label';
+const _FACEBOOKEVENTID = "_facebook_event_id";
+const _WHATS = "_whatsapp";
 
 global $app_db;
 
@@ -86,6 +90,7 @@ class EventControl extends stdClass {
     }
 
     public function loadMyDates() {
+
         $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
         if (empty($lEvents)) {
             $lEvents = [];
@@ -94,6 +99,8 @@ class EventControl extends stdClass {
         }
         $myEvents = "";
         foreach ($lEvents as $e) {
+            if (empty($e))
+                continue;
             $myEvents .= $e . ",";
         }
         $myEvents .= "-1";
@@ -125,9 +132,13 @@ class EventControl extends stdClass {
         }
         $myEvents = "";
         foreach ($lEvents as $e) {
+            if (empty($e))
+                continue;
             $myEvents .= $e . ",";
         }
         $myEvents .= "-1";
+
+        //echo $myEvents;
         //Make query
         //Connect to database
         //Only if not cached
@@ -142,6 +153,7 @@ class EventControl extends stdClass {
                 FROM wp_posts as a 
                 where 
                     id in ($myEvents)";
+            //echo $myEvents;
             $events = $app_db->get_results($query);
             wp_cache_set('my_events', $data);
             $app_db->close();
@@ -184,6 +196,167 @@ class EventControl extends stdClass {
     function __construct() {
         @session_start();
         //var_dump($this->app_db);
+    }
+
+    private function existsFace(&$conn, $faceId) {
+        $query = "select * from wp_postmeta where meta_key = '" . _FACEBOOKEVENTID . "' and meta_value='" . $faceId . "'";
+        $result = $conn->get_results($query);
+        //var_dump($result);
+        if (count($result) > 0) {
+            echo '<div class="notice notice-error"> 
+                    <p><strong>O Evento já foi importado. Verifique o código do Facebook</strong></p>
+                 </div>';
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @Import Events From Facebook
+     */
+    function importEvents($request) {
+        if (isset($request['facebook_event_ids'])) {
+            $eventFace = $this->loadEventFromFacebook($request);
+            if (isset($eventFace->error)) {
+                echo '<div class="notice notice-error"> 
+                    <p><strong>O Código do evento:<code>' . $request['facebook_event_ids'] . '</code> é inválido</strong><br>' . $eventFace->error->message . '</p>
+                 </div>';
+                //wp_die();
+                // var_dump($eventFace);
+                //echo $eventFace->error;
+                return NULL;
+            } else {
+
+                $placeName = $eventFace->place->name;
+                $query = "select id,post_title from wp_posts where post_title like '%$placeName%' and post_type = 'anuncio';";
+                $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+                if ($this->existsFace($app_db, $eventFace->id)) {
+                    //Does nothing
+                    $app_db->close();
+                } else {
+                    $result = $app_db->get_results($query);
+                    //var_dump($result);
+                    //echo $query;
+                    $eventFace->placeGuia = $result;
+                    //insert post evento
+
+                    $r1 = array(
+                        "txtDesc" => $eventFace->description,
+                        "titEvent" => $eventFace->name,
+                        "placeName" => $placeName
+                    );
+                    $app_db->get_results($this->createInsert($r1));
+
+                    //var_dump($app_db);
+                    //get post id by title 
+                    $postID = $this->loadImportedEvent($app_db, $eventFace->name);
+                    //Update place if find it....
+                    $this->updatePlace($app_db, $eventFace, $postID);
+                    //Update list of events
+                    $this->updateUserEvents($postID);
+                    //Insert image if it has one and bill is enabled
+                    $this->updateImageFromFace($app_db, $eventFace->cover->source, $postID);
+                    //set dates
+                    $faceDates = $this->splitFacebookDates($eventFace);
+                    $this->insertDates($app_db, $faceDates->dInit, $faceDates->hInit, $faceDates->dFinish, $faceDates->hFinish, $postID);
+                    //Set event email
+                    $current_user = wp_get_current_user();
+                    $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $current_user->user_email));
+                    $app_db->get_results($this->insertMeta($postID, _VEVENT_PRICE_LABEL, "Ingresso:"));
+                    $app_db->get_results($this->insertMeta($postID, _FACEBOOKEVENTID, $eventFace->id));
+                    $app_db->get_results($this->insertMeta($postID, _MOREINFO, "Quantos confirmaram:" . $eventFace->maybe_count));
+                    //echo "FACEBOOK EVENT ID".$eventFace->id;
+                    $eventPrice = "Promoters no face:";
+                    foreach ($eventFace->admins->data as $p12) {
+                        //var_dump($p12);
+                        $eventPrice .= " " . $p12->name . " (" . $p12->link . ")";
+                    }
+
+                    $app_db->get_results($this->insertMeta($postID, _EVENTPRICE, $eventPrice));
+                    $c1 = array(
+                        "titEvent" => $eventFace->name,
+                        "placeName" => $placeName,
+                        "content_url" => $eventFace->cover->source,
+                        "txtDesc" => $eventFace->description,
+                        "ingresso" => $eventFace->ticket_uri,
+                        "email" => $current_user->user_email,
+                        "whats" => get_user_meta(get_current_user_id(), _WHATS, true),
+                        "linkFace" => "https://www.facebook.com/events/" . $eventFace->id . "/"
+                    );
+                    $this->createCampaign($c1, $postID);
+                    $app_db->close();
+                }
+                return $eventFace;
+            }
+        }
+    }
+
+    private function splitFacebookDates($eventFace) {
+
+        $dtInit = $eventFace->start_time;
+        $dtFinish = $eventFace->end_time;
+
+        $dt = new stdClass();
+        $tmp = explode("T", $dtInit);
+
+        $dt->dInit = $tmp[0];
+        $dt->hInit = substr($tmp[1], 0, 5);
+
+        $tmp = explode("T", $dtFinish);
+
+        $dt->dFinish = $tmp[0];
+        $dt->hFinish = substr($tmp[1], 0, 5);
+        //var_dump($dt);
+        return $dt;
+    }
+
+    private function updatePlace(&$conn, $eventFace, $postID) {
+        if (count($eventFace->placeGuia) > 0) {//Localizou o estabelecimento
+            $conn->get_results($this->insertMeta($postID, _LOCATION, $eventFace->placeGuia[0]->id));
+        } else {
+            echo '<div class="notice notice-warning"> 
+                    <p><strong>Por favor importe a localização do evento</strong></p>
+                 </div>';
+        }
+    }
+
+    private function loadImportedEvent(&$conn, $nameEvent) {
+        $query1 = "SELECT ID FROM wp_posts where post_type='evento' and post_title = '" . $nameEvent . "' order by id desc limit 1";
+        $mData = $conn->get_results($query1);
+        //var_dump($mData);
+        $postID = $mData[0]->ID;
+        return $postID;
+    }
+
+    private function uploadFaceImage($img) {
+
+
+        $imag = GetImageFromUrl($img);
+        return $this->uploadImage($imag);
+    }
+
+    private function updateImageFromFace(&$conn, $url, $postID) {
+        if ((!empty($url)) && get_user_meta(get_current_user_id(), _PLANOTYPE, true)) {
+            $infoPicture = $this->uploadFaceImage($url);
+            //var_dump($infoPicture);
+            $conn->get_results($this->insertMeta($postID, _THUMB, $infoPicture['id']));
+        }
+    }
+
+    function loadEventFromFacebook($request) {
+
+        $curl = curl_init();
+// Set some options - we are passing in a useragent too here
+        $url = "https://graph.facebook.com/v2.11/" . $request['facebook_event_ids'] . "?fields=id,place,owner,category,description,start_time,cover,end_time,event_times,scheduled_publish_time,is_canceled,is_draft,interested_count,name,maybe_count,ticket_uri,ticketing_privacy_uri,guest_list_enabled,timezone,type,is_page_owned,parent_group,admins{name,pic_large,link}&access_token=1405126029586258|tAryq_gM91gczqnQmKD5PwIu2ho";
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $url,
+            CURLOPT_USERAGENT => 'App GuiaFloripa'
+        ));
+// Send the request & save response to $resp
+        $resp = curl_exec($curl);
+        curl_close($curl);
+        return (json_decode($resp));
     }
 
     //put your code here
@@ -254,7 +427,7 @@ class EventControl extends stdClass {
 
     public function insertEvent($request) {
         //var_dump($_SESSION);
-
+        // var_dump($request);die;
 
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         //insert post evento
@@ -306,14 +479,30 @@ class EventControl extends stdClass {
         $app_db->get_results($this->insertMeta($postID, $request['region'], '1'));
         //Meta Evento price & Info
         $app_db->get_results($this->insertMeta($postID, _EVENTPRICE, $request['vevent_price']));
-        $app_db->get_results($this->insertMeta($postID, 'vevent_price_label', "Ingresso:"));
+        $app_db->get_results($this->insertMeta($postID, _VEVENT_PRICE_LABEL, "Ingresso:"));
         //Meta email
         if (!empty($request['email'])) {
             $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $request['email']));
         }
         //Dates
-        $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
-        $qtfim = $this->getTimeFromString($request['dtEnd'], $request['hrEnd']);
+        $this->insertDates($app_db, $request['dtStart'], $request['hrStart'], $request['dtEnd'], $request['hrEnd'], $postID);
+
+        //Close connection
+        $app_db->close();
+        //If parameter is set create prebuild templates
+        //Create Campaign
+        $this->createCampaign($request, $postID);
+
+        $this->updateUserEvents($postID);
+        //Aviso guiafloripa
+        wp_mail("comercialguiafloripa@gmail.com", "Novo evento:" . $request['titEvent'], "Novo evento cadastrado");
+        // var_dump($mData);
+        return $postID;
+    }
+
+    private function insertDates(&$app_db, $dtStart, $hrStart, $dtEnd, $hrEnd, $postID) {
+        $qtinit = $this->getTimeFromString($dtStart, $hrStart);
+        $qtfim = $this->getTimeFromString($dtEnd, $hrEnd);
         //Query timestamp from database
         $dtinit = $app_db->get_results($qtinit);
         $dtfim = $app_db->get_results($qtfim);
@@ -323,12 +512,9 @@ class EventControl extends stdClass {
         //Insert event duration variable
         $timeAmnt = (double) ($dtfim[0]->DT + (3600 * 6)) - (double) $dtinit[0]->DT;
         $app_db->get_results($this->insertMeta($postID, _DURACAO, $timeAmnt));
-        //Close connection
-        $app_db->close();
-        //If parameter is set create prebuild templates
-        //Create Campaign
-        $this->createCampaign($request, $postID, $dtinit[0]->DT, $dtfim[0]->DT);
+    }
 
+    private function updateUserEvents($postID) {
         $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
         if (empty($lEvents)) {
             $lEvents = [];
@@ -337,10 +523,6 @@ class EventControl extends stdClass {
         }
         $lEvents[] = $postID;
         update_user_option(get_current_user_id(), _MY_EVENTS, serialize($lEvents));
-        //Aviso guiafloripa
-        wp_mail("comercialguiafloripa@gmail.com", "Novo evento:" . $request['titEvent'], "Novo evento cadastrado");
-        // var_dump($mData);
-        return $postID;
     }
 
     /**
@@ -452,7 +634,6 @@ class EventControl extends stdClass {
             $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "ticket", $request['ingresso']);
             $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "whats", $request['whats']);
             $this->insertOrUpdateMeta($wpdb, $request['pID'][0]->id, "email", $request['email']);
-
         } else if ($request[_SECTION] === "image") {
             if (!empty($request['content_url'])) {
                 $request['image'] = $this->uploadImage($request['content_url']);
@@ -563,7 +744,7 @@ class EventControl extends stdClass {
     /**
      * @Create campaign and Email Modelo from default description
      */
-    public function createCampaign($request, $postID, $dtStart, $dtEnd) {
+    public function createCampaign($request, $postID) {
         $campaign = array(
             'post_title' => sanitize_title($request['titEvent'] . "_" . $request['placeName']),
             'post_content' => '<img src="' . $request['content_url'] . '"><br>' . $request['txtDesc'],
@@ -575,8 +756,8 @@ class EventControl extends stdClass {
         // Insert the post into the database
         $campaignID = wp_insert_post($campaign);
         //Add meta info
-        add_post_meta($campaignID, "vevent_dtstart", $dtStart, true);
-        add_post_meta($campaignID, "vevent_dtend", $dtEnd, true);
+        // add_post_meta($campaignID, "vevent_dtstart", $dtStart, true);
+        // add_post_meta($campaignID, "vevent_dtend", $dtEnd, true);
         if (!empty($request['discount'])) {
             add_post_meta($campaignID, _DISCOUNT, $request['discountAmount'], true);
         }
@@ -651,4 +832,24 @@ class EventControl extends stdClass {
         return $clientResponse;
     }
 
+}
+
+function GetImageFromUrl($link) {
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_POST, 0);
+    curl_setopt($ch, CURLOPT_URL, $link);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $result = curl_exec($ch);
+
+    curl_close($ch);
+    $upload_dir = wp_upload_dir();
+    $basedir = $upload_dir['basedir'] . '/' . date('Y') . "/" . date('m') . "/facebook_" . rand() . ".jpg";
+    //echo $basedir;
+    $savefile = fopen($basedir, 'w');
+    fwrite($savefile, $result);
+    fclose($savefile);
+    return $basedir;
 }

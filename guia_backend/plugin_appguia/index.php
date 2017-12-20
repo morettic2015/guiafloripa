@@ -211,7 +211,12 @@ function findBeachsAjax() {
     }
     die();
 }
-
+/**
+ * @Update
+ */
+function app_guiafloripa_eventos_imp(){
+     include_once PLUGIN_ROOT_DIR . 'views/events_import.php';
+}
 /**
  * @Ajax to load dinamyc content from forms
  */
@@ -317,7 +322,7 @@ function wpse_91693_register() {
     );
     add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
     add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
-    //add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
+    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
     //add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
     add_menu_page(
             'Campanhas', // page title

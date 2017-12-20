@@ -1,5 +1,5 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Importar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_eventos_imp" class="page-title-action">Importar do Facebook</a></h1>
 
     <div class="notice notice-info"> 
         <p>Lista de <code>Eventos</code> vinculados ao seu perfil.</p>
