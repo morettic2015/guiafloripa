@@ -156,7 +156,7 @@ function mediaXmlRPCAjax() {
 
 /**
  * @Update Event by fragments
- **/
+ * */
 function update_evento_data() {
     header("Content-type:application/json");
     include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
@@ -211,12 +211,14 @@ function findBeachsAjax() {
     }
     die();
 }
+
 /**
  * @Update
  */
-function app_guiafloripa_eventos_imp(){
-     include_once PLUGIN_ROOT_DIR . 'views/events_import.php';
+function app_guiafloripa_eventos_imp() {
+    include_once PLUGIN_ROOT_DIR . 'views/events_import.php';
 }
+
 /**
  * @Ajax to load dinamyc content from forms
  */
@@ -331,18 +333,18 @@ function wpse_91693_register() {
             'app_guiafloripa_campaigns', // menu slug
             'wpse_91693_campaign', null, 6
     );
-    add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
+    //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
     add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
 
     add_menu_page(
-            'Leads', // page title
-            'Leads', // menu title
+            'Contatos', // page title
+            'Contatos', // menu title
             'read', // capability
             'app_guiafloripa_leads', // menu slug
             'asd', null, 6
     );
-    add_submenu_page('app_guiafloripa_leads', 'Adicionar Lead', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_push_map');
-    add_submenu_page('app_guiafloripa_leads', 'Importar Leads', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_leads', 'Adicionar Contato', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_leads', 'Importar Contatos', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_push_map');
 
     /*   add_menu_page(
       'Mensagens', // page title
@@ -364,9 +366,9 @@ function wpse_91693_register() {
             'Emails', // menu title
             'read', // capability
             'app_guiafloripa_mail', // menu slug
-            'asd', null, 6
+            'app_guiafloripa_mail', null, 6
     );
-    add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_mail_add');
 
     /*    add_menu_page(
       'Chatbot', // page title
@@ -413,6 +415,15 @@ function app_guiafloripa_money() {
     include_once PLUGIN_ROOT_DIR . 'views/table_price.php';
 }
 
+function app_guiafloripa_mail_add() {
+    wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
+    wp_enqueue_style('thickbox');
+    include_once PLUGIN_ROOT_DIR . 'views/email/page_add.php';
+}
+
 function wpse_91693_push() {
     include_once PLUGIN_ROOT_DIR . 'views/notific.php';
 }
@@ -439,6 +450,14 @@ function wpse_91693_bug() {
 
 function wpse_91693_render() {
     include PLUGIN_ROOT_DIR . 'views/admin.php';
+}
+
+function app_guiafloripa_mail() {
+    include PLUGIN_ROOT_DIR . 'views/email/email.php';
+}
+
+function wpse_91693_campaign() {
+    include PLUGIN_ROOT_DIR . 'views/campaign/campaign.php';
 }
 
 function wpse_91693_events() {
@@ -566,7 +585,7 @@ function add_email_dashboard_widgets() {
     $wp_meta_boxes['dashboard']['side']['core']['wptips_dashboard_widget'] = $my_widget;
     wp_add_dashboard_widget(
             'wpleads_dashboard_widget', // Widget slug.
-            'Leads', // Title.
+            'Contatos', // Title.
             'leads_dashboard_widget_content' // Display function.
     );
     wp_add_dashboard_widget(
@@ -659,6 +678,7 @@ function header_options_guia_app() {
     wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
     wp_enqueue_style('wp-jquery-ui-dialog');
     wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_style('wp-color-picker');
 }
 
 //Remove visit site menu

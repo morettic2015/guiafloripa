@@ -40,6 +40,8 @@ global $app_db;
 
 class EventControl extends stdClass {
 
+   
+
     public function updateDates($request) {
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
@@ -233,6 +235,7 @@ class EventControl extends stdClass {
                 if ($this->existsFace($app_db, $eventFace->id)) {
                     //Does nothing
                     $app_db->close();
+                    wp_die();
                 } else {
                     $result = $app_db->get_results($query);
                     //var_dump($result);
@@ -250,6 +253,7 @@ class EventControl extends stdClass {
                     //var_dump($app_db);
                     //get post id by title 
                     $postID = $this->loadImportedEvent($app_db, $eventFace->name);
+                    $eventFace->postID = $postID;
                     //Update place if find it....
                     $this->updatePlace($app_db, $eventFace, $postID);
                     //Update list of events
@@ -261,18 +265,18 @@ class EventControl extends stdClass {
                     $this->insertDates($app_db, $faceDates->dInit, $faceDates->hInit, $faceDates->dFinish, $faceDates->hFinish, $postID);
                     //Set event email
                     $current_user = wp_get_current_user();
-                    $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $current_user->user_email));
-                    $app_db->get_results($this->insertMeta($postID, _VEVENT_PRICE_LABEL, "Ingresso:"));
+                    // $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $current_user->user_email));
+                    // $app_db->get_results($this->insertMeta($postID, _VEVENT_PRICE_LABEL, "Ingresso:"));
                     $app_db->get_results($this->insertMeta($postID, _FACEBOOKEVENTID, $eventFace->id));
-                    $app_db->get_results($this->insertMeta($postID, _MOREINFO, "Quantos confirmaram:" . $eventFace->maybe_count));
+                    // $app_db->get_results($this->insertMeta($postID, _MOREINFO, "Quantos confirmaram:" . $eventFace->maybe_count));
                     //echo "FACEBOOK EVENT ID".$eventFace->id;
-                    $eventPrice = "Promoters no face:";
-                    foreach ($eventFace->admins->data as $p12) {
-                        //var_dump($p12);
-                        $eventPrice .= " " . $p12->name . " (" . $p12->link . ")";
-                    }
+                    /* $eventPrice = "Promoters no face:";
+                      foreach ($eventFace->admins->data as $p12) {
+                      //var_dump($p12);
+                      $eventPrice .= " " . $p12->name . " (" . $p12->link . ")";
+                      }
 
-                    $app_db->get_results($this->insertMeta($postID, _EVENTPRICE, $eventPrice));
+                      $app_db->get_results($this->insertMeta($postID, _EVENTPRICE, $eventPrice)); */
                     $c1 = array(
                         "titEvent" => $eventFace->name,
                         "placeName" => $placeName,
@@ -314,9 +318,10 @@ class EventControl extends stdClass {
         if (count($eventFace->placeGuia) > 0) {//Localizou o estabelecimento
             $conn->get_results($this->insertMeta($postID, _LOCATION, $eventFace->placeGuia[0]->id));
         } else {
-            echo '<div class="notice notice-warning"> 
-                    <p><strong>Por favor importe a localização do evento</strong></p>
-                 </div>';
+            echo '<div class="notice notice-error"> 
+                    <p><strong>Por favor importe ou selecione as informações do local do evento</strong></p>
+                 </div>
+                 ';
         }
     }
 
@@ -652,6 +657,8 @@ class EventControl extends stdClass {
         } else if ($request[_SECTION] === "categ") {//Remove categories
             $this->removeCategories($app_db, $request['eventID'], $request['oldCategories']);
             $request['removes'] = array();
+            //insert permalink first been choosed so the meta for now just then we improve it
+            $this->updatePrimaryCat($app_db, $request['eventID'], $request['categories'][0]);
             foreach ($request['categories'] as $cat) {
                 $q1 = $this->insertCategory($request['eventID'], $cat);
                 $request['removes'][] = $app_db->get_results($q1);
@@ -667,6 +674,17 @@ class EventControl extends stdClass {
         $app_db->close();
         // var_dump($request);die;
         return json_encode($request);
+    }
+
+    private function updatePrimaryCat(&$conn, $postId, $cat) {
+        $query = "SELECT * from wp_postmeta where post_id = $postId and meta_key = '_category_permalink'";
+        $r1 = $conn->get_results($query);
+        if (count($r1) > 0) {
+            return false;
+        } else {
+            $q1 = "insert into wp_postmeta (post_id,meta_key,meta_value) values (" . $postId . ",'_category_permalink'," . $cat . ")";
+            $conn->get_results($q1);
+        }
     }
 
     public function insertOrUpdateMeta(&$conn, $postID, $metaKey, $metaValue) {
