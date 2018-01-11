@@ -1,11 +1,13 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="#" class="page-title-action">Visualizar</a></h1>
     <div class="notice notice-info"> 
         <p>Crie seu email marketing para enviar em sua campanha</p>
     </div>
     <hr/>
-    <form id="terms-crud" onsubmit="return validate()" name="terms" action="admin.php?page=app_guiafloripa_twitter_add_term" method="post">
-
+    <form id="terms-crud" onsubmit="return validate()" name="terms" action="admin.php?page=app_guiafloripa_mail_add" method="post">
+        <?php 
+        var_dump($_POST);
+        ?>
 
         <div id="namediv" class="stuffbox"><div id="message-term"></div>
             <div class="inside">
@@ -29,8 +31,14 @@
                             <tr>
                                 <td class="first" style="text-align: right">Mensagem</td>
                                 <td>
-                                    <textarea style="width: 100%;height: 200px"></textarea>
+                                    <?php
+                                    $content = '';
+                                    $editor_id = 'txtDesc';
+
+                                    wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false));
+                                    ?>
                                 </td>
+
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Link</td>
@@ -113,7 +121,8 @@
             // show a group of common colors beneath the square
             // or, supply an array of colors to customize further
             palettes: ['#444444', '#ff2255', '#559999', '#99CCFF', '#00c1e8', '#F9DE0E', '#111111', '#EEEEDD']
-        })
+        });
+
 
     });
     function upload_new_img(obj)
