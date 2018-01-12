@@ -11,6 +11,7 @@
  * @copyright 2016 Matthew van Andel
  * @license   GPL-2.0+
  */
+
 /**
  * Example List Table Child Class
  *
@@ -28,13 +29,17 @@
  * @package WPListTableExample
  * @author  Matt van Andel
  */
-wp_enqueue_media('media-upload');
-wp_enqueue_media('thickbox');
-wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
-wp_enqueue_media('my-upload');
-wp_enqueue_style('thickbox');
+/* wp_enqueue_media('media-upload');
+  wp_enqueue_media('thickbox');
+  wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+  wp_enqueue_media('my-upload');
+  wp_enqueue_style('thickbox'); */
 
 class TT_Example_List_Table extends WP_List_Table {
+
+    public function insertUpdateEmail($request) {
+        var_dump($request);
+    }
 
     /**
      * TT_Example_List_Table constructor.
@@ -187,16 +192,17 @@ class TT_Example_List_Table extends WP_List_Table {
         // Build edit row action.
         //showPop(action,id)
         //trial cannot upload images
-        $actions['general'] = '<a href="javascript:showPop(\'general\',' . $item['ID'] . ')">' . _x('Editar') . '</a>';
-        $actions['edit'] = '<a href="javascript:showPop(\'place\',' . $item['ID'] . ')">' . _x('Visualizar') . '</a>';
-       /* $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
-        $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
-        $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
-        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
-            $actions['pic'] = '<a href="javascript:showPop(\'image\',' . $item['ID'] . ')">' . _x('Imagem') . '</a>';
-        }
-        $actions['comp'] = '<a href="javascript:showPop(\'comp\',' . $item['ID'] . ')">' . _x('Complemento') . '</a>';
-*/
+        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_mail_add&pid=' . $item['ID'] . ' ">' . _x('Editar') . '</a>';
+        $actions['edit'] = '<a target="_blank" href="admin-ajax.php?action=email_template&pid=' . $item['ID'] . ' ">' . _x('Visualizar') . '</a>';
+        // $actions['clone'] = '<a href="admin.php?page=app_guiafloripa_mail_add&pid=' . $item['ID'] . ' ">' . _x('Duplicar') . '</a>';
+        /* $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
+          $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
+          $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
+          if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+          $actions['pic'] = '<a href="javascript:showPop(\'image\',' . $item['ID'] . ')">' . _x('Imagem') . '</a>';
+          }
+          $actions['comp'] = '<a href="javascript:showPop(\'comp\',' . $item['ID'] . ')">' . _x('Complemento') . '</a>';
+         */
         // Return the title contents.
         return sprintf('%1$s <span style="color:silver;">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions));
     }
@@ -221,6 +227,7 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function get_bulk_actions() {
         $actions = array(
             'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
+            'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
         );
 
 
@@ -247,8 +254,21 @@ class TT_Example_List_Table extends WP_List_Table {
             $campaign .= "-1";
             $query = "delete FROM wp_posts where post_type = 'email' and post_author = " . get_current_user_id() . " and ID in ($campaign)";
             $cp = $wpdb->get_results($query);
+            $query = "delete FROM wp_postmeta where post_id in ($campaign)";
+            $cp = $wpdb->get_results($query);
             echo '<div class="notice notice-success is-dismissible"> 
                     <p><strong>Sucesso. Os emails selecionadas foram excluidas.</strong></p>
+                 </div>';
+        } else if ('clone' === $this->current_action()) {
+            include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
+            $ec = new EmailController();
+            $t = 0;
+            foreach ($_GET['campaign'] as $r1) {
+                $ec->duplicatePost($r1);
+                $t++;
+            }
+            echo '<div class="notice notice-success is-dismissible"> 
+                    <p><strong><code>'.$t.' Emails marketing</code> duplicados</strong></p>
                  </div>';
         }
     }

@@ -175,7 +175,13 @@ function findPlacesEdit() {
     echo $data;
     die;
 }
-
+function emailTemplate1(){
+    //echo "1";
+    include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
+    $ec = new EmailController();
+    $ec->showModel($_GET['pid']);
+    die();
+}
 /**
  * Ajax request
  */
@@ -822,6 +828,7 @@ add_action('admin_menu', 'wpse_91693_register');
 add_action('admin_head', 'header_options_guia_app');
 add_action('wp_ajax_mediaXmlRPCAjax', 'mediaXmlRPCAjax');
 add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
+add_action('wp_ajax_email_template', 'emailTemplate1');
 add_action('wp_ajax_findPlacesEdit', 'findPlacesEdit');
 add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_update_evento_data', 'update_evento_data');

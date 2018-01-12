@@ -1,10 +1,8 @@
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_mail_add" class="page-title-action">Criar</a></h1>
-
     <div class="notice notice-info"> 
         <p>Lista de <code>Emails</code>.</p>
     </div>
-
     <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
     <form id="movies-filter" method="get">
         <!-- For plugins, we also need to ensure that the form posts back to our current page -->

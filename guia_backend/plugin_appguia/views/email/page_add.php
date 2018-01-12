@@ -1,13 +1,26 @@
+<?php
+include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
+$ec = new EmailController();
+$emailId = $ec->saveUpdateEmail($_POST);
+// echo "<pre>";
+$pId = "";
+if ($_GET['pid'] !== "") {
+    // echo "post";
+    $pId = $_GET['pid'];
+    $post = $ec->getEmail($_GET['pid']);
+} else if ($emailId) {
+    $pId = $emailId;
+    $post = $ec->getEmail($emailId);
+}
+?>
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="#" class="page-title-action">Visualizar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><?php echo (empty($pId) ? "" : '<a target="_target" href="admin-ajax.php?action=email_template&pid='.$pId.'" class="page-title-action">Visualizar</a>'); ?></h1>
     <div class="notice notice-info"> 
         <p>Crie seu email marketing para enviar em sua campanha</p>
     </div>
     <hr/>
-    <form id="terms-crud" onsubmit="return validate()" name="terms" action="admin.php?page=app_guiafloripa_mail_add" method="post">
-        <?php 
-        var_dump($_POST);
-        ?>
+    <form id="terms-crud" onsubmit="return validate()" name="terms" action="admin.php?page=app_guiafloripa_mail_add&pid=<?php echo $_GET['pid'] ?>" method="post">
+
 
         <div id="namediv" class="stuffbox"><div id="message-term"></div>
             <div class="inside">
@@ -15,24 +28,17 @@
                     <table class="form-table editcomment">
                         <tbody>
                             <tr>
-                                <td class="first" style="text-align: right">Nome interno</td>
-                                <td>
-                                    <input type="text" name="nmInterno" id="nmInterno" value="" spellcheck="true"  size="30" placeholder="nome-interno-da-mensagem_123">
-                                </td>
-                            </tr>
-                            <tr>
                                 <td class="first" style="text-align: right"><label for="name">Assunto</label></td>
-                                <td><input type="text" name="subject" id="subject" value="" spellcheck="true"  size="30"  placeholder="Assunto da mensagem"></td>
-                            </tr>
-                            <tr>
-                                <td class="first" style="text-align: right">Cabeçalho</td>
-                                <td><input type="text" name="header" id="header" value="" spellcheck="true"  size="30"  placeholder="Cabeçalho da mensagem"></td>
+                                <td>
+                                    <input type="hidden" name="id" id="id" value="<?php echo empty($post) ? "" : $post->post->ID; ?>">
+                                    <input type="text" value="<?php echo $post->post->post_title; ?>" name="subject" id="subject" spellcheck="true"  size="30"  placeholder="Assunto da mensagem">
+                                </td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Mensagem</td>
                                 <td>
                                     <?php
-                                    $content = '';
+                                    $content = $post->post->post_content;
                                     $editor_id = 'txtDesc';
 
                                     wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false));
@@ -42,26 +48,26 @@
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Link</td>
-                                <td><input type="text" name="link" id="link" value="" spellcheck="true"  size="30"  placeholder="http://"></td>
+                                <td><input type="text" name="link" id="link" value="<?php echo $post->meta[M_LINK][0]; ?>"  spellcheck="true"  size="30"  placeholder="http://"></td>
 
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Titulo do botão</td>
-                                <td><input type="text" name="txtBt" id="txtBt" value="" spellcheck="true"  size="30"  placeholder="Compre seu ticket!"></td>
+                                <td><input type="text" name="txtBt" id="txtBt" value="<?php echo $post->meta[TXT_BT][0]; ?>" spellcheck="true"  size="30"  placeholder="Compre seu ticket!"></td>
 
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Cor do botão</td>
-                                <td><input type="text" name="colorpicker" id="colorpicker" value="" spellcheck="true"  size="30"  placeholder="Compre seu ticket!"></td>
+                                <td class="first" style="text-align: right">Cor do tema</td>
+                                <td><input type="text" name="colorpicker" id="colorpicker" value="<?php echo $post->meta[COLOR_PICKER][0]; ?>" spellcheck="true"  size="30"  placeholder="Compre seu ticket!"></td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Link Facebook</td>
-                                <td><input type="text" name="linkFacebook" id="linkFacebook" value="" spellcheck="true"  size="30"  placeholder="https://facebook.com/minhapagina"></td>
+                                <td><input type="text" name="linkFacebook" value="<?php echo $post->meta[FACE][0]; ?>" value="" spellcheck="true"  size="30"  placeholder="https://facebook.com/minhapagina"></td>
 
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Link Twitter</td>
-                                <td><input type="text" name="linkTwitter" id="linkTwitter" value="" spellcheck="true"  size="30"  placeholder="@meuperfil"></td>
+                                <td><input type="text" name="linkTwitter" id="linkTwitter" value="<?php echo $post->meta[TWITTER][0]; ?>" spellcheck="true"  size="30"  placeholder="@meuperfil"></td>
 
                             </tr>
                             <?php
@@ -72,10 +78,10 @@
                                         Logotipo
                                     </td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input id="content_url" name="content_url" type="hidden" readonly="readonly"/>
+                                        <input id="content_url" value="<?php echo $post->meta[LOGO_URL][0]; ?>" name="content_url" type="hidden" readonly="readonly"/>
                                         <input type="button" value="Selecione" class="button button-primary" style="width: 25%" onclick="upload_new_img(this)"/>   
                                         <a href="javascript:void(0);" onclick="remove_image(this);" style="width: 25%" class="button button-primary">Remover</a>
-                                        <div id="imgPreview"></div>
+                                        <div id="imgPreview"><img src="<?php echo $post->meta[LOGO_URL][0]; ?>"/></div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -83,10 +89,10 @@
                                         Imagem publicitária
                                     </td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input id="content_url1" name="content_url1" type="hidden" readonly="readonly"/>
+                                        <input id="content_url1" value="<?php echo $post->meta[LOGO_URL1][0]; ?>" name="content_url1" type="hidden" readonly="readonly"/>
                                         <input type="button" value="Selecione" class="button button-primary" style="width: 25%" onclick="upload_new_img1(this)"/>   
                                         <a href="javascript:void(0);" onclick="remove_image1(this);" style="width: 25%" class="button button-primary">Remover</a>
-                                        <div id="imgPreview1"></div>
+                                        <div id="imgPreview1"><img src="<?php echo $post->meta[LOGO_URL1][0]; ?>"/></div>
                                     </td>
                                 </tr>
                             <?php }

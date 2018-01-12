@@ -37,9 +37,10 @@ function tt_render_list_page() {
 
     // Include the view markup.
     include dirname(__FILE__) . '/page.php';
+    return $test_list_table;
 }
 
-tt_render_list_page();
+$emailController = tt_render_list_page();
 ?>
 
 
