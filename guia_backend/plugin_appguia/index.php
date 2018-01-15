@@ -347,10 +347,10 @@ function wpse_91693_register() {
             'Contatos', // menu title
             'read', // capability
             'app_guiafloripa_leads', // menu slug
-            'asd', null, 6
+            'app_guiafloripa_leads', null, 6
     );
-    add_submenu_page('app_guiafloripa_leads', 'Adicionar Contato', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_push_map');
-    add_submenu_page('app_guiafloripa_leads', 'Importar Contatos', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_leads', 'Adicionar Contato', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_leads_add');
+    add_submenu_page('app_guiafloripa_leads', 'Importar Contatos', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_leads_imp');
 
     /*   add_menu_page(
       'Mensagens', // page title
@@ -437,6 +437,12 @@ function wpse_91693_push() {
 function app_guiafloripa_twitter_cloud_tag() {
     include_once PLUGIN_ROOT_DIR . 'views/tpage_cloud.php';
 }
+function app_guiafloripa_leads_imp(){
+    include PLUGIN_ROOT_DIR . 'views/contatos/page_imp.php';
+}
+function app_guiafloripa_leads_add(){
+    include PLUGIN_ROOT_DIR . 'views/contatos/page_add.php';
+}
 
 function app_guiafloripa_push_map() {
     include_once PLUGIN_ROOT_DIR . 'views/notifications_map.php';
@@ -460,6 +466,9 @@ function wpse_91693_render() {
 
 function app_guiafloripa_mail() {
     include PLUGIN_ROOT_DIR . 'views/email/email.php';
+}
+function app_guiafloripa_leads(){
+    include PLUGIN_ROOT_DIR . 'views/contatos/contatos.php';
 }
 
 function wpse_91693_campaign() {
@@ -667,6 +676,7 @@ function wpb_sender_name($original_email_from) {
 
 function remove_dashboard_widgets() {
     remove_meta_box('dashboard_activity', 'dashboard', 'normal');
+    remove_meta_box('e-dashboard-overview', 'dashboard', 'normal');//rmove elementor
 }
 
 function header_options_guia_app() {
