@@ -40,8 +40,6 @@ global $app_db;
 
 class EventControl extends stdClass {
 
-   
-
     public function updateDates($request) {
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
@@ -499,9 +497,20 @@ class EventControl extends stdClass {
         $this->createCampaign($request, $postID);
 
         $this->updateUserEvents($postID);
-        //Aviso guiafloripa
-        wp_mail("comercialguiafloripa@gmail.com", "Novo evento:" . $request['titEvent'], "Novo evento cadastrado");
-        // var_dump($mData);
+
+
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+
+// Additional headers
+        $headers[] = 'To: Morettic <malacma@gmail.com>';
+        $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
+        //$headers[] = 'Cc: birthdayarchive@example.com';
+        //$headers[] = 'Bcc: birthdaycheck@example.com';
+
+// Mail it
+        mail("malacma@gmail.com", "Novo Evento cadastrado", $request['titEvent'], implode("\r\n", $headers));
+
         return $postID;
     }
 

@@ -1,17 +1,17 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_mail_add" class="page-title-action">Criar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_leads_add" class="page-title-action">Criar</a><a href="admin.php?page=app_guiafloripa_leads_imp" class="page-title-action">Importar</a></h1>
+    <form id="movies-filter" method="get" action="admin.php?page=app_guiafloripa_leads_add">
+        <p class="search-box">
+            <label class="screen-reader-text" for="search_id-search-input">
+                Buscar contatos:</label> 
+            <input id="search_id-search-input" type="text" name="s" value="" /> 
+            <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
+        </p>
+        <div class="notice notice-info"> 
+            <p>Lista de <code>Contatos</code>.</p>
+        </div>
+        <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
 
-    <p class="search-box">
-        <label class="screen-reader-text" for="search_id-search-input">
-            Buscar contatos:</label> 
-        <input id="search_id-search-input" type="text" name="s" value="" /> 
-        <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
-    </p>
-    <div class="notice notice-info"> 
-        <p>Lista de <code>Contatos</code>.</p>
-    </div>
-    <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-    <form id="movies-filter" method="get">
         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
         <!-- Now we can render the completed list table -->
@@ -24,7 +24,7 @@
     .column-avatar { text-align: left; width:80px !important; overflow:hidden }
     .column-tipo { text-align: left; width:100px !important; overflow:hidden }
     .column-whats { text-align: left; width:150px !important; overflow:hidden }
-    .column-email { text-align: left; width:180px !important; overflow:hidden }
+    .column-email { text-align: left; width:300px !important; overflow:hidden }
     .column-enterprise { text-align: left; width:180px !important; overflow:hidden }
 
     input[type="checkbox"]{

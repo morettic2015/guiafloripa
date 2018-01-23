@@ -78,9 +78,9 @@ class TT_Example_List_Table extends WP_List_Table {
             'avatar' => _x('Foto', 'Foto', 'wp-list-table-example'),
             'title' => _x('Nome', 'Nome', 'wp-list-table-example'),
             'email' => _x('Email', 'Column label', 'wp-list-table-example'),
-            'whats' => _x('Whatsapp', 'Column label', 'wp-list-table-example'),
-            'enterprise' => _x('Empresa', 'Column label', 'wp-list-table-example'),
-            'tipo' => _x('Tipo', 'Column label', 'wp-list-table-example'),
+                //'whats' => _x('Whatsapp', 'Column label', 'wp-list-table-example'),
+                //'enterprise' => _x('Empresa', 'Column label', 'wp-list-table-example'),
+                //'tipo' => _x('Tipo', 'Column label', 'wp-list-table-example'),
                 //  'deplace' => _x('Fim', 'Column label', 'wp-list-table-example'),
                 //'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
         );
@@ -194,8 +194,9 @@ class TT_Example_List_Table extends WP_List_Table {
         // Build edit row action.
         //showPop(action,id)
         //trial cannot upload images
-        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_mail_add&pid=' . $item['ID'] . ' ">' . _x('Editar') . '</a>';
-        $actions['group'] = '<a href="admin.php?page=app_guiafloripa_mail_add&pid=' . $item['ID'] . ' ">' . _x('Grupos') . '</a>';
+        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Editar') . '</a>';
+        $actions['group'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#groups">' . _x('Grupos') . '</a>';
+        $actions['notes'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Adicionar nota') . '</a>';
         /* $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
           $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
           $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
@@ -227,6 +228,9 @@ class TT_Example_List_Table extends WP_List_Table {
      */
     protected function get_bulk_actions() {
         $actions = array(
+         //   'notes' => _x('Adicionar nota', 'List table bulk action', 'wp-list-table-example'),
+            'group' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
+            'email' => _x('Enviar mensagem', 'List table bulk action', 'wp-list-table-example'),
             'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
                 //  'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
         );
@@ -248,28 +252,17 @@ class TT_Example_List_Table extends WP_List_Table {
         global $wpdb; //This is used only if making any database queries
         // Detect when a bulk action is being triggered.
         if ('delete' === $this->current_action()) {
+
+            // var_dump($_GET);
             $lead = "";
             foreach ($_GET['lead'] as $r1) {
                 $lead .= $r1 . ",";
             }
             $lead .= "-1";
-            $query = "delete FROM wp_posts where post_type = 'email' and post_author = " . get_current_user_id() . " and ID in ($lead)";
-            $cp = $wpdb->get_results($query);
-            $query = "delete FROM wp_postmeta where post_id in ($lead)";
+            $query = "DELETE FROM wp_usermeta WHERE user_id = " . get_current_user_id() . " and meta_key = '_myLeads' and meta_value in ($lead);";
             $cp = $wpdb->get_results($query);
             echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong>Sucesso. Os emails selecionadas foram excluidas.</strong></p>
-                 </div>';
-        } else if ('clone' === $this->current_action()) {
-            include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
-            $ec = new EmailController();
-            $t = 0;
-            foreach ($_GET['lead'] as $r1) {
-                $ec->duplicatePost($r1);
-                $t++;
-            }
-            echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong><code>' . $t . ' Emails marketing</code> duplicados</strong></p>
+                    <p><strong>Sucesso. Os contatos selecionadas foram excluidas.</strong></p>
                  </div>';
         }
     }
@@ -342,32 +335,43 @@ class TT_Example_List_Table extends WP_List_Table {
          * http://codex.wordpress.org/Class_Reference/wpdb
          */
 
+        $list = get_user_meta(get_current_user_id(), '_myLeads');
+        //var_dump($list);
+        //echo "<PRE>";
+        $ids = "";
+        foreach ($list as $id1) {
+            $ids .= $id1 . ",";
+        }
+        $ids .= "0";
+        // echo "</PRE>";
 
-
-        $query = "SELECT * FROM wp_posts where post_type = 'email' and post_author = " . get_current_user_id();   // var_dump($wpdb);
+        $query = "SELECT * FROM wp_users where ID in($ids) ";   // var_dump($wpdb);
+        //
+        if(isset($_GET['s'])){
+            $query.= " AND (user_email like '%".$_GET['s']."%' OR user_nicename like '%".$_GET['s']."%' OR display_name like '%".$_GET['s']."%')";
+        }
         // echo $query;
         $cp = $wpdb->get_results($query);
-        //var_dump($twitterMeta);
-        //
-        //
+
         $vet = array();
         foreach ($cp as $t) {
-            // var_dump($t);
-            //$obj = json_decode($t->meta_value);
-            //var_dump($obj);
-
-
-
-            $lnk = "<a href='https://twitter.com/search?q=" . urlencode($obj->hashtag) . "&src=typd' target='_blank'>" . $obj->hashtag . "</a>";
-
+            $avatar = get_user_meta($t->ID, 'content_url', true);
+            $facebook_id = get_user_meta($t->ID, '_fb_user_id', true);
+            //echo $facebook_id;
+            if (empty($avatar)) {
+                $token = md5(strtolower(trim($t->user_email)));
+                $avatar = 'https://www.gravatar.com/avatar/' . $token;
+            }
+            if (!empty($facebook_id)) {
+                $avatar = "https://graph.facebook.com/$facebook_id/picture";
+            }
+            //var_dump($tipo);
+            //  $whats = get_user_meta($t->ID, '_whatsapp');
             $vet[] = array(
                 'ID' => $t->ID,
-                'title' => $t->post_title,
-                'tipo' => "Pessoa fisica",
-                'whats' => "+55 48 996004929",
-                'enterprise' => "LTDA",
-                'email' => 'mail@mail.com',
-                'avatar' => '<img alt="Foto de perfil do Facebook" src="https://graph.facebook.com/10211897127362550/picture?width=26&amp;height=26" class="avatar avatar-26 photo" height="26" width="26">',
+                'title' => $t->display_name,
+                'email' => $t->user_email,
+                'avatar' => '<img alt="Foto de perfil" src="' . $avatar . '" class="avatar avatar-26 photo" height="26" width="26">',
             );
         }
 

@@ -13,7 +13,8 @@
         "geocoder-php/arcgis-online-provider": "dev-master",
         "geocoder-php/geonames-provider": "dev-master",
         "geocoder-php/bing-maps-provider": "^4.0",
-        "geocoder-php/locationiq-provider": "dev-master"
+        "geocoder-php/locationiq-provider": "dev-master",
+        "google/apiclient": "v2.2.1"
     },
     "require-dev": {
         "abraham/twitteroauth": "0.7.4"

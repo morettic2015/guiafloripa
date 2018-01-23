@@ -155,6 +155,20 @@ function mediaXmlRPCAjax() {
 }
 
 /**
+ * @Update Groups from user
+ * */
+function insert_groups_profile() {
+    //header("Content-type:application/json");
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    $data = $ec->getUpdateGroups($_POST);
+    // echo $data;
+   // var_dump($data);
+    //var_dump($_POST);
+    die;
+}
+
+/**
  * @Update Event by fragments
  * */
 function update_evento_data() {
@@ -175,13 +189,15 @@ function findPlacesEdit() {
     echo $data;
     die;
 }
-function emailTemplate1(){
+
+function emailTemplate1() {
     //echo "1";
     include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
     $ec = new EmailController();
     $ec->showModel($_GET['pid']);
     die();
 }
+
 /**
  * Ajax request
  */
@@ -437,10 +453,16 @@ function wpse_91693_push() {
 function app_guiafloripa_twitter_cloud_tag() {
     include_once PLUGIN_ROOT_DIR . 'views/tpage_cloud.php';
 }
-function app_guiafloripa_leads_imp(){
+
+function app_guiafloripa_leads_imp() {
     include PLUGIN_ROOT_DIR . 'views/contatos/page_imp.php';
 }
-function app_guiafloripa_leads_add(){
+
+function app_guiafloripa_leads_add() {
+    wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
     include PLUGIN_ROOT_DIR . 'views/contatos/page_add.php';
 }
 
@@ -467,7 +489,8 @@ function wpse_91693_render() {
 function app_guiafloripa_mail() {
     include PLUGIN_ROOT_DIR . 'views/email/email.php';
 }
-function app_guiafloripa_leads(){
+
+function app_guiafloripa_leads() {
     include PLUGIN_ROOT_DIR . 'views/contatos/contatos.php';
 }
 
@@ -676,7 +699,7 @@ function wpb_sender_name($original_email_from) {
 
 function remove_dashboard_widgets() {
     remove_meta_box('dashboard_activity', 'dashboard', 'normal');
-    remove_meta_box('e-dashboard-overview', 'dashboard', 'normal');//rmove elementor
+    remove_meta_box('e-dashboard-overview', 'dashboard', 'normal'); //rmove elementor
 }
 
 function header_options_guia_app() {
@@ -842,6 +865,7 @@ add_action('wp_ajax_email_template', 'emailTemplate1');
 add_action('wp_ajax_findPlacesEdit', 'findPlacesEdit');
 add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_update_evento_data', 'update_evento_data');
+add_action('wp_ajax_insert_groups_profile', 'insert_groups_profile');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');

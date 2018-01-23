@@ -200,7 +200,7 @@ class NotificationsGrid extends WP_List_Table {
         );
 
         $actions['segment'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Segmentar', 'List table row action', 'wp-list-table-example')
+                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Agrupar', 'List table row action', 'wp-list-table-example')
         );
 
         // Return the title contents.
@@ -227,8 +227,8 @@ class NotificationsGrid extends WP_List_Table {
      */
     protected function get_bulk_actions() {
         $actions = array(
-            'segment' => _x('Segmentar', 'List table bulk action', 'wp-list-table-example'),
-                //  'export' => _x('Desabilitar', 'List table bulk action', 'wp-list-table-example'),
+            'segment' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
+            'export' => _x('Enviar Mensagem', 'List table bulk action', 'wp-list-table-example'),
         );
 
         return $actions;

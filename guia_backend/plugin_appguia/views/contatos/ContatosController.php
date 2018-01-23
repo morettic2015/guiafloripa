@@ -1,19 +1,203 @@
 <?php
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+error_reporting(E_ALL);
 
 /**
  * Description of EmailController
  *
  * @author Morettic LTDA
  */
+const USER_GROUP_ID = "_usr_grp_id_";
+
+class ContatosController {
+
+    public function getUpdateGroups($request) {
+        global $wpdb;
+        $query = "SELECT * FROM wp_usermeta WHERE user_id = " . get_current_user_id() . " and meta_key = '_myGroups' and meta_value = '" . $request['groupName'] . "'";
+        $group = $wpdb->get_results($query);
+        if (empty($group)) {
+            //echo "novo";
+            $id = add_user_meta(get_current_user_id(), '_myGroups', ($request['groupName']), false);
+            echo $id . "," . $request['groupName'];
+        }
+        $wpdb->close();
+    }
+
+    public function getUserGroups() {
+        $_myGroups = get_user_meta(get_current_user_id(), '_myGroups', false);
+        return$_myGroups;
+    }
+
+    public function getLead($request) {
+        if (empty($request['pid'])) {
+            return false;
+        }
+        $myLeads = get_user_meta(get_current_user_id(), '_myLeads');
+        $hasLead = false;
+        foreach ($myLeads as $pid) {
+            if ($pid === $request['pid'])
+                $hasLead = true;
+        }
+        if (!$hasLead) {
+            echo '<div class="notice notice-error"> 
+                    <p><strong><code>Ocorreu um erro. </code>Você não tem permissão para acessar este contato!</strong></p>
+                 </div>';
+            wp_die();
+        }
 
 
-class EmailController {
+        $lead = new stdClass();
 
-  
+        $user = get_user_by('ID', $request['pid']);
+
+        $lead->info = $user;
+        //var_dump($user);
+
+        $lead->comercial = get_user_meta($user->ID, 'comercial', true);
+        $lead->last_name = get_user_meta($user->ID, 'last_name', true);
+        $lead->first_name = get_user_meta($user->ID, 'first_name', true);
+        $lead->nickname = get_user_meta($user->ID, 'nickname', true);
+        $lead->whatsapp = get_user_meta($user->ID, '_whatsapp', true);
+        $lead->pj = get_user_meta($user->ID, 'pj', true);
+        $lead->pfpj = get_user_meta($user->ID, 'pfpj', true);
+        $lead->fixo = get_user_meta($user->ID, 'fixo', true);
+        $lead->address = get_user_meta($user->ID, 'address', true);
+        $lead->comp = get_user_meta($user->ID, 'comp', true);
+        $lead->organization = get_user_meta($user->ID, 'organization', true);
+        $lead->actor = get_user_meta($user->ID, 'actor', true);
+        $lead->content_url = get_user_meta($user->ID, 'content_url', true);
+        $lead->facebook = get_user_meta($user->ID, 'facebook', true);
+        $lead->Skype = get_user_meta($user->ID, 'Skype', true);
+        $lead->LinkedIn = get_user_meta($user->ID, 'LinkedIn', true);
+        $lead->Twitter = get_user_meta($user->ID, 'Twitter', true);
+        $lead->Instagram = get_user_meta($user->ID, 'Instagram', true);
+        $lead->Google = get_user_meta($user->ID, 'Google', true);
+        $lead->groupList = $this->getLeadGroups($user->ID);
+
+
+        //Default logo
+        if (empty($lead->content_url)) {
+            $token = md5(strtolower(trim($user->user_email)));
+            $lead->content_url = 'https://www.gravatar.com/avatar/' . $token;
+        }
+        $facebook_id = get_user_meta($user->ID, '_fb_user_id', true);
+        if (!empty($facebook_id)) {
+            $lead->content_url = "https://graph.facebook.com/$facebook_id/picture";
+        }
+        if (empty($lead->facebook) && !empty($facebook_id)) {
+            $lead->facebook = "https://www.facebook.com/app_scoped_user_id/$facebook_id/";
+        }
+
+        return $lead;
+    }
+
+    public function saveUpdateProfile($request) {
+        //var_dump($request);
+        if (!isset($request['email']))
+            return false;
+
+        $userdata = array(
+            'user_login' => sanitize_title($request['nick']),
+            'user_nicename' => sanitize_title($request['nick']),
+            'user_url' => $request['website'],
+            'user_email' => sanitize_email($request['email']),
+            'first_name' => $request['firstName'],
+            'nickname' => sanitize_title($request['nick']),
+            'last_name' => $request['lastName'],
+            'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
+        );
+        $user = get_user_by('email', $request['email']);
+        if ($user->ID) {
+            $userdata['ID'] = $user->ID;
+            unset($userdata['user_pass']);
+        }
+        $user_id = wp_insert_user($userdata);
+
+        //var_dump($userdata);die;
+        update_user_meta($user_id, 'comercial', $request['phone2']);
+        update_user_meta($user_id, '_whatsapp', $request['whats']);
+        update_user_meta($user_id, 'fixo', $request['phone1']);
+        update_user_meta($user_id, 'pj', empty($request['pj']) ? 0 : 1);
+        update_user_meta($user_id, 'pfpj', $request['pfpj']);
+        update_user_meta($user_id, 'facebook', $request['facebook']);
+        update_user_meta($user_id, 'Skype', $request['Skype']);
+        update_user_meta($user_id, 'LinkedIn', $request['LinkedIn']);
+        update_user_meta($user_id, 'Twitter', $request['Twitter']);
+        update_user_meta($user_id, 'Instagram', $request['Instagram']);
+        update_user_meta($user_id, 'Google', $request['Google']);
+        update_user_meta($user_id, 'address', $request['address']);
+        update_user_meta($user_id, 'comp', $request['comp']);
+        update_user_meta($user_id, 'organization', $request['organization']);
+        update_user_meta($user_id, 'actor', $request['actor']);
+        update_user_meta($user_id, 'content_url', $request['content_url']);
+        // var_dump($userdata);die;
+//On success
+        $myLeads = get_user_meta(get_current_user_id(), '_myLeads');
+        //var_dump($myLeads);
+        if (empty($myLeads)) {
+            $myLeads = array();
+            $myLeads[] = $user_id;
+        } else {
+            //$myLeads = json_decode($myLeads);
+            //var_dump($myLeads);
+
+            $myLeads[] = $user_id;
+        }
+        // var_dump($myLeads);
+
+        add_user_meta(get_current_user_id(), '_myLeads', ($user_id), false);
+
+        $this->updateGroupsForLead($request['vlGroups'], $user_id);
+        if (!is_wp_error($user_id)) {
+            echo '<div class="notice notice-success is-dismissible"> 
+                    <p><strong><code>Contato</code> salvo com sucesso</strong></p>
+                 </div>';
+        } else {
+            echo '<div class="notice notice-error"> 
+                    <p><strong><code>Ocorreu um erro. Verifique os campos e tente outra vez!</strong></p>
+                 </div>';
+        }
+    }
+
+    public function updateGroupsForLead($groups, $idLead) {
+        //echo  urldecode($groups);
+        global $wpdb;
+        $strQueryGroups = "";
+        $groups = json_decode(urldecode($groups));
+        //var_dump($groups);
+        foreach ($groups as $g1) {
+            $strQueryGroups .= "'" . $g1 . "',";
+        }
+        $strQueryGroups .= "''";
+        //echo $strQueryGroups;
+        $query = "SELECT umeta_id as group_id FROM wp_usermeta where user_id = " . get_current_user_id() . " and meta_key = '_myGroups' and meta_value in ($strQueryGroups)";
+
+        //echo $query;
+        $groupsIDS = $wpdb->get_results($query);
+        //Remove old and insert new one
+        $metaKey = USER_GROUP_ID . get_current_user_id();
+        $deleteOlds = "delete FROM wp_usermeta where user_id = $idLead and meta_key = '$metaKey'";
+        $remove = $wpdb->get_results($deleteOlds);
+        //var_dump($remove);
+        //$idsGroups = "";
+        foreach ($groupsIDS as $id) {
+            add_user_meta($idLead, $metaKey, $id->group_id, false);
+        }
+
+        //var_dump($groupsIDS);
+    }
+
+    public function getLeadGroups($contactIDD) {
+        global $wpdb;
+        $metaKey = USER_GROUP_ID . get_current_user_id();
+        $query = "select upper(meta_value) as groupName from wp_usermeta where umeta_id in ( select meta_value  from wp_usermeta where user_id = $contactIDD and meta_key = '$metaKey')";
+        $groups = $wpdb->get_results($query);
+        return $groups;
+    }
 
 }

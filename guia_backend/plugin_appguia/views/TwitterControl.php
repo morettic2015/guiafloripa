@@ -8,6 +8,7 @@ const FREEGEOIP = "https://freegeoip.net/json/";
 const ONESIGNAL = "https://onesignal.com/api/v1/";
 const ONE_SIGNAL_REST_API = "_onesignal_rest_api_key";
 const ONE_SIGNAL_APP_ID = "_onesignal_app_id";
+
 /**
  * Description of TwitterControl
  *
@@ -59,23 +60,40 @@ class TwitterControl {
             $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response), true);
             $response_to_arrays['notifications'] = array_merge($response_to_arrays['notifications'], $response_to_arrays1['notifications']);
         }
-        
+
         if ($response_to_arrays['notifications']) {
             foreach ($response_to_arrays['notifications'] as $response_array) {
                 $now_time = time();
                 $notification_send_after = $response_array['send_after'];
                 //$response_counter++;
-                if ($now_time > $notification_send_after) {
+                if ($now_time > $notification_send_after && is_numeric($response_array['remaining']) && is_numeric($response_array['converted']) && is_numeric($response_array['successful']) && is_numeric($response_array['failed'])) {
                     $response_counter++;
+                    //var_dump($response_array);
                     $notification_converted = $response_array['converted'];
                     $notification_delivered = $response_array['successful'];
                     $notification_failed = $response_array['failed'];
                     $notification_pending = $response_array['remaining'];
                     $total_notification_stats = $notification_delivered + $notification_failed + $notification_pending;
+
+                    if (is_nan($total_notification_stats) ||
+                            is_nan(($notification_delivered / $total_notification_stats) * 100) ||
+                            is_nan(($notification_failed / $total_notification_stats) * 100) ||
+                            is_nan(($notification_pending / $total_notification_stats) * 100) ||
+                            is_nan(($notification_converted / $total_notification_stats) * 100)
+                    ) {
+                        continue;
+                    }
+
+
                     $decimal_delivered += ($notification_delivered / $total_notification_stats) * 100;
                     $decimal_failed += ($notification_failed / $total_notification_stats) * 100;
                     $decimal_pending += ($notification_pending / $total_notification_stats) * 100;
                     $decimal_converted += ($notification_converted / $total_notification_stats) * 100;
+                    /* echo "<br>$decimal_converted";
+                      echo "<br>$notification_converted";
+                      echo "<br>$notification_delivered";
+                      echo "<br>$notification_failed";
+                      echo "<br>$notification_pending"; */
                 }
             }
             ?>
