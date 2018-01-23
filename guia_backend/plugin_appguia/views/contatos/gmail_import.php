@@ -97,10 +97,11 @@ if (count($results->getConnections()) == 0) {
 
     <div id="namediv" class="stuffbox">
         <div class="inside">
+            <input type="button" name="import" value="Importar Selecionados" class="page-title-action"/>
             <table class="form-table editcomment">
                 <tbody>
                     <tr>
-                        <td class="first" style="width: 5%"><input type="checkbox"></td>
+                        <td class="first" style="width: 5%"><input alt="Selecionar todos" title="Selecionar todos" id="checkAll" type="checkbox"></td>
                         <td class="first"><b>Avatar</b></td>
                         <td class="first"><b>Nome</b></td>
                         <td class="first"><b>Email</b></td>
@@ -147,7 +148,7 @@ if (count($results->getConnections()) == 0) {
                             <td class="first" style="font-size: 15px"><img src="<?php echo $std->avatar; ?>" width="30px"/></td>
                             <td class="first" style="font-size: 15px"><?php echo substr($std->name, 0, 30); ?></small></td>
                             <td class="first" style="font-size: 15px"><?php echo $std->email; ?></small></td>
-                            <td><span class="dashicons dashicons-upload"></span></td>
+                            <td><span title="Importar" alt="Importar" class="page-title-action dashicons-before dashicons dashicons-upload"></span></td>
                         </tr>
                         <?php
                     }
@@ -158,6 +159,7 @@ if (count($results->getConnections()) == 0) {
 
                 </tbody>
             </table>
+            <input type="button" name="import" value="Importar Selecionados" class="page-title-action"/>
         </div>
     </div>
     <?php
@@ -169,3 +171,14 @@ if (count($results->getConnections()) == 0) {
     <?php
 }
 ?>
+<style>
+    tr:hover td {
+        background-color: yellow;
+    }
+</style>
+<script>
+
+    jQuery("#checkAll").click(function () {
+        jQuery('input:checkbox').prop('checked', this.checked);
+    });
+</script>
