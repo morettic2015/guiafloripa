@@ -1,5 +1,5 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_leads_add" class="page-title-action">Criar</a><a href="admin.php?page=app_guiafloripa_leads_imp" class="page-title-action">Importar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_leads_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_leads_imp" class="page-title-action">Importar</a></h1>
     <form id="movies-filter" method="get" action="admin.php?page=app_guiafloripa_leads_add">
         <p class="search-box">
             <label class="screen-reader-text" for="search_id-search-input">

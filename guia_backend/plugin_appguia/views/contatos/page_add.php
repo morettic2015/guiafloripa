@@ -510,7 +510,7 @@ $lead = $ec->getLead($_GET);
             element.remove();
             sel = document.getElementById("myGroups");
             for (i = 0; i < sel.length; i++) {
-                if (sel[i].text === this.value) {
+                if (sel[i].text === element.value) {
                     sel[i].disabled = false;
                     break;
                 }

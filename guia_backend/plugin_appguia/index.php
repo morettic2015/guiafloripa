@@ -163,7 +163,7 @@ function insert_groups_profile() {
     $ec = new ContatosController();
     $data = $ec->getUpdateGroups($_POST);
     // echo $data;
-   // var_dump($data);
+    // var_dump($data);
     //var_dump($_POST);
     die;
 }
@@ -342,28 +342,19 @@ function wpse_91693_register() {
             'Meus Eventos', // menu title
             'read', // capability
             'app_guiafloripa_eventos', // menu slug
-            'wpse_91693_events', null, 6
+            'wpse_91693_events', null, 1
     );
     add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
     add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
     add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
     //add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
-    add_menu_page(
-            'Campanhas', // page title
-            'Campanhas', // menu title
-            'read', // capability
-            'app_guiafloripa_campaigns', // menu slug
-            'wpse_91693_campaign', null, 6
-    );
-    //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
-    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
 
     add_menu_page(
             'Contatos', // page title
             'Contatos', // menu title
             'read', // capability
             'app_guiafloripa_leads', // menu slug
-            'app_guiafloripa_leads', null, 6
+            'app_guiafloripa_leads', null, 2
     );
     add_submenu_page('app_guiafloripa_leads', 'Adicionar Contato', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_leads_add');
     add_submenu_page('app_guiafloripa_leads', 'Importar Contatos', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_leads_imp');
@@ -376,19 +367,22 @@ function wpse_91693_register() {
       'asd', null, 6
       ); */
     add_menu_page(
-            'Dispositivos Ativos', // page title
-            'Dispositivos', // menu title
+            'Minhas Notificações', // page title
+            'Notificações', // menu title
             'read', // capability
             'app_guiafloripa_push', // menu slug
-            'wpse_91693_push', null, 6
+            'wpse_91693_push', null, 5
     );
-    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Alcance', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Dispositivos Ativos', 'read', 'app_guiafloripa_push', 'wpse_91693_push',2);
+    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Minhas notificações', 'read', 'app_guiafloripa_push_list', 'app_guiafloripa_push_list',3);
+    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Criar notificação', 'read', 'app_guiafloripa_push_add', 'app_guiafloripa_push_add',1);
+    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Estatísticas', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map',3);
     add_menu_page(
             'Emails', // page title
             'Emails', // menu title
             'read', // capability
             'app_guiafloripa_mail', // menu slug
-            'app_guiafloripa_mail', null, 6
+            'app_guiafloripa_mail', null, 3
     );
     add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_mail_add');
 
@@ -404,17 +398,28 @@ function wpse_91693_register() {
             'Plano', // menu title
             'read', // capability
             'app_guiafloripa_money', // menu slug
-            'app_guiafloripa_money', null, 6
+            'app_guiafloripa_money', null, 7
     );
     add_menu_page(
             'Minhas Hashtags', // page title
             'Twitter', // menu title
             'read', // capability
             'app_guiafloripa_twitter', // menu slug
-            'wpse_91693_twitter', null, 6
+            'wpse_91693_twitter', null, 4
     );
     add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar Hashtag', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
-    // add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
+
+    add_menu_page(
+            'Campanhas', // page title
+            'Campanhas', // menu title
+            'read', // capability
+            'app_guiafloripa_campaigns', // menu slug
+            'wpse_91693_campaign', null, 6
+    );
+    //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
+
+// add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
     //add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Sincronizar', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_render');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Estatisticas', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_stats');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');

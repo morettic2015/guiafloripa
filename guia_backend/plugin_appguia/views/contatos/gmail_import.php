@@ -1,6 +1,6 @@
 <?php
 //echo PLUGIN_ROOT_DIR;
-$secret = '~/.credentials/google_contacts_' . date('d_m_y_h') . '_' . get_current_user_id() . '.json';
+$secret = '~/.credentials/google_contacts_' . date('d_m_y_h_m') . '_' . get_current_user_id() . '.json';
 include_once '/var/www/guiafloripa.morettic.com.br/vendor/autoload.php';
 define('APPLICATION_NAME', 'GuiaFloripa Load LEads');
 define('CREDENTIALS_PATH', $secret);

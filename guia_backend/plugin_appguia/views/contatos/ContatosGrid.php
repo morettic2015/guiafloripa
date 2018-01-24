@@ -229,8 +229,7 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function get_bulk_actions() {
         $actions = array(
          //   'notes' => _x('Adicionar nota', 'List table bulk action', 'wp-list-table-example'),
-            'group' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
-            'email' => _x('Enviar mensagem', 'List table bulk action', 'wp-list-table-example'),
+            'group' => _x('Vincular grupo', 'List table bulk action', 'wp-list-table-example'),
             'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
                 //  'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
         );
