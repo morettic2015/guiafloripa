@@ -194,9 +194,9 @@ class TT_Example_List_Table extends WP_List_Table {
         // Build edit row action.
         //showPop(action,id)
         //trial cannot upload images
-        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Editar') . '</a>';
-        $actions['group'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#groups">' . _x('Grupos') . '</a>';
-        $actions['notes'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Adicionar nota') . '</a>';
+        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Editar','Editar') . '</a>';
+        $actions['group'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#groups">' . _x('Grupos','Grupos') . '</a>';
+        $actions['notes'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#notes">' . _x('Adicionar nota','Add Nota') . '</a>';
         /* $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
           $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
           $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
@@ -228,7 +228,7 @@ class TT_Example_List_Table extends WP_List_Table {
      */
     protected function get_bulk_actions() {
         $actions = array(
-         //   'notes' => _x('Adicionar nota', 'List table bulk action', 'wp-list-table-example'),
+            //   'notes' => _x('Adicionar nota', 'List table bulk action', 'wp-list-table-example'),
             'group' => _x('Vincular grupo', 'List table bulk action', 'wp-list-table-example'),
             'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
                 //  'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
@@ -339,39 +339,45 @@ class TT_Example_List_Table extends WP_List_Table {
         //echo "<PRE>";
         $ids = "";
         foreach ($list as $id1) {
-            $ids .= $id1 . ",";
+            if (is_numeric($id1)) {
+                $ids .= $id1 . ",";
+            }
         }
         $ids .= "0";
         // echo "</PRE>";
 
         $query = "SELECT * FROM wp_users where ID in($ids) ";   // var_dump($wpdb);
         //
-        if(isset($_GET['s'])){
-            $query.= " AND (user_email like '%".$_GET['s']."%' OR user_nicename like '%".$_GET['s']."%' OR display_name like '%".$_GET['s']."%')";
+        if (isset($_GET['s'])) {
+            $query .= " AND (user_email like '%" . $_GET['s'] . "%' OR user_nicename like '%" . $_GET['s'] . "%' OR display_name like '%" . $_GET['s'] . "%')";
         }
         // echo $query;
         $cp = $wpdb->get_results($query);
 
         $vet = array();
         foreach ($cp as $t) {
-            $avatar = get_user_meta($t->ID, 'content_url', true);
-            $facebook_id = get_user_meta($t->ID, '_fb_user_id', true);
-            //echo $facebook_id;
-            if (empty($avatar)) {
-                $token = md5(strtolower(trim($t->user_email)));
-                $avatar = 'https://www.gravatar.com/avatar/' . $token;
+            try {
+                $avatar = get_user_meta($t->ID, 'content_url', true);
+                $facebook_id = get_user_meta($t->ID, '_fb_user_id', true);
+                //echo $facebook_id;
+                if (empty($avatar)) {
+                    $token = md5(strtolower(trim($t->user_email)));
+                    $avatar = 'https://www.gravatar.com/avatar/' . $token;
+                }
+                if (!empty($facebook_id)) {
+                    $avatar = "https://graph.facebook.com/$facebook_id/picture";
+                }
+                //var_dump($tipo);
+                //  $whats = get_user_meta($t->ID, '_whatsapp');
+                $vet[] = array(
+                    'ID' => $t->ID,
+                    'title' => $t->display_name,
+                    'email' => $t->user_email,
+                    'avatar' => '<img alt="Foto de perfil" src="' . $avatar . '" class="avatar avatar-26 photo" height="26" width="26">',
+                );
+            } catch (WP_Error $e) {
+                var_dump($e);
             }
-            if (!empty($facebook_id)) {
-                $avatar = "https://graph.facebook.com/$facebook_id/picture";
-            }
-            //var_dump($tipo);
-            //  $whats = get_user_meta($t->ID, '_whatsapp');
-            $vet[] = array(
-                'ID' => $t->ID,
-                'title' => $t->display_name,
-                'email' => $t->user_email,
-                'avatar' => '<img alt="Foto de perfil" src="' . $avatar . '" class="avatar avatar-26 photo" height="26" width="26">',
-            );
         }
 
         $data = $vet;

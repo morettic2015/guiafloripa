@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,8 +14,139 @@ error_reporting(E_ALL);
  * @author Morettic LTDA
  */
 const USER_GROUP_ID = "_usr_grp_id_";
+const MY_LEADS_LIST = '_myLeads';
+const MY_GROUPS_LIST = '_myGroups';
+const MAX_BYTE = 50;
+const MAX_MEGA = 500;
+const MAX_GIGA = 1000;
+const MAX_TERA = 1500;
 
 class ContatosController {
+
+    public function getMyLeadsEmail() {
+        global $wpdb;
+        $queryMyLeads = "select user_email from wp_users where ID in "
+                . "(select distinct meta_value FROM wp_usermeta where user_id = " . get_current_user_id() . " and meta_key = '_myLeads');";
+
+        $cp1 = $wpdb->get_results($queryMyLeads);
+
+        $cp = array();
+        foreach ($cp1 as $mm) {
+            $cp[] = $mm->user_email;
+        }
+
+        return $cp;
+    }
+
+    public function getTotalLeadsOrDie() {
+        global $wpdb;
+        $list = get_user_meta(get_current_user_id(), MY_LEADS_LIST);
+        $plano = get_user_meta(get_current_user_id(), '_plano_type', true);
+        // var_dump($plano);
+        //echo "<PRE>";
+        $ids = "";
+        foreach ($list as $id1) {
+            if (is_numeric($id1)) {
+                $ids .= $id1 . ",";
+            }
+        }
+        $ids .= "0";
+        // echo "</PRE>";
+
+        $query = "SELECT * FROM wp_users where ID in($ids) ";   // var_dump($wpdb);
+        //
+       
+        // echo $query;
+        $cp = $wpdb->get_results($query);
+        switch (intval($plano)) {
+            case 1:
+                $max = MAX_MEGA;
+                break;
+            case 2:
+                $max = MAX_GIGA;
+                break;
+            case 3:
+                $max = MAX_TERA;
+                break;
+            default :
+                $max = MAX_BYTE;
+                break;
+        }
+        $total = $max - count($cp);
+
+        if ($total === 0 || $total < 0) {
+            echo '<div class="notice notice-warning"> 
+                    <p><strong>Você atingiu o limite de ' . $total . ' contatos!<p><a href="admin.php?page=app_guiafloripa_money">Faça um upgrade de seu plano para importar mais contatos.</a></p></strong></p>
+                 </div>';
+            die;
+        }
+        //$wpdb->close();
+        return $total;
+    }
+
+    public function importGmail($request) {
+        global $wpdb;
+        $gContacts = json_decode($_SESSION['gContacts']);
+        $list = json_decode(str_replace('\\', "", str_replace('"', "", $request['ids'])));
+        $totalAtLeas = $this->getTotalLeadsOrDie();
+
+        if (count($list) > $totalAtLeas) {
+            echo "{'error':'Limite ultrapassado'}";
+            wp_die();
+        }
+
+        foreach ($list as $id) {
+            $totalAtLeas--;
+            //echo $gContacts[$id - 1]->email;
+            $query1 = "SELECT count(*) as total,ID  FROM wp_users WHERE (user_email) = ('" . $gContacts[$id - 1]->email . "')";
+            //echo $query1;
+            $hasLead = $wpdb->get_results($query1);
+            //var_dump($hasLead);
+            if ($hasLead[0]->total > 0) {
+                add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($hasLead[0]->ID), false);
+            } else {
+                //var_dump($gContacts[$id - 1]);
+                $leadName = explode(" ", $gContacts[$id - 1]->name);
+                $userdata = array(
+                    'user_login' => sanitize_title($gContacts[$id - 1]->name),
+                    'user_nicename' => sanitize_title($gContacts[$id - 1]->name),
+                    'user_url' => count($gContacts[$id - 1]->url) > 0 ? $gContacts[$id - 1]->url[0] : "",
+                    'user_email' => sanitize_email($gContacts[$id - 1]->email),
+                    'first_name' => count($leadName) > 0 ? $leadName[0] : "",
+                    'nickname' => sanitize_title($gContacts[$id - 1]->name),
+                    'last_name' => count($leadName) > 1 ? $leadName[1] : "",
+                    'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
+                );
+                $user_id = wp_insert_user($userdata);
+                //echo $user_id;
+                if (count($gContacts[$id - 1]->phoneNumbers) > 0) {
+                    update_user_meta($user_id, 'comercial', $gContacts[$id - 1]->phoneNumbers[0]->number);
+                }
+                var_dump($gContacts[$id - 1]->phoneNumber);
+                if (count($gContacts[$id - 1]->phoneNumbers) > 1) {
+                    update_user_meta($user_id, 'fixo', $gContacts[$id - 1]->phoneNumbers[1]->number);
+                }
+                update_user_meta($user_id, 'content_url', $gContacts[$id - 1]->avatar);
+                update_user_meta($user_id, 'description', $gContacts[$id - 1]->biographies);
+                update_user_meta($user_id, 'address', $gContacts[$id - 1]->addresses);
+                add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
+            }
+            if ($totalAtLeas == 0)
+                break;
+        }
+        $wpdb->close();
+        echo $totalAtLeas;
+    }
+
+    public function getNickName($nick) {
+        global $wpdb;
+        $query = "SELECT count(*) as total FROM wp_users WHERE user_login = '" . sanitize_title($nick) . "'";
+        //echo $query;
+        $group = $wpdb->get_results($query);
+        //var_dump($group);
+        return $group[0]->total;
+        $wpdb->close();
+    }
 
     public function getUpdateGroups($request) {
         global $wpdb;
@@ -22,14 +154,14 @@ class ContatosController {
         $group = $wpdb->get_results($query);
         if (empty($group)) {
             //echo "novo";
-            $id = add_user_meta(get_current_user_id(), '_myGroups', ($request['groupName']), false);
+            $id = add_user_meta(get_current_user_id(), MY_GROUPS_LIST, ($request['groupName']), false);
             echo $id . "," . $request['groupName'];
         }
         $wpdb->close();
     }
 
     public function getUserGroups() {
-        $_myGroups = get_user_meta(get_current_user_id(), '_myGroups', false);
+        $_myGroups = get_user_meta(get_current_user_id(), MY_GROUPS_LIST, false);
         return$_myGroups;
     }
 
@@ -37,7 +169,7 @@ class ContatosController {
         if (empty($request['pid'])) {
             return false;
         }
-        $myLeads = get_user_meta(get_current_user_id(), '_myLeads');
+        $myLeads = get_user_meta(get_current_user_id(), MY_LEADS_LIST);
         $hasLead = false;
         foreach ($myLeads as $pid) {
             if ($pid === $request['pid'])
@@ -77,6 +209,7 @@ class ContatosController {
         $lead->Twitter = get_user_meta($user->ID, 'Twitter', true);
         $lead->Instagram = get_user_meta($user->ID, 'Instagram', true);
         $lead->Google = get_user_meta($user->ID, 'Google', true);
+        $lead->description = get_user_meta($user->ID, 'description', true);
         $lead->groupList = $this->getLeadGroups($user->ID);
 
 
@@ -97,10 +230,10 @@ class ContatosController {
     }
 
     public function saveUpdateProfile($request) {
-        //var_dump($request);
+
         if (!isset($request['email']))
             return false;
-
+//var_dump($request);die;
         $userdata = array(
             'user_login' => sanitize_title($request['nick']),
             'user_nicename' => sanitize_title($request['nick']),
@@ -135,9 +268,11 @@ class ContatosController {
         update_user_meta($user_id, 'organization', $request['organization']);
         update_user_meta($user_id, 'actor', $request['actor']);
         update_user_meta($user_id, 'content_url', $request['content_url']);
+        update_user_meta($user_id, 'description', $request['txtBio']);
+
         // var_dump($userdata);die;
 //On success
-        $myLeads = get_user_meta(get_current_user_id(), '_myLeads');
+        $myLeads = get_user_meta(get_current_user_id(), MY_LEADS_LIST);
         //var_dump($myLeads);
         if (empty($myLeads)) {
             $myLeads = array();
@@ -150,17 +285,25 @@ class ContatosController {
         }
         // var_dump($myLeads);
 
-        add_user_meta(get_current_user_id(), '_myLeads', ($user_id), false);
+        add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
 
         $this->updateGroupsForLead($request['vlGroups'], $user_id);
         if (!is_wp_error($user_id)) {
-            echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong><code>Contato</code> salvo com sucesso</strong></p>
+            if ($user->ID) {//Edition mode
+                echo '<div class="notice notice-success is-dismissible"> 
+                    <p><strong><code>Contato</code> salvo com sucesso.</strong></p>
                  </div>';
+            } else { //news
+                echo '<div class="notice notice-success is-dismissible"> 
+                    <p><strong><code>Contato</code> salvo com sucesso. Visualize seus <a href="admin.php?page=app_guiafloripa_leads"> contatos</a> cadastrados</strong></p>
+                 </div>';
+                wp_die();
+            }
         } else {
             echo '<div class="notice notice-error"> 
                     <p><strong><code>Ocorreu um erro. Verifique os campos e tente outra vez!</strong></p>
                  </div>';
+            wp_die();
         }
     }
 

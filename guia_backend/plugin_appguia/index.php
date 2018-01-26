@@ -219,6 +219,24 @@ function findPlacesAjax() {
     die();
 }
 
+
+
+function importGmail() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    $ec->importGmail($_POST);
+    die();
+}
+/**
+ * @ajax for beach names
+ * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
+ */
+function findNickName() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    echo $ec->getNickName($_GET['nick']);
+    die();
+}
 /**
  * @ajax for beach names
  * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
@@ -872,6 +890,8 @@ add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_update_evento_data', 'update_evento_data');
 add_action('wp_ajax_insert_groups_profile', 'insert_groups_profile');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
+add_action('wp_ajax_findNickName', 'findNickName');
+add_action('wp_ajax_importGmail', 'importGmail');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');

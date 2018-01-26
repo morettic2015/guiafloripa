@@ -4,6 +4,7 @@
         <p>Importe seus contatos para promover seu negócio</p>
     </div>
     <hr/>
+    <a name="top"/>
     <?php
     if (isset($_GET['source'])) {
         if ($_GET['source'] === "google") {

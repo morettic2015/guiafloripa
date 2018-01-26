@@ -45,7 +45,8 @@ $lead = $ec->getLead($_GET);
                             <tr>
                                 <td class="first" style="text-align: right"><label for="name">Apelido</label></td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                    <input type="text" maxlength="40" name="nick" id="nick" spellcheck="true"  size="30"  placeholder="Apelido" value="<?php echo $lead->info->nickname; ?>">
+                                    <input type="text" maxlength="40" name="nick" id="nick" spellcheck="true"  size="30" <?php echo empty($lead->info->nickname)?"":'readonly="true"'; ?>   placeholder="Apelido" value="<?php echo $lead->info->nickname; ?>" onblur="validateNick(this)">
+                                    <br><span class="description" id="txtNick">O apelido deve ser único.</span>
                                 </td>
                                 <td class="first" style="text-align: right"><label for="name">Pessoa Jurídica?</label></td>
                                 <td >
@@ -213,6 +214,25 @@ $lead = $ec->getLead($_GET);
 
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="5">
+                                    <a name="notes"/>
+                                    <hr>
+                                    <h1>
+                                        Notas do usuário
+                                    </h1>
+                                    <br><span class="description">Notas e informações de interesse</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="first">
+                                    <?php
+                                    $editor_id = 'txtBio';
+
+                                    wp_editor($lead->description, $editor_id, array('media_buttons' => false, 'quicktags' => false));
+                                    ?>
+                                </td>
+                            </tr>
 
                         </tbody>
                     </table>
@@ -226,11 +246,30 @@ $lead = $ec->getLead($_GET);
 
 </div>
 <script>
+    function validateNick(elemento) {
+        if(elemento.readonly===undefined){
+            return false;
+        }
+        // alert(elemento.value);
+        var url = "admin-ajax.php?action=findNickName&nick=" + elemento.value;
+        jQuery(function ($) {
+            $.get(url, function (data, status) {
+                if (parseInt(data) > 0) {
+                    errorField(jQuery("#nick"));
+                    jQuery("#txtNick").html("<b>O apelido <code>" + elemento.value + "</code> já se encontra em uso</b>");
+                    jQuery("#nick").val("");
+                    jQuery("#nick").focus();
+                } else {
+                    defaultField(jQuery("#nick"));
+                    jQuery("#txtNick").html("<b>O apelido deve ser único</b>")
+                }
+            });
+        });
+    }
     function campo_numerico() {
 
         if (event.keyCode < 45 || event.keyCode > 57)
             event.returnValue = false;
-
     }
 
 // Função verifica qual das funções tem que chamar cpf ou cnpj
@@ -247,31 +286,26 @@ $lead = $ec->getLead($_GET);
     function mascara_cnpj(campo, documento, f) {
         var mydata = '';
         mydata = mydata + documento;
-
         if (mydata.length == 2) {
             mydata = mydata + '.';
-
             ct_campo = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo;
         }
 
         if (mydata.length == 6) {
             mydata = mydata + '.';
-
             ct_campo = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo;
         }
 
         if (mydata.length == 10) {
             mydata = mydata + '/';
-
             ct_campo1 = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo1;
         }
 
         if (mydata.length == 15) {
             mydata = mydata + '-';
-
             ct_campo1 = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo1;
         }
@@ -286,24 +320,20 @@ $lead = $ec->getLead($_GET);
     function mascara_cpf(campo, documento, f) {
         var mydata = '';
         mydata = mydata + documento;
-
         if (mydata.length == 3) {
             mydata = mydata + '.';
-
             ct_campo = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo;
         }
 
         if (mydata.length == 7) {
             mydata = mydata + '.';
-
             ct_campo = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo;
         }
 
         if (mydata.length == 11) {
             mydata = mydata + '-';
-
             ct_campo1 = eval("document." + f + "." + campo + ".value = mydata");
             ct_campo1;
         }
@@ -323,20 +353,14 @@ $lead = $ec->getLead($_GET);
         ter = eval("document." + f + "." + campo + ".value.substring(7,10)");
         qua = eval("document." + f + "." + campo + ".value.substring(11,15)");
         qui = eval("document." + f + "." + campo + ".value.substring(16,18)");
-
         var i;
         var numero;
         var situacao = '';
-
         numero = (pri + seg + ter + qua + qui);
-
         s = numero;
-
-
         c = s.substr(0, 12);
         var dv = s.substr(12, 2);
         var d1 = 0;
-
         for (i = 0; i < 12; i++) {
             d1 += c.charAt(11 - i) * (2 + (i % 8));
         }
@@ -345,10 +369,8 @@ $lead = $ec->getLead($_GET);
             var result = "falso";
         }
         d1 = 11 - (d1 % 11);
-
         if (d1 > 9)
             d1 = 0;
-
         if (dv.charAt(0) != d1) {
             var result = "falso";
         }
@@ -361,7 +383,6 @@ $lead = $ec->getLead($_GET);
         d1 = 11 - (d1 % 11);
         if (d1 > 9)
             d1 = 0;
-
         if (dv.charAt(1) != d1) {
             var result = "falso";
         }
@@ -387,17 +408,13 @@ $lead = $ec->getLead($_GET);
         seg = eval("document." + f + "." + campo + ".value.substring(4,7)");
         ter = eval("document." + f + "." + campo + ".value.substring(8,11)");
         qua = eval("document." + f + "." + campo + ".value.substring(12,14)");
-
         var i;
         var numero;
-
         numero = (pri + seg + ter + qua);
-
         s = numero;
         c = s.substr(0, 9);
         var dv = s.substr(9, 2);
         var d1 = 0;
-
         for (i = 0; i < 9; i++) {
             d1 += c.charAt(i) * (10 - i);
         }
@@ -409,7 +426,6 @@ $lead = $ec->getLead($_GET);
         d1 = 11 - (d1 % 11);
         if (d1 > 9)
             d1 = 0;
-
         if (dv.charAt(0) != d1) {
             var result = "falso";
         }
@@ -422,7 +438,6 @@ $lead = $ec->getLead($_GET);
         d1 = 11 - (d1 % 11);
         if (d1 > 9)
             d1 = 0;
-
         if (dv.charAt(1) != d1) {
             var result = "falso";
         }
@@ -484,7 +499,6 @@ $lead = $ec->getLead($_GET);
             }
         }
         document.getElementById('vlGroups').value = encodeURI(JSON.stringify(groupsList));
-
         if (!noError) {
             jQuery('#msg').removeClass("notice-info");
             jQuery("#msg").addClass("notice-error");
@@ -533,7 +547,6 @@ $lead = $ec->getLead($_GET);
         }
         opt1.appendChild(document.createTextNode(sel.value));
         dest.appendChild(opt1);
-
         for (var i = 0, iLen = sel.length; i < iLen; i++) {
             if (sel[i].value === sel.value) {
                 sel[i].disabled = true;
@@ -552,7 +565,6 @@ $lead = $ec->getLead($_GET);
                 var optionOne = response.split(",");
                 if (optionOne[1] === undefined)
                     return;
-
                 var x = document.getElementById("myGroups");
                 var option = document.createElement("option");
                 option.text = optionOne[1];
@@ -605,12 +617,10 @@ $lead = $ec->getLead($_GET);
                         field.mask(SPMaskBehavior.apply({}, arguments), options);
                     }
                 };
-
         $('#whats').mask(SPMaskBehavior, spOptions);
         $('#phone1').mask(SPMaskBehavior, spOptions);
         $('#phone2').mask(SPMaskBehavior, spOptions);
     });
-
 <?php echo $disableds; ?>
 </script>
 <style>

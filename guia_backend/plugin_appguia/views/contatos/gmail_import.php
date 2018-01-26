@@ -1,15 +1,16 @@
 <?php
 //echo PLUGIN_ROOT_DIR;
-$secret = '~/.credentials/google_contacts_' . date('d_m_y_h_m') . '_' . get_current_user_id() . '.json';
+
+$secret = '~/.credentials/google_contacts_' . date('d-m-Y') . '_' . get_current_user_id() . '.json';
 include_once '/var/www/guiafloripa.morettic.com.br/vendor/autoload.php';
 define('APPLICATION_NAME', 'GuiaFloripa Load LEads');
 define('CREDENTIALS_PATH', $secret);
 define('CLIENT_SECRET_PATH', PLUGIN_ROOT_DIR . 'views/contatos/client_secret.json');
-// If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/people.googleapis.com-php-quickstart.json
 define('SCOPES', implode(' ', array(Google_Service_PeopleService::PLUS_LOGIN,
     Google_Service_PeopleService::CONTACTS_READONLY, Google_Service_PeopleService::USERINFO_EMAIL, Google_Service_PeopleService::USER_EMAILS_READ, Google_Service_PeopleService::USER_PHONENUMBERS_READ)
 ));
+include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+$ec = new ContatosController();
 
 /* if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -86,6 +87,7 @@ $optParams = array(
 );
 $results = $service->people_connections->listPeopleConnections('people/me', $optParams);
 //echo "<pre>";
+$rest = $ec->getTotalLeadsOrDie();
 if (count($results->getConnections()) == 0) {
     echo '<div class="notice notice-error"> 
                     <p><strong>Nenhum contato encontrado em sua conta do Google</strong></p>
@@ -97,7 +99,7 @@ if (count($results->getConnections()) == 0) {
 
     <div id="namediv" class="stuffbox">
         <div class="inside">
-            <input type="button" name="import" value="Importar Selecionados" class="page-title-action"/>
+            <input type="button" onclick="importContacts()" name ="import" value="Importar Selecionados" class="page-title-action"/>
             <table class="form-table editcomment">
                 <tbody>
                     <tr>
@@ -105,10 +107,17 @@ if (count($results->getConnections()) == 0) {
                         <td class="first"><b>Avatar</b></td>
                         <td class="first"><b>Nome</b></td>
                         <td class="first"><b>Email</b></td>
-                        <td class="first"><b>Importar</b></td>
+                      <!--  <td class="first"><b>Importar</b></td> -->
                     </tr>
                     <?php
-                    foreach ($results->getConnections() as $person) {
+                    $myLeadsL = $ec->getMyLeadsEmail();
+                    // var_dump($myLeadsL);die;
+                    $count = 0;
+                    $gContacts = $results->getConnections();
+                    foreach ($gContacts as $person) {
+                        if (in_array($person['emailAddresses'][0]['value'], $myLeadsL)) {
+                            continue;//already exists
+                        }
                         $std = new stdClass();
                         if (empty($person['emailAddresses'][0]['value'])) {
                             continue;
@@ -134,35 +143,35 @@ if (count($results->getConnections()) == 0) {
                             $std->urls[] = $ph['value'];
                         }
 
-                        if (count($person['addresses']) > 0) {
-                            $std->addresses = $person['addresses'][0]['formattedValue'];
-                        }
-                        $std->address = $person['addresses'][0]['value'];
+                        $std->addresses = $person['addresses'][0]['formattedValue'];
                         $std->biographies = $person['biographies'][0]['value'];
                         $std->id = $i++;
                         //var_dump($person['imClients']);
                         $mList[] = $std;
                         ?>
-                        <tr>
-                            <td class="first" style="width: 5%"><input type="checkbox"></td>
+                        <tr id="tr_<?php echo $count++ ?>">
+                            <td class="first" style="width: 5%"><input title="Importar <?php echo $std->email; ?>" alt="Importar <?php echo $std->email; ?>" value="<?php echo $count ?>" type="checkbox"></td>
                             <td class="first" style="font-size: 15px"><img src="<?php echo $std->avatar; ?>" width="30px"/></td>
                             <td class="first" style="font-size: 15px"><?php echo substr($std->name, 0, 30); ?></small></td>
                             <td class="first" style="font-size: 15px"><?php echo $std->email; ?></small></td>
-                            <td><span title="Importar" alt="Importar" class="page-title-action dashicons-before dashicons dashicons-upload"></span></td>
-                        </tr>
+                   <!--         <td><span title="Importar <?php echo $std->email; ?>" alt="Importar <?php echo $std->email; ?>" class="page-title-action dashicons-before dashicons dashicons-upload"></span></td>
+                            -->  </tr>
                         <?php
                     }
-                    echo '<div class="notice notice-success"> 
-                    <p><strong>Sucesso. Foram localizados ' . count($mList) . ' contatos. Selecione os contatos que deseja importar</strong></p>
+                    echo '<div class="notice notice-success" id="msg"> 
+                    <p><strong>Foram localizados ' . count($mList) . ' contatos. Selecione os contatos que deseja importar. <br> <code>Seu plano permite importar mais ' . $rest . ' contatos</code></strong></p>
                  </div>';
                     ?>
 
                 </tbody>
             </table>
-            <input type="button" name="import" value="Importar Selecionados" class="page-title-action"/>
+            <input type="button" onclick="importContacts()" name="import" value="Importar Selecionados" class="page-title-action"/>
         </div>
     </div>
     <?php
+    session_start();
+    $_SESSION['gContacts'] = json_encode($mList);
+    //var_dump( $_SESSION['gContacts']);
     /* echo "<pre>";
       var_dump($mList);
       echo "</pre>"; */
@@ -177,8 +186,42 @@ if (count($results->getConnections()) == 0) {
     }
 </style>
 <script>
-
+    var totalLeads = <?php echo $rest ?>;
     jQuery("#checkAll").click(function () {
         jQuery('input:checkbox').prop('checked', this.checked);
     });
+    function importContacts() {
+        checkeds = [];
+        count = 0;
+        canSend = true;
+        jQuery('input:checkbox').each(function () {
+            if (count < totalLeads) {
+                if (this.checked) {
+                    checkeds.push(this.value);
+                    count++;
+                    myTr = "#tr_" + this.value;
+                    jQuery(myTr).addClass("notice-info");
+                }
+            } else {
+                canSend = false;
+                jQuery('input:checkbox').prop('checked', false);
+                jQuery('#msg').removeClass("notice-info");
+                jQuery("#msg").addClass("notice-error");
+                jQuery("#msg").html('Você ultrapassou o limite de importação. Selecione no máximo:' + totalLeads);
+                document.location.href = "#top";
+                return canSend;
+            }
+        });
+        if (!canSend)
+            return false;
+
+        var url = "admin-ajax.php?action=importGmail";
+        jQuery(function ($) {
+            $.post(url, {ids: JSON.stringify(checkeds)}, function (result) {
+                alert("Contatos importados com sucesso!");
+                window.location.href = "";
+            })
+        });
+        //alert(checkeds);
+    }
 </script>
