@@ -1,5 +1,4 @@
 <?php
-
 @session_start();
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -42,7 +41,7 @@ class ContatosController {
         global $wpdb;
         $list = get_user_meta(get_current_user_id(), MY_LEADS_LIST);
         $plano = get_user_meta(get_current_user_id(), '_plano_type', true);
-        // var_dump($plano);
+        //var_dump($plano);
         //echo "<PRE>";
         $ids = "";
         foreach ($list as $id1) {
@@ -73,10 +72,10 @@ class ContatosController {
                 break;
         }
         $total = $max - count($cp);
-
+        //echo $total;
         if ($total === 0 || $total < 0) {
             echo '<div class="notice notice-warning"> 
-                    <p><strong>Você atingiu o limite de ' . $total . ' contatos!<p><a href="admin.php?page=app_guiafloripa_money">Faça um upgrade de seu plano para importar mais contatos.</a></p></strong></p>
+                    <p><strong>Você atingiu o limite de ' . $max . ' contatos!<p><a href="admin.php?page=app_guiafloripa_money">Faça um upgrade de seu plano para adicionar mais contatos.</a></p></strong></p>
                  </div>';
             die;
         }
@@ -307,7 +306,13 @@ class ContatosController {
         }
     }
 
-    public function updateGroupsForLead($groups, $idLead) {
+    public function updateGroupsBatch($request) {
+        foreach ($request['leadsList'] as $leadID) {
+            $this->updateGroupsForLead($request['groupName'], $leadID, false);
+        }
+    }
+
+    public function updateGroupsForLead($groups, $idLead, $remove = true) {
         //echo  urldecode($groups);
         global $wpdb;
         $strQueryGroups = "";
@@ -324,8 +329,10 @@ class ContatosController {
         $groupsIDS = $wpdb->get_results($query);
         //Remove old and insert new one
         $metaKey = USER_GROUP_ID . get_current_user_id();
-        $deleteOlds = "delete FROM wp_usermeta where user_id = $idLead and meta_key = '$metaKey'";
-        $remove = $wpdb->get_results($deleteOlds);
+        if ($remove) {
+            $deleteOlds = "delete FROM wp_usermeta where user_id = $idLead and meta_key = '$metaKey'";
+            $remove = $wpdb->get_results($deleteOlds);
+        }
         //var_dump($remove);
         //$idsGroups = "";
         foreach ($groupsIDS as $id) {
@@ -333,6 +340,77 @@ class ContatosController {
         }
 
         //var_dump($groupsIDS);
+    }
+
+    public function getDashBoard() {
+        global $wpdb;
+        $list = get_user_meta(get_current_user_id(), MY_LEADS_LIST);
+        $plano = get_user_meta(get_current_user_id(), '_plano_type', true);
+        //var_dump($plano);
+        //echo "<PRE>";
+        $ids = "";
+        foreach ($list as $id1) {
+            if (is_numeric($id1)) {
+                $ids .= $id1 . ",";
+            }
+        }
+        $ids .= "0";
+        // echo "</PRE>";
+
+        $query = "SELECT * FROM wp_users where ID in($ids) ";   // var_dump($wpdb);
+        //
+       
+        // echo $query;
+        $cp = $wpdb->get_results($query);
+        switch (intval($plano)) {
+            case 1:
+                $max = MAX_MEGA;
+                break;
+            case 2:
+                $max = MAX_GIGA;
+                break;
+            case 3:
+                $max = MAX_TERA;
+                break;
+            default :
+                $max = MAX_BYTE;
+                break;
+        }
+        $total = $max - count($cp);
+        ?>
+
+      <!--  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
+        <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> -->
+        
+        <h3>Você tem <?php echo count($cp); ?> contatos de <?php echo $max; ?> possíveis para o seu plano</h3>
+       <!-- <div id="graph1" style="height: 180px;width: 100%"></div>
+        <script>
+         /*   Morris.Donut({
+                element: 'graph1',
+                data: [
+                    {value: <?php echo $max; ?>, label: 'Total do Plano'},
+                    {value: <?php echo count($cp); ?>, label: 'Cadastrados'},
+                ],
+                backgroundColor: '#ccc',
+                labelColor: '#f79129',
+                colors: [
+                    '#2499c8',
+                    '#f79129',
+                    '#a4ce3f',
+                    '#c0358a',
+                ],
+                formatter: function (x) {
+                    return x;
+                }
+            });*/
+
+            //document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
+        </script> -->
+
+        <?php
     }
 
     public function getLeadGroups($contactIDD) {

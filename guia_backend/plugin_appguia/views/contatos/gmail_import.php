@@ -111,19 +111,19 @@ if (count($results->getConnections()) == 0) {
                     </tr>
                     <?php
                     $myLeadsL = $ec->getMyLeadsEmail();
-                    // var_dump($myLeadsL);die;
+                    // var_dump($myLeadsL);;
                     $count = 0;
                     $gContacts = $results->getConnections();
                     foreach ($gContacts as $person) {
                         if (in_array($person['emailAddresses'][0]['value'], $myLeadsL)) {
-                            continue;//already exists
+                            continue; //already exists
                         }
                         $std = new stdClass();
                         if (empty($person['emailAddresses'][0]['value'])) {
                             continue;
                         }
                         if (count($person->getNames()) == 0) {
-                            $std->name = NULL;
+                            $std->name = ucwords(strtolower(substr($person['emailAddresses'][0]['value'], 0, strripos($person['emailAddresses'][0]['value'], '@'))));;
                         } else {
                             $names = $person->getNames();
                             $name = $names[0];
@@ -169,7 +169,7 @@ if (count($results->getConnections()) == 0) {
         </div>
     </div>
     <?php
-    session_start();
+    @session_start();
     $_SESSION['gContacts'] = json_encode($mList);
     //var_dump( $_SESSION['gContacts']);
     /* echo "<pre>";
@@ -195,21 +195,22 @@ if (count($results->getConnections()) == 0) {
         count = 0;
         canSend = true;
         jQuery('input:checkbox').each(function () {
-            if (count < totalLeads) {
-                if (this.checked) {
+            if (this.checked) {
+                if (count < totalLeads) {
+
                     checkeds.push(this.value);
                     count++;
                     myTr = "#tr_" + this.value;
                     jQuery(myTr).addClass("notice-info");
+                } else {
+                    canSend = false;
+                    jQuery('input:checkbox').prop('checked', false);
+                    jQuery('#msg').removeClass("notice-info");
+                    jQuery("#msg").addClass("notice-error");
+                    jQuery("#msg").html('Você ultrapassou o limite de importação. Selecione no máximo:' + totalLeads);
+                    document.location.href = "#top";
+                    return canSend;
                 }
-            } else {
-                canSend = false;
-                jQuery('input:checkbox').prop('checked', false);
-                jQuery('#msg').removeClass("notice-info");
-                jQuery("#msg").addClass("notice-error");
-                jQuery("#msg").html('Você ultrapassou o limite de importação. Selecione no máximo:' + totalLeads);
-                document.location.href = "#top";
-                return canSend;
             }
         });
         if (!canSend)

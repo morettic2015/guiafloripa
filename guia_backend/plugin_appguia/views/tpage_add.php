@@ -33,37 +33,37 @@
                             <tr>
                                 <td class="first" style="text-align: right"> Ignorar?</td>
                                 <td>
-                                    <input onclick="disableChecks(this)" type="checkbox" name="ignore" value="SIM">
+                                    <input onclick="disableChecks(this)" style="width: 50px" type="checkbox" name="ignore" value="SIM">
                                 </td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right"><label for="name">Hashtag:</label></td>
-                                <td><input type="text" name="hashtag" id="title" value="" spellcheck="true"  size="30"  placeholder="Ex: #floripa #festa #balada #cultura"></td>
+                                <td><input type="text" maxlength="30" name="hashtag" id="title" value="" spellcheck="true"  size="30"  placeholder="Ex: #floripa #festa #balada #cultura"></td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Adicionar aos favoritos</td>
-                                <td><input type="checkbox" name="favoritos" value="SIM"></td>
+                                <td><input type="checkbox" style="width: 50px" name="favoritos" value="SIM"></td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Retweetar</td>
-                                <td> <input type="checkbox" name="retweetar" value="SIM"></td>
+                                <td> <input type="checkbox" style="width: 50px" name="retweetar" value="SIM"></td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right"> Seguir autor</td>
                                 <td>
-                                    <input type="checkbox" name="follow" value="SIM">
+                                    <input type="checkbox" style="width: 50px" name="follow" value="SIM">
                                 </td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Parar de seguir em 72 horas </td>
                                 <td>
-                                    <input type="checkbox" name="unfollow" value="SIM">
+                                    <input type="checkbox" style="width: 50px" name="unfollow" value="SIM">
                                 </td>
                             </tr>
                             <tr>
                                 <td class="first" style="text-align: right">Tirar dos favoritos em 72 horas </td>
                                 <td>
-                                    <input type="checkbox" name="unfavorite" value="SIM">
+                                    <input type="checkbox" style="width: 50px" name="unfavorite" value="SIM">
                                 </td>
                             </tr>
                             <tr>
@@ -71,7 +71,7 @@
                                     Remover retweet em 72 horas
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="unretweet" value="SIM">
+                                    <input type="checkbox" style="width: 50px" name="unretweet" value="SIM">
                                 </td>
                             </tr>
                             <tr>

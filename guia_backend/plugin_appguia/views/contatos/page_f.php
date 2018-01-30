@@ -1,14 +1,9 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_leads_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_leads_imp" class="page-title-action">Importar</a></h1>
-    <form id="movies-filter" method="post" action="admin.php?page=app_guiafloripa_leads">
-        <p class="search-box">
-            <label class="screen-reader-text" for="search_id-search-input">
-                Buscar contatos:</label> 
-            <input id="search_id-search-input" type="text" name="s" value="" /> 
-            <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
-        </p>
+    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <form id="movies-filter">
+
         <div class="notice notice-info"> 
-            <p>Lista de <code>Contatos</code>.</p>
+            <p>Lista de <code>Seguidores do Twitter</code>.</p>
         </div>
         <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
 
@@ -21,11 +16,11 @@
 </div>
 <style>
 
-    .column-avatar { text-align: left; width:80px !important; overflow:hidden }
-    .column-tipo { text-align: left; width:100px !important; overflow:hidden }
+    .column-avatar { text-align: left; width:70px !important; overflow:hidden }
+    .column-title { text-align: left; width:180px !important; overflow:hidden }
     .column-whats { text-align: left; width:150px !important; overflow:hidden }
-    .column-email { text-align: left; width:300px !important; overflow:hidden }
-    .column-enterprise { text-align: left; width:180px !important; overflow:hidden }
+    .column-email { text-align: left; width:90px !important; overflow:hidden }
+    .column-murl { text-align: left; width:180px !important; overflow:hidden }
 
     input[type="checkbox"]{
         appearance:none;

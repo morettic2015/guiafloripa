@@ -1,44 +1,8 @@
 <?php
-//995044427162-3i20lnkl1r4tp72hpqh7gcgb5tu9g5co.apps.googleusercontent.com
-//995044427162-frej7i577t6b40581cifugpssvdkhjkk.apps.googleusercontent.com
-//6QdxlcMCFfzcPRKG4ajFAJL8
-/**
- * WP List Table Example class
- *
- * @package   WPListTableExample
- * @author    Matt van Andel
- * @copyright 2016 Matthew van Andel
- * @license   GPL-2.0+
- */
 
-/**
- * Example List Table Child Class
- *
- * Create a new list table package that extends the core WP_List_Table class.
- * WP_List_Table contains most of the framework for generating the table, but we
- * need to define and override some methods so that our data can be displayed
- * exactly the way we need it to be.
- *
- * To display this example on a page, you will first need to instantiate the class,
- * then call $yourInstance->prepare_items() to handle any data manipulation, then
- * finally call $yourInstance->display() to render the table to the page.
- *
- * Our topic for this list table is going to be movies.
- *
- * @package WPListTableExample
- * @author  Matt van Andel
- */
-/* wp_enqueue_media('media-upload');
-  wp_enqueue_media('thickbox');
-  wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
-  wp_enqueue_media('my-upload');
-  wp_enqueue_style('thickbox'); */
+use Abraham\TwitterOAuth\TwitterOAuth;
 
 class TT_Example_List_Table extends WP_List_Table {
-
-    public function insertUpdateEmail($request) {
-        var_dump($request);
-    }
 
     /**
      * TT_Example_List_Table constructor.
@@ -55,59 +19,19 @@ class TT_Example_List_Table extends WP_List_Table {
         ));
     }
 
-    /**
-     * Get a list of columns. The format is:
-     * 'internal-name' => 'Title'
-     *
-     * REQUIRED! This method dictates the table's columns and titles. This should
-     * return an array where the key is the column slug (and class) and the value
-     * is the column's title text. If you need a checkbox for bulk actions, refer
-     * to the $columns array below.
-     *
-     * The 'cb' column is treated differently than the rest. If including a checkbox
-     * column in your table you must create a `column_cb()` method. If you don't need
-     * bulk actions or checkboxes, simply leave the 'cb' entry out of your array.
-     *
-     * @see WP_List_Table::::single_row_columns()
-     * @return array An associative array containing column information.
-     */
     public function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
             'avatar' => _x('Foto', 'Foto', 'wp-list-table-example'),
             'title' => _x('Nome', 'Nome', 'wp-list-table-example'),
-            'email' => _x('Email', 'Column label', 'wp-list-table-example'),
-                //'whats' => _x('Whatsapp', 'Column label', 'wp-list-table-example'),
-                //'enterprise' => _x('Empresa', 'Column label', 'wp-list-table-example'),
-                //'tipo' => _x('Tipo', 'Column label', 'wp-list-table-example'),
-                //  'deplace' => _x('Fim', 'Column label', 'wp-list-table-example'),
-                //'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
+            'email' => _x('Apelido', 'Column label', 'wp-list-table-example'),
+            'desc' => _x('Informações', 'Column label', 'wp-list-table-example'),
+            'murl' => _x('Website', 'Column label', 'wp-list-table-example'),
         );
 
         return $columns;
     }
 
-    /**
-     * Get a list of sortable columns. The format is:
-     * 'internal-name' => 'orderby'
-     * or
-     * 'internal-name' => array( 'orderby', true )
-     *
-     * The second format will make the initial sorting order be descending
-     *
-     * Optional. If you want one or more columns to be sortable (ASC/DESC toggle),
-     * you will need to register it here. This should return an array where the
-     * key is the column that needs to be sortable, and the value is db column to
-     * sort by. Often, the key and value will be the same, but this is not always
-     * the case (as the value is a column name from the database, not the list table).
-     *
-     * This method merely defines which columns should be sortable and makes them
-     * clickable - it does not handle the actual sorting. You still need to detect
-     * the ORDERBY and ORDER querystring variables within `prepare_items()` and sort
-     * your data accordingly (usually by modifying your query).
-     *
-     * @return array An associative array containing all the columns that should be sortable.
-     */
     protected function get_sortable_columns() {
         $sortable_columns = array(
             'title' => array('title', false),
@@ -118,29 +42,6 @@ class TT_Example_List_Table extends WP_List_Table {
         return $sortable_columns;
     }
 
-    /**
-     * Get default column value.
-     *
-     * Recommended. This method is called when the parent class can't find a method
-     * specifically build for a given column. Generally, it's recommended to include
-     * one method for each column you want to render, keeping your package class
-     * neat and organized. For example, if the class needs to process a column
-     * named 'title', it would first see if a method named $this->column_title()
-     * exists - if it does, that method will be used. If it doesn't, this one will
-     * be used. Generally, you should try to use custom column methods as much as
-     * possible.
-     *
-     * Since we have defined a column_title() method later on, this method doesn't
-     * need to concern itself with any column with a name of 'title'. Instead, it
-     * needs to handle everything else.
-     *
-     * For more detailed insight into how columns are handled, take a look at
-     * WP_List_Table::single_row_columns()
-     *
-     * @param object $item        A singular item (one full row's worth of data).
-     * @param string $column_name The name/slug of the column to be processed.
-     * @return string Text or HTML to be placed inside the column <td>.
-     */
     protected function column_default($item, $column_name) {
         switch ($column_name) {
             case 'avatar':
@@ -148,6 +49,8 @@ class TT_Example_List_Table extends WP_List_Table {
             case 'email':
             case 'whats':
             case 'enterprise':
+            case 'desc':
+            case 'murl':
                 return $item[$column_name];
             default:
                 return print_r($item, true); // Show the whole array for troubleshooting purposes.
@@ -193,9 +96,9 @@ class TT_Example_List_Table extends WP_List_Table {
         // Build edit row action.
         //showPop(action,id)
         //trial cannot upload images
-        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Editar', 'Editar') . '</a>';
-        $actions['group'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#groups">' . _x('Grupos', 'Grupos') . '</a>';
-        $actions['notes'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#notes">' . _x('Adicionar nota', 'Add Nota') . '</a>';
+        //  $actions['general'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . ' ">' . _x('Editar', 'Editar') . '</a>';
+        //  $actions['group'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#groups">' . _x('Grupos', 'Grupos') . '</a>';
+        //  $actions['notes'] = '<a href="admin.php?page=app_guiafloripa_leads_add&pid=' . $item['ID'] . '#notes">' . _x('Adicionar nota', 'Add Nota') . '</a>';
         /* $actions['dates'] = '<a href="javascript:showPop(\'dates\',' . $item['ID'] . ')">' . _x('Datas') . '</a>';
           $actions['categ'] = '<a href="javascript:showPop(\'categ\',' . $item['ID'] . ')">' . _x('Categorias') . '</a>';
           $actions['location'] = '<a href="javascript:showPop(\'local\',' . $item['ID'] . ')">' . _x('Localização') . '</a>';
@@ -229,7 +132,7 @@ class TT_Example_List_Table extends WP_List_Table {
         $actions = array(
             //   'notes' => _x('Adicionar nota', 'List table bulk action', 'wp-list-table-example'),
             'group' => _x('Vincular grupo', 'List table bulk action', 'wp-list-table-example'),
-            'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
+                // 'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
                 //  'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
         );
 
@@ -249,20 +152,7 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function process_bulk_action() {
         global $wpdb; //This is used only if making any database queries
         // Detect when a bulk action is being triggered.
-        if ('delete' === $this->current_action()) {
-
-            // var_dump($_GET);
-            $lead = "";
-            foreach ($_POST['lead'] as $r1) {
-                $lead .= $r1 . ",";
-            }
-            $lead .= "-1";
-            $query = "DELETE FROM wp_usermeta WHERE user_id = " . get_current_user_id() . " and meta_key = '_myLeads' and meta_value in ($lead);";
-            $cp = $wpdb->get_results($query);
-            echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong>Sucesso. Os contatos selecionadas foram excluidas.</strong></p>
-                 </div>';
-        } else if ('group' === $this->current_action()) {
+        if ('group' === $this->current_action()) {
             include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
             $ec = new ContatosController();
             $leadsSelected = [];
@@ -314,7 +204,7 @@ class TT_Example_List_Table extends WP_List_Table {
                                     }
                                 }
 
-                                jQuery.ajax({
+                               /* jQuery.ajax({
                                     url: "admin-ajax.php?action=updateGroupsBatch",
                                     type: 'get',
                                     data: {
@@ -329,7 +219,7 @@ class TT_Example_List_Table extends WP_List_Table {
                                         mdialog.dialog("close");
                                     }
 
-                                });
+                                });*/
 
                             },
                             Cancelar: function () {
@@ -477,53 +367,57 @@ class TT_Example_List_Table extends WP_List_Table {
          * http://codex.wordpress.org/Class_Reference/wpdb
          */
 
-        $list = get_user_meta(get_current_user_id(), '_myLeads');
-        //var_dump($list);
-        //echo "<PRE>";
-        $ids = "";
-        foreach ($list as $id1) {
-            if (is_numeric($id1)) {
-                $ids .= $id1 . ",";
-            }
-        }
-        $ids .= "0";
-        // echo "</PRE>";
+        $wp_upload_dir = wp_upload_dir();
 
-        $query = "SELECT * FROM wp_users where ID in($ids) ";   // var_dump($wpdb);
-        //
-        if (isset($_POST['s'])) {
-            $query .= " AND (user_email like '%" . $_POST['s'] . "%' OR user_nicename like '%" . $_POST['s'] . "%' OR display_name like '%" . $_POST['s'] . "%')";
-        }
-        // echo $query;
-        $cp = $wpdb->get_results($query);
+        $filename = $wp_upload_dir['path'] . '/t1_' . get_current_user_id . '_' . date('d') . '.cache';
 
+        //echo $filename;
+        $myFollowers = null;
+        if (file_exists($filename)) {
+            $handle = fopen($filename, "r");
+            $contents = fread($handle, filesize($filename));
+            fclose($handle);
+            $myFollowers = unserialize($contents);
+            //var_dump($myFollowers);
+        } else {
+            $ck = get_user_meta(get_current_user_id(), '_ck', true);
+            $cs = get_user_meta(get_current_user_id(), '_cs', true);
+            $at = get_user_meta(get_current_user_id(), '_at', true);
+            $ac = get_user_meta(get_current_user_id(), '_ac', true);
+
+            $twitterConn = new TwitterOAuth($ck, $cs, $at, $ac);
+            // var_dump($twitterConn);
+            $myFollowers = $twitterConn->get("followers/list", ["count" => 200]);
+            $open = fopen($filename, "a");
+            $write = fputs($open, serialize($myFollowers));
+            fclose($open);
+        }
+
+        if (isset($myFollowers->errors)) {
+            echo '<div class="notice notice-error"> 
+                    <p><strong>O seguinte erro ocorreu.<code>' . $myFollowers->errors[0]->message . '</code> Verifique suas credenciais.</strong></p>
+                 </div>';
+            die;
+        }
+        //echo "<pre>";
+        // var_dump($myFollowers->users);
+        //  die;
         $vet = array();
-        foreach ($cp as $t) {
-            try {
-                $avatar = get_user_meta($t->ID, 'content_url', true);
-                $facebook_id = get_user_meta($t->ID, '_fb_user_id', true);
-                //echo $facebook_id;
-                if (empty($avatar)) {
-                    $token = md5(strtolower(trim($t->user_email)));
-                    $avatar = 'https://www.gravatar.com/avatar/' . $token;
-                }
-                if (!empty($facebook_id)) {
-                    $avatar = "https://graph.facebook.com/$facebook_id/picture";
-                }
-                //var_dump($tipo);
-                //  $whats = get_user_meta($t->ID, '_whatsapp');
-                $vet[] = array(
-                    'ID' => $t->ID,
-                    'title' => $t->display_name,
-                    'email' => $t->user_email,
-                    'avatar' => '<img alt="Foto de perfil" src="' . $avatar . '" class="avatar avatar-26 photo" height="26" width="26">',
-                );
-            } catch (WP_Error $e) {
-                var_dump($e);
-            }
+        foreach ($myFollowers->users as $follower) {
+            //var_dump($follower);
+            // die;
+            $vet[] = array(
+                'ID' => $follower->id,
+                'title' => $follower->name,
+                'email' => $follower->screen_name,
+                'desc' => $follower->description,
+                'murl' => '<a target=_BLANK alt="' . $follower->url . '" href="' . $follower->url . '">' . $follower->url . '</a>',
+                'avatar' => '<img alt="Foto de perfil" src="' . $follower->profile_image_url . '" class="avatar avatar-26 photo" height="26" width="26">',
+            );
         }
 
         $data = $vet;
+
 
         //  var_dump($data);die;
 

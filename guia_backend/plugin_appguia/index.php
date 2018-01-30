@@ -219,14 +219,13 @@ function findPlacesAjax() {
     die();
 }
 
-
-
 function importGmail() {
     include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
     $ec = new ContatosController();
     $ec->importGmail($_POST);
     die();
 }
+
 /**
  * @ajax for beach names
  * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
@@ -237,6 +236,17 @@ function findNickName() {
     echo $ec->getNickName($_GET['nick']);
     die();
 }
+
+/**
+ * @Ajax to save groups
+ */
+function updateGroupsBatch() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    $ec->updateGroupsBatch($_GET);
+    wp_die();
+}
+
 /**
  * @ajax for beach names
  * @Query = select id,post_title from wp_posts where id in (select post_id from wp_postmeta where meta_key = '_wp_page_template' and meta_value='praias-comerciais.php');
@@ -357,18 +367,18 @@ function wpse_91693_register() {
       ); */
     add_menu_page(
             'Meus Eventos', // page title
-            'Meus Eventos', // menu title
+            'Eventos', // menu title
             'read', // capability
             'app_guiafloripa_eventos', // menu slug
             'wpse_91693_events', null, 1
     );
-    add_submenu_page('app_guiafloripa_eventos', 'Seu calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
+    add_submenu_page('app_guiafloripa_eventos', 'Calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
     add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
     add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
     //add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
 
     add_menu_page(
-            'Contatos', // page title
+            'Meus Contatos', // page title
             'Contatos', // menu title
             'read', // capability
             'app_guiafloripa_leads', // menu slug
@@ -391,12 +401,12 @@ function wpse_91693_register() {
             'app_guiafloripa_push', // menu slug
             'wpse_91693_push', null, 5
     );
-    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Dispositivos Ativos', 'read', 'app_guiafloripa_push', 'wpse_91693_push',2);
-    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Minhas notificações', 'read', 'app_guiafloripa_push_list', 'app_guiafloripa_push_list',3);
-    add_submenu_page('app_guiafloripa_push', 'Acesso e Leitura das Notificações', 'Criar notificação', 'read', 'app_guiafloripa_push_add', 'app_guiafloripa_push_add',1);
-    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Estatísticas', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map',3);
+    add_submenu_page('app_guiafloripa_push', 'Dispositivos Ativos', 'Dispositivos Ativos', 'read', 'app_guiafloripa_push', 'wpse_91693_push', 2);
+    add_submenu_page('app_guiafloripa_push', 'Minhas notificações', 'Minhas notificações', 'read', 'app_guiafloripa_push_list', 'app_guiafloripa_push_list', 3);
+    add_submenu_page('app_guiafloripa_push', 'Criar notificação', 'Criar notificação', 'read', 'app_guiafloripa_push_add', 'app_guiafloripa_push_add', 1);
+    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Estatísticas', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map', 3);
     add_menu_page(
-            'Emails', // page title
+            'Lista de Email Marketing', // page title
             'Emails', // menu title
             'read', // capability
             'app_guiafloripa_mail', // menu slug
@@ -425,17 +435,19 @@ function wpse_91693_register() {
             'app_guiafloripa_twitter', // menu slug
             'wpse_91693_twitter', null, 4
     );
-    add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar Hashtag', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
+    add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
+    add_submenu_page('app_guiafloripa_twitter', 'Minhas Hashtags', ' Hashtags', 'read', 'app_guiafloripa_twitter', 'wpse_91693_twitter');
+    add_submenu_page('app_guiafloripa_twitter', 'Meus Seguidores', 'Seguidores', 'read', 'app_guiafloripa_twitter_followers', 'app_guiafloripa_twitter_followers');
 
     add_menu_page(
-            'Campanhas', // page title
+            'Minhas Campanhas', // page title
             'Campanhas', // menu title
             'read', // capability
             'app_guiafloripa_campaigns', // menu slug
             'wpse_91693_campaign', null, 6
     );
     //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
-    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_push_map');
+    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_campaigns_add');
 
 // add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
     //add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Sincronizar', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_render');
@@ -469,18 +481,30 @@ function app_guiafloripa_mail_add() {
     include_once PLUGIN_ROOT_DIR . 'views/email/page_add.php';
 }
 
+function app_guiafloripa_push_list() {
+    include_once PLUGIN_ROOT_DIR . 'views/notifications/note_grid.php';
+}
+
 function wpse_91693_push() {
     include_once PLUGIN_ROOT_DIR . 'views/notific.php';
 }
-
+function app_guiafloripa_twitter_followers(){
+       include_once PLUGIN_ROOT_DIR . 'views/contatos/followers.php';
+}
 function app_guiafloripa_twitter_cloud_tag() {
     include_once PLUGIN_ROOT_DIR . 'views/tpage_cloud.php';
+}
+
+function app_guiafloripa_push_add() {
+    include_once PLUGIN_ROOT_DIR . 'views/notifications/page_add.php';
 }
 
 function app_guiafloripa_leads_imp() {
     include PLUGIN_ROOT_DIR . 'views/contatos/page_imp.php';
 }
-
+function app_guiafloripa_campaigns_add(){
+    include PLUGIN_ROOT_DIR . 'views/campaign/page_add.php';
+}
 function app_guiafloripa_leads_add() {
     wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');
@@ -654,6 +678,15 @@ function add_email_dashboard_widgets() {
             'Meus Eventos', // Title.
             'events_dashboard_widget_content' // Display function.
     );
+}
+
+/**
+ * Contacts imported
+ */
+function leads_dashboard_widget_content() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    $data = $ec->getDashBoard();
 }
 
 /**
@@ -890,6 +923,7 @@ add_action('wp_ajax_findNeighoodAjax', 'findNeighoodAjax');
 add_action('wp_ajax_update_evento_data', 'update_evento_data');
 add_action('wp_ajax_insert_groups_profile', 'insert_groups_profile');
 add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
+add_action('wp_ajax_updateGroupsBatch', 'updateGroupsBatch');
 add_action('wp_ajax_findNickName', 'findNickName');
 add_action('wp_ajax_importGmail', 'importGmail');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');

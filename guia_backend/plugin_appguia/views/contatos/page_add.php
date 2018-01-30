@@ -6,7 +6,6 @@ $ec = new ContatosController();
 $profileId = $ec->saveUpdateProfile($_POST);
 // echo "<pre>";
 $lead = $ec->getLead($_GET);
-//var_dump($lead);
 ?>
 <a name="top"/>
 <div class="wrap">
@@ -15,6 +14,10 @@ $lead = $ec->getLead($_GET);
         <p>Gerencie seus contatos</p>
     </div>
     <hr/>
+    <?php
+    if (empty($lead))
+        $tot = $ec->getTotalLeadsOrDie();
+    ?>
     <form onsubmit="return validateLead()" id="terms-crud" onsubmit="return validate()" name="terms" action="admin.php?page=app_guiafloripa_leads_add&pid=<?php echo $_GET['pid'] ?>" method="post">
 
 
@@ -45,7 +48,7 @@ $lead = $ec->getLead($_GET);
                             <tr>
                                 <td class="first" style="text-align: right"><label for="name">Apelido</label></td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                    <input type="text" maxlength="40" name="nick" id="nick" spellcheck="true"  size="30" <?php echo empty($lead->info->nickname)?"":'readonly="true"'; ?>   placeholder="Apelido" value="<?php echo $lead->info->nickname; ?>" onblur="validateNick(this)">
+                                    <input type="text" maxlength="40" name="nick" id="nick" spellcheck="true"  size="30" <?php echo empty($lead->info->nickname) ? "" : 'readonly="true"'; ?>   placeholder="Apelido" value="<?php echo $lead->info->nickname; ?>" <?php echo empty($lead->info->nickname) ? 'onblur="validateNick(this)"' : ""; ?>>
                                     <br><span class="description" id="txtNick">O apelido deve ser único.</span>
                                 </td>
                                 <td class="first" style="text-align: right"><label for="name">Pessoa Jurídica?</label></td>
@@ -104,8 +107,10 @@ $lead = $ec->getLead($_GET);
                                 <td class="first" style="text-align: right">Complemento</td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                     <input type="text" name="comp" id="comp" spellcheck="true"  size="30"  placeholder="Apto 321"  value="<?php echo $lead->comp; ?>">
+                                    <input id="content_url" value="<?php echo $lead->content_url; ?>" name="content_url" type="hidden" readonly="readonly"/>
                                 </td>
                             </tr>
+                            '
                             <?php
                             if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
                                 ?>
@@ -114,7 +119,6 @@ $lead = $ec->getLead($_GET);
                                         Imagem de Perfil
                                     </td>
                                     <td colspan="3" style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                        <input id="content_url" value="<?php echo $lead->content_url; ?>" name="content_url" type="hidden" readonly="readonly"/>
                                         <input type="button" value="Selecione" class="button button-primary" style="width: 25%" onclick="upload_new_img(this)"/>   
                                         <a href="javascript:void(0);" onclick="remove_image(this);" style="width: 25%" class="button button-primary">Remover</a>
                                         <div id="imgPreview" style="margin-top: 20px"><img src="<?php echo $lead->content_url; ?>" style="max-width: 200px"/></div>
@@ -247,10 +251,6 @@ $lead = $ec->getLead($_GET);
 </div>
 <script>
     function validateNick(elemento) {
-        if(elemento.readonly===undefined){
-            return false;
-        }
-        // alert(elemento.value);
         var url = "admin-ajax.php?action=findNickName&nick=" + elemento.value;
         jQuery(function ($) {
             $.get(url, function (data, status) {

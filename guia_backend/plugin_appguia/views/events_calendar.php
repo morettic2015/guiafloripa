@@ -1,6 +1,6 @@
 <?php ?>
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Exportar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><!--<a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Exportar</a>--></h1>
 
     <div class="notice notice-info"> 
         <p>Calendário de <code>Eventos</code> vinculados ao seu perfil.</p>

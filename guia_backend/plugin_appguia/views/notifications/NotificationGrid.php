@@ -1,9 +1,8 @@
 <?php
 
-const FREEGEOIP = "https://freegeoip.net/json/";
-const ONESIGNAL = "https://onesignal.com/api/v1/";
-const ONE_SIGNAL_REST_API = "_onesignal_rest_api_key";
-const ONE_SIGNAL_APP_ID = "_onesignal_app_id";
+//995044427162-3i20lnkl1r4tp72hpqh7gcgb5tu9g5co.apps.googleusercontent.com
+//995044427162-frej7i577t6b40581cifugpssvdkhjkk.apps.googleusercontent.com
+//6QdxlcMCFfzcPRKG4ajFAJL8
 /**
  * WP List Table Example class
  *
@@ -30,7 +29,17 @@ const ONE_SIGNAL_APP_ID = "_onesignal_app_id";
  * @package WPListTableExample
  * @author  Matt van Andel
  */
-class NotificationsGrid extends WP_List_Table {
+/* wp_enqueue_media('media-upload');
+  wp_enqueue_media('thickbox');
+  wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+  wp_enqueue_media('my-upload');
+  wp_enqueue_style('thickbox'); */
+
+class TT_Example_List_Table extends WP_List_Table {
+
+    public function insertUpdateEmail($request) {
+        var_dump($request);
+    }
 
     /**
      * TT_Example_List_Table constructor.
@@ -41,8 +50,8 @@ class NotificationsGrid extends WP_List_Table {
     public function __construct() {
         // Set parent defaults.
         parent::__construct(array(
-            'singular' => 'push', // Singular name of the listed records.
-            'plural' => 'pushes', // Plural name of the listed records.
+            'singular' => 'campaign', // Singular name of the listed records.
+            'plural' => 'campaigns', // Plural name of the listed records.
             'ajax' => false, // Does this table support ajax?
         ));
     }
@@ -65,16 +74,14 @@ class NotificationsGrid extends WP_List_Table {
      */
     public function get_columns() {
         $columns = array(
-           // 'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
-            'title' => _x('Dispositivo', 'Hashtag de busca', 'wp-list-table-example'),
-            'follow' => _x('Primeira sessão', 'Seguir autor', 'wp-list-table-example'),
-            'rating' => _x('Última sessão', 'Adicionar aos favoritos', 'wp-list-table-example'),
-            'director' => _x('Sessões', 'Retwittar post', 'wp-list-table-example'),
-            'quote' => _x('Linguagem', 'Menção no retweet', 'wp-list-table-example'),
-            'ip' => _x('IP', 'Ignorar tweet', 'wp-list-table-example'),
-            'city' => _x('Cidade', 'Ignorar tweet', 'wp-list-table-example'),
-            'uf' => _x('UF', 'Ignorar tweet', 'wp-list-table-example'),
-            'pais' => _x('Pais', 'Ignorar tweet', 'wp-list-table-example'),
+            'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
+            'title' => _x('Titulo', 'Titulo', 'wp-list-table-example'),
+            'murl' => _x('Url', 'Titulo', 'wp-list-table-example'),
+                // 'director' => _x('Status', 'Column label', 'wp-list-table-example'),
+                // 'rating' => _x('Editado', 'Column label', 'wp-list-table-example'),
+                // 'category' => _x('Inicio', 'Column label', 'wp-list-table-example'),
+                //  'deplace' => _x('Fim', 'Column label', 'wp-list-table-example'),
+                //'published' => _x('Situação', 'Column label', 'wp-list-table-example'),
         );
 
         return $columns;
@@ -104,14 +111,9 @@ class NotificationsGrid extends WP_List_Table {
     protected function get_sortable_columns() {
         $sortable_columns = array(
             'title' => array('title', false),
-            'rating' => array('rating', false),
-            'follow' => array('follow', false),
-            'director' => array('director', false),
-            'ignore' => array('ignore', false),
-            'ip' => array('ignore', false),
-            'city' => array('ignore', false),
-            'uf' => array('ignore', false),
-            'pais' => array('ignore', false),
+                // 'url' => array('url', false),
+                //   'rating' => array('rating', false),
+                //   'director' => array('director', false),
         );
 
         return $sortable_columns;
@@ -142,15 +144,8 @@ class NotificationsGrid extends WP_List_Table {
      */
     protected function column_default($item, $column_name) {
         switch ($column_name) {
-            case 'rating':
-            case 'director':
-            case 'quote':
-            case 'follow':
-            case 'ignore':
-            case 'ip':
-            case 'uf':
-            case 'city':
-            case 'pais':
+            case 'murl':
+            case 'title':
                 return $item[$column_name];
             default:
                 return print_r($item, true); // Show the whole array for troubleshooting purposes.
@@ -193,43 +188,16 @@ class NotificationsGrid extends WP_List_Table {
      */
     protected function column_title($item) {
         $page = wp_unslash($_REQUEST['page']); // WPCS: Input var ok.
-        $delete_query_args = array(
-            'page' => $page,
-            'action' => 'segment',
-            'push' => $item['ID'],
-        );
-
-     /*   $actions['segment'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Agrupar', 'List table row action', 'wp-list-table-example')
-        );*/
-
-        // Return the title contents.
-        return sprintf('%1$s <br><span style="color:silver;font-size:10px">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
-        );
+        $actions['general'] = '<a href="admin.php?page=app_guiafloripa_push_add&id=' . $item['ID'] . ' ">' . _x('Editar') . '</a>';
+        return sprintf('%1$s <span style="color:silver;">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions));
     }
 
-    /**
-     * Get an associative array ( option_name => option_title ) with the list
-     * of bulk actions available on this table.
-     *
-     * Optional. If you need to include bulk actions in your list table, this is
-     * the place to define them. Bulk actions are an associative array in the format
-     * 'slug'=>'Visible Title'
-     *
-     * If this method returns an empty value, no bulk action will be rendered. If
-     * you specify any bulk actions, the bulk actions box will be rendered with
-     * the table automatically on display().
-     *
-     * Also note that list tables are not automatically wrapped in <form> elements,
-     * so you will need to create those manually in order for bulk actions to function.
-     *
-     * @return array An associative array containing all the bulk actions.
-     */
     protected function get_bulk_actions() {
         $actions = array(
-          //  'segment' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
-          //  'export' => _x('Enviar Mensagem', 'List table bulk action', 'wp-list-table-example'),
+            'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
+                //         'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
         );
+
 
         return $actions;
     }
@@ -244,34 +212,31 @@ class NotificationsGrid extends WP_List_Table {
      * @see $this->prepare_items()
      */
     protected function process_bulk_action() {
-        global $wpdb;
+        global $wpdb; //This is used only if making any database queries
         // Detect when a bulk action is being triggered.
+        if ('delete' === $this->current_action()) {
+            $campaign = "";
+            foreach ($_GET['campaign'] as $r1) {
+                $campaign .= $r1 . ",";
+            }
+            $campaign .= "-1";
+            $query = "delete FROM wp_posts where post_type = 'notification' and post_author = " . get_current_user_id() . " and ID in ($campaign)";
+            $cp = $wpdb->get_results($query);
+            $query = "delete FROM wp_postmeta where post_id in ($campaign)";
+            $cp = $wpdb->get_results($query);
+            echo '<div class="notice notice-success is-dismissible">
+              <p><strong>Sucesso. As notificações selecionadas foram excluidas.</strong></p>
+              </div>';
+        }
     }
 
-    /**
-     * Prepares the list of items for displaying.
-     *
-     * REQUIRED! This is where you prepare your data for display. This method will
-     * usually be used to query the database, sort and filter the data, and generally
-     * get it ready to be displayed. At a minimum, we should set $this->items and
-     * $this->set_pagination_args(), although the following properties and methods
-     * are frequently interacted with here.
-     *
-     * @global wpdb $wpdb
-     * @uses $this->_column_headers
-     * @uses $this->items
-     * @uses $this->get_columns()
-     * @uses $this->get_sortable_columns()
-     * @uses $this->get_pagenum()
-     * @uses $this->set_pagination_args()
-     */
     function prepare_items() {
         global $wpdb; //This is used only if making any database queries
 
         /*
          * First, lets decide how many records per page to show
          */
-        $per_page = 20;
+        $per_page = 15;
 
         /*
          * REQUIRED. Now we need to define our column headers. This includes a complete
@@ -299,114 +264,37 @@ class NotificationsGrid extends WP_List_Table {
         $this->process_bulk_action();
 
 
+        $query = "SELECT * FROM wp_posts where post_type = 'notification' and post_author = " . get_current_user_id();   // var_dump($wpdb);
+        // echo $query;
+        $cp = $wpdb->get_results($query);
+        //var_dump($twitterMeta);
+        //
+        //
+        $vet = array();
+        foreach ($cp as $t) {
+            // var_dump($t);
+            //$obj = json_decode($t->meta_value);
+            //var_dump($obj);
 
-        $OneSignalWPSetting = get_option('OneSignalWPSetting');
-//var_dump($OneSignalWPSetting);
-        $OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
-        $OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
-        $pluginList = get_option('active_plugins');
-        $plugin = 'onesignal-free-web-push-notifications/onesignal.php';
-        if (in_array($plugin, $pluginList) && $OneSignalWPSetting_app_id && $OneSignalWPSetting_rest_api_key) {
-            //$onesignal_extra_info = get_option('oss_settings_page');
-            $args = array(
-                'headers' => array(
-                    'Authorization' => 'Basic ' . $OneSignalWPSetting_rest_api_key,
-                    'Cache-Control' => 'max-age=31536000'
-                )
+
+
+            $lnk = "<a href='https://twitter.com/search?q=" . urlencode($obj->hashtag) . "&src=typd' target='_blank'>" . $obj->hashtag . "</a>";
+            $link = get_post_meta($t->ID, "_note_link", true);
+            $vet[] = array(
+                'ID' => $t->ID,
+                'title' => $t->post_title,
+                'murl' => '<a href="' . $link . '" target="_blank">' . $link . '</a>',
+                    // 'director' => $ret,
+                    //  'quote' => $quo,
+                    //   'follow' => $fol,
+                    //  'ignore' => $ign,
             );
-            $url = ONESIGNAL . "players?app_id=" . $OneSignalWPSetting_app_id . "&limit=500&offset=0";
-            $response = wp_remote_get($url, $args);
-            $response_to_arrays = json_decode(wp_remote_retrieve_body($response), true);
-            //var_dump($response_to_arrays);
-            //Verify if has keys
-            $user_custom_api_key = get_user_meta(get_current_user_id(), ONE_SIGNAL_REST_API, true);
-            
-            //var_dump($user_custom_api_key);die;
-            $user_custom_app_id = get_user_meta(get_current_user_id(), ONE_SIGNAL_APP_ID, true);
-            if (!empty($user_custom_api_key) && !empty($user_custom_api_key)) {
-                $args = array(
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . $user_custom_api_key,
-                        'Cache-Control' => 'max-age=31536000'
-                    )
-                );
-               // echo "Não tem a porra da chave..... mane";
-                $url = ONESIGNAL . "players?app_id=" . $user_custom_app_id . "&limit=500&offset=0";
-                $response1 = wp_remote_get($url, $args);
-                $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response1), true);
-                //echo "<pre>";
-                //var_dump($response_to_arrays1);
-                //die;
-                $total = array_merge($response_to_arrays['players'], $response_to_arrays1['players']);
-                // echo(count($response_to_arrays1));
-                // var_dump($response_to_arrays1);die;
-                $response_to_arrays = $total;
-                
-               // var_dump($response_to_arrays);die;
-                //echo(count($response_to_arrays));die;
-            }else{
-                $response_to_arrays = $response_to_arrays['players'];
-            }
-            //echo $user_custom_api_key;die;
-            //ar_dump($user_custom_api_key);die;
-            $response_counter = 0;
-            $vet = [];
-            foreach (array_reverse($response_to_arrays) as $response_array) {
-
-                //  echo "<pre>";
-                //   var_dump($response_array);die;
-                $ip = $response_array['ip'];
-                $user_sessions = $response_array['session_count'];
-                $user_language = $response_array['language'];
-                $user_device = $response_array['device_model'];
-                $user_status = $response_array['invalid_identifier'];
-                $final_readable_last_active = date('d/m/y h:i:s', $response_array['last_active']);
-                $final_readable_first_session = date('d/m/y h:i:s', $response_array['created_at']);
-                $did = $response_array['id'];
-                $geo = get_option($ip);
-
-                if ($geo === false) {
-                    $urlFreeGeoIp = FREEGEOIP . $ip;
-                    $args = array('headers' => array(
-                            'If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT',
-                            'Cache-Control: max-age=31536000',
-                        ),
-                    );
-                    $r1 = wp_remote_get($urlFreeGeoIp, $args);
-                    $jsGeo = json_decode(wp_remote_retrieve_body($r1), true);
-                    //Save IP to Wp_options //lesss io resource...faster from database
-                    add_option($ip, json_encode($jsGeo), '', false);
-                    //var_dump($jsGeo);
-                } else {
-                    $jsGeo = get_object_vars(json_decode($geo));
-                }
-
-                $obj = json_decode($t->meta_value);
-                //var_dump($obj);
-
-
-                $vet[] = array(
-                    'ID' => $did,
-                    'title' => $user_device,
-                    'rating' => $final_readable_last_active,
-                    'director' => $user_sessions,
-                    'quote' => $user_language,
-                    'follow' => $final_readable_first_session,
-                    'ignore' => $ign,
-                    'ip' => $ip,
-                    'city' => $jsGeo['city'],
-                    'uf' => $jsGeo['region_name'],
-                    'pais' => $jsGeo['country_code'],
-                );
-            }
         }
 
-
-        //  foreach ($twitterMeta as $t) {
-        //var_dump($t);
-        //   }
-
         $data = $vet;
+
+        // var_dump($data);die;
+
         /*
          * This checks for sorting input and sorts the data in our array of dummy
          * data accordingly (using a custom usort_reorder() function). It's for 
@@ -477,8 +365,4 @@ class NotificationsGrid extends WP_List_Table {
         return ( 'asc' === $order ) ? $result : - $result;
     }
 
-}
-
-function isSerialized($str) {
-    return ($str == serialize(false) || @unserialize($str) !== false);
 }
