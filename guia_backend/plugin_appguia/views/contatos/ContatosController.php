@@ -83,6 +83,68 @@ class ContatosController {
         return $total;
     }
 
+    public function importOutlook($request) {
+        global $wpdb;
+        $gContacts = json_decode($_SESSION['contacts_outlook']);
+        $list = json_decode(str_replace('\\', "", str_replace('"', "", $request['ids'])));
+        $totalAtLeas = $this->getTotalLeadsOrDie();
+
+        if (count($list) > $totalAtLeas) {
+            echo "{'error':'Limite ultrapassado'}";
+            wp_die();
+        }
+
+        foreach ($list as $id) {
+            $totalAtLeas--;
+            //echo $gContacts[$id - 1]->email;
+            $query1 = "SELECT count(*) as total,ID  FROM wp_users WHERE (user_email) = ('" . $gContacts[$id - 1]->emailAddresses[0]->address . "')";
+            //echo $query1;
+            $hasLead = $wpdb->get_results($query1);
+            //var_dump($hasLead);
+            if ($hasLead[0]->total > 0) {
+                add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($hasLead[0]->ID), false);
+            } else {
+                //var_dump($gContacts[$id - 1]);
+                $stripMail = sanitize_title($gContacts[$id - 1]->emailAddresses[0]->address);
+                $userdata = array(
+                    'user_login' => $stripMail,
+                    'user_nicename' => is_null($gContacts[$id - 1]->displayName)?:sanitize_title($gContacts[$id - 1]->displayName),
+                    'user_url' => count($gContacts[$id - 1]->websites) > 0 ? $gContacts[$id - 1]->websites[0]->address : "",
+                    'user_email' => sanitize_email($gContacts[$id - 1]->emailAddresses[0]->address),
+                    'first_name' => is_null($gContacts[$id - 1]->givenName) ? "" : $gContacts[$id - 1]->givenName,
+                    'nickname' => is_null($gContacts[$id - 1]->displayName) ? "" : sanitize_title($gContacts[$id - 1]->displayName),
+                    'last_name' => is_null($gContacts[$id - 1]->surname) ? "" : $gContacts[$id - 1]->surname,
+                    'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
+                );
+                $user_id = wp_insert_user($userdata);
+                //echo $user_id;
+                if (count($gContacts[$id - 1]->phones) > 0) {
+                    update_user_meta($user_id, 'comercial', $gContacts[$id - 1]->phones[0]->number);
+                }
+                //var_dump($gContacts[$id - 1]->phoneNumber);
+                if (count($gContacts[$id - 1]->phones) > 1) {
+                    update_user_meta($user_id, 'fixo', $gContacts[$id - 1]->phones[1]->number);
+                }
+                //var_dump($gContacts[$id - 1]->phoneNumber);
+                if (count($gContacts[$id - 1]->phones) > 2) {
+                    update_user_meta($user_id, '_whatsapp', $gContacts[$id - 1]->phones[1]->number);
+                }
+                $address = count($gContacts[$id - 1]->postalAddresses) > 0 ? $gContacts[$id - 1]->postalAddresses[0]->address->city : "";
+                update_user_meta($user_id, 'actor', $gContacts[$id - 1]->title);
+                update_user_meta($user_id, 'organization', $gContacts[$id - 1]->companyName);
+                //update_user_meta($user_id, 'content_url', $gContacts[$id - 1]->avatar);
+                update_user_meta($user_id, 'description', $gContacts[$id - 1]->personNotes);
+                update_user_meta($user_id, 'address', $address);
+                update_user_meta($user_id, '_outlook', $gContacts[$id - 1]->id);
+                add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
+            }
+            if ($totalAtLeas == 0)
+                break;
+        }
+        $wpdb->close();
+        echo $totalAtLeas;
+    }
+
     public function importGmail($request) {
         global $wpdb;
         $gContacts = json_decode($_SESSION['gContacts']);
@@ -379,36 +441,36 @@ class ContatosController {
         $total = $max - count($cp);
         ?>
 
-      <!--  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
-        <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> -->
-        
-        <h3>Você tem <?php echo count($cp); ?> contatos de <?php echo $max; ?> possíveis para o seu plano</h3>
-       <!-- <div id="graph1" style="height: 180px;width: 100%"></div>
-        <script>
-         /*   Morris.Donut({
-                element: 'graph1',
-                data: [
-                    {value: <?php echo $max; ?>, label: 'Total do Plano'},
-                    {value: <?php echo count($cp); ?>, label: 'Cadastrados'},
-                ],
-                backgroundColor: '#ccc',
-                labelColor: '#f79129',
-                colors: [
-                    '#2499c8',
-                    '#f79129',
-                    '#a4ce3f',
-                    '#c0358a',
-                ],
-                formatter: function (x) {
-                    return x;
-                }
-            });*/
+        <!--  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
+          <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+          <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+          <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> -->
 
-            //document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
-        </script> -->
+        <h3>Você tem <?php echo count($cp); ?> contatos de <?php echo $max; ?> possíveis para o seu plano</h3>
+        <!-- <div id="graph1" style="height: 180px;width: 100%"></div>
+         <script>
+          /*   Morris.Donut({
+                 element: 'graph1',
+                 data: [
+                     {value: <?php echo $max; ?>, label: 'Total do Plano'},
+                     {value: <?php echo count($cp); ?>, label: 'Cadastrados'},
+                 ],
+                 backgroundColor: '#ccc',
+                 labelColor: '#f79129',
+                 colors: [
+                     '#2499c8',
+                     '#f79129',
+                     '#a4ce3f',
+                     '#c0358a',
+                 ],
+                 formatter: function (x) {
+                     return x;
+                 }
+             });*/
+
+             //document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
+         </script> -->
 
         <?php
     }

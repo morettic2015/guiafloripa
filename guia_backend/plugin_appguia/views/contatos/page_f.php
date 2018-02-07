@@ -1,7 +1,23 @@
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-    <form id="movies-filter">
-
+    <form id="movies-filter" method="post">
+        <p class="search-box">
+            <label class="screen-reader-text" for="f_group">Filtrar por grupos</label> 
+            <select id="search_id-search-input" name="f_group">
+                <option value="">Filtrar por grupo</option>
+                <?php
+                include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+                $cc = new ContatosController();
+                $_myGroups = $cc->getUserGroups();
+                foreach ($_myGroups as $opt) {
+                    ?>
+                    <option value="<?php echo $opt; ?>">
+                        <?php echo strtoupper($opt); ?>
+                    </option>
+                <?php } ?>
+            </select>
+            <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
+        </p>
         <div class="notice notice-info"> 
             <p>Lista de <code>Seguidores do Twitter</code>.</p>
         </div>

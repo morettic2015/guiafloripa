@@ -93,7 +93,15 @@ function extra_user_profile_fields($user) {
     </table>
     <a name="twitter"/>
     <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
-
+   
+    <ul>
+        <li>1) No <a href="https://apps.twitter.com/" target="_blank">Gerenciador de aplicativos do Twitter</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
+        <li>2) Na guia 'Permissões', selecione 'Ler, Escrever e acessar mensagens diretas' na área 'Acesso' e clique em 'Configurações de atualização'.</LI>
+        <li>3) Na guia 'Chave e toques de acesso', clique no botão 'Criar meu token de acesso'.</LI>
+        <li>4) Digite o nome de usuário do botão no respectivo campo abaixo.</LI>
+        <li>5) Na guia 'Chave e Acesso Tokens', copie a Chave do Consumidor, o Segredo do Consumidor, o Token de Acesso e o Token de Acesso segure e cole nos respectivos campos abaixo.</LI>
+    </ul>
+  
 
     <table class="form-table">
         <tr>
@@ -223,6 +231,13 @@ function importGmail() {
     include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
     $ec = new ContatosController();
     $ec->importGmail($_POST);
+    die();
+}
+
+function importOutlook() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
+    $ec = new ContatosController();
+    $ec->importOutlook($_POST);
     die();
 }
 
@@ -488,9 +503,11 @@ function app_guiafloripa_push_list() {
 function wpse_91693_push() {
     include_once PLUGIN_ROOT_DIR . 'views/notific.php';
 }
-function app_guiafloripa_twitter_followers(){
-       include_once PLUGIN_ROOT_DIR . 'views/contatos/followers.php';
+
+function app_guiafloripa_twitter_followers() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/followers.php';
 }
+
 function app_guiafloripa_twitter_cloud_tag() {
     include_once PLUGIN_ROOT_DIR . 'views/tpage_cloud.php';
 }
@@ -502,9 +519,11 @@ function app_guiafloripa_push_add() {
 function app_guiafloripa_leads_imp() {
     include PLUGIN_ROOT_DIR . 'views/contatos/page_imp.php';
 }
-function app_guiafloripa_campaigns_add(){
+
+function app_guiafloripa_campaigns_add() {
     include PLUGIN_ROOT_DIR . 'views/campaign/page_add.php';
 }
+
 function app_guiafloripa_leads_add() {
     wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');
@@ -678,6 +697,40 @@ function add_email_dashboard_widgets() {
             'Meus Eventos', // Title.
             'events_dashboard_widget_content' // Display function.
     );
+}
+
+function events_dashboard_widget_content() {
+    ?>
+
+    <div id="piechart" style="width: 100%; height: 300px;"></div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Work', 11],
+                ['Eat', 2],
+                ['Commute', 2],
+                ['Watch TV', 2],
+                ['Sleep', 7]
+            ]);
+
+            var options = {
+                title: 'My Daily Activities'
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
+
+    <?php
 }
 
 /**
@@ -926,6 +979,7 @@ add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_updateGroupsBatch', 'updateGroupsBatch');
 add_action('wp_ajax_findNickName', 'findNickName');
 add_action('wp_ajax_importGmail', 'importGmail');
+add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');

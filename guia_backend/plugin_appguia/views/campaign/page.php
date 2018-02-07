@@ -1,5 +1,5 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_eventos_add" class="page-title-action">Criar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_campaigns_add" class="page-title-action">Criar</a></h1>
 
     <div class="notice notice-info"> 
         <p>Suas <code>Campanhas</code> de Marketing Digital.</p>

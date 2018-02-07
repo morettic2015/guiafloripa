@@ -15,6 +15,9 @@
         } else if ($_GET['source'] === "csv") {
             include_once PLUGIN_ROOT_DIR . 'views/contatos/Csv.php';
             wp_die('CSV');
+        } else if ($_GET['source'] === "outlook") {
+            include_once PLUGIN_ROOT_DIR . 'views/contatos/outlook.php';
+            //wp_die();
         }
     } else {
         ?>
@@ -24,20 +27,20 @@
                     <tbody>
 
                         <tr>
-                    <!--        <td><center><h1>Outlook</h1></center></td> -->
+                          <td><center><h1>Outlook</h1></center></td>
                             <td><center><h1>Gmail</h1></center></td>
                          <!--   <td><center><h1>Yahoo Mail</h1></center></td> -->
                     <td><center><h1>Arquivo Texto</h1></center></td>
                     </tr>
                     <tr>
-                  <!--      <td><a href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=000000004C17D3C1&redirect_uri=https://app.guiafloripa.com.br/wp-content/plugins/plugin_appguia/views/contatos/outlook.php&response_type=code&scope=Contacts.Read"><center><img style="width: 100%;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/outlook.jpg"/></a></center></td>
-                        -->     <td><a href="admin.php?page=app_guiafloripa_leads_imp&source=google"><center><img style="width: 100%;max-width: 240px;;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/google1.png"/></a></center></td>
+                        <td><a href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=17f5eff2-d613-4483-8119-32d48eb5aeb4&redirect_uri=https://app.guiafloripa.com.br/wp-content/plugins/plugin_appguia/views/contatos/outlook.php&response_type=code&scope=Contacts.Read"><center><img style="width: 100%;max-width: 240px;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/outlook.jpg"/></a></center></td>
+                           <td><a href="admin.php?page=app_guiafloripa_leads_imp&source=google"><center><img style="width: 100%;max-width: 240px;;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/google1.png"/></a></center></td>
                       <!--       <td><a href="#"><center><img style="width: 100%;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/yahoo.png"/></a></center></td>
                         -->      <td><a href="admin.php?page=app_guiafloripa_leads_imp&source=csv"><center><img style="width: 100%;max-width: 240px;border: 1px;border-style: dotted" src="../wp-content/uploads/2018/01/csv.png"/></a></center></td>
                     </tr>
                     <tr>
-                  <!--      <td style="width: 25%;border: 1px"><center><p>Autorize sua conta do Outlook Microsoft para Importar seus contatos e sincronize seus Leads.</p></center></td>
-                        --> <td style="width: 25%;border: 1px"><center><p>Autorize o APP Guia Floripa a acessar os seus contatos e sincronize seus Leads</p></center></td>
+                       <td style="width: 25%;border: 1px"><center><p>Autorize sua conta do Outlook Microsoft para Importar seus contatos e sincronize seus Leads.</p></center></td>
+                         <td style="width: 25%;border: 1px"><center><p>Autorize o APP Guia Floripa a acessar os seus contatos e sincronize seus Leads</p></center></td>
                     <!--<td style="width: 25%;border: 1px"<center><p>Autorize o APP Guia Floripa a acessar os seus contatos no Yahoo e sincronize seus Lead</p></center></td>
                     -->  <td style="width: 25%;border: 1px"><center><p>Selecione uma planilha com delimitador de campos e cabeçalho. Assim podemos mapear os campos durante a importação.<p><a href="https://docs.google.com/spreadsheets/d/1UhxNISbwdNmRHmUHg4v2i5LJZVK5UBsJXErpU_HUuY8/edit?usp=sharing" class="page-title-action" target="_BLANK">Planilha de exemplo</a></p></p></center></td>
 

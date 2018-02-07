@@ -152,11 +152,13 @@ class TT_Example_List_Table extends WP_List_Table {
     protected function process_bulk_action() {
         global $wpdb; //This is used only if making any database queries
         // Detect when a bulk action is being triggered.
+        //echo $this->current_action();
         if ('group' === $this->current_action()) {
             include_once PLUGIN_ROOT_DIR . 'views/contatos/ContatosController.php';
             $ec = new ContatosController();
             $leadsSelected = [];
             //foreach ($_GET['lead'])
+            // var_dump($_POST['lead']);
             foreach ($_POST['lead'] as $l1) {
                 $leadsSelected[] = $l1;
             }
@@ -204,23 +206,16 @@ class TT_Example_List_Table extends WP_List_Table {
                                     }
                                 }
 
-                               /* jQuery.ajax({
-                                    url: "admin-ajax.php?action=updateGroupsBatch",
-                                    type: 'get',
-                                    data: {
-                                        groupName: encodeURI(JSON.stringify(groupsList)),
-                                        leadsList: <?php echo json_encode($leadsSelected); ?>
-                                    },
-                                    success: function (response) {
-                                        mdialog.dialog("close");
-                                    },
-                                    error: function (e) {
-                                        alert(e);
-                                        mdialog.dialog("close");
-                                    }
+                                var x = document.forms[0].action;
+                                var option = document.createElement("option");
+                                option.text = "Agrupar....";
+                                option.value = "make";
+                                x.add(option);
 
-                                });*/
+                                $("#movies-filter").append('<input type="text" name="myGroups1" value=\'' + JSON.stringify(groupsList) + '\'/>');
 
+                                document.forms[0].action.value = "make";
+                                document.forms[0].submit();
                             },
                             Cancelar: function () {
                                 $(this).dialog("close");
@@ -296,6 +291,28 @@ class TT_Example_List_Table extends WP_List_Table {
                 }
             </script>
             <?php
+        } else if ('make' === $this->current_action()) {
+            //echo "<pre>";
+            //var_dump($_POST['lead']);
+            $groups = $_POST['myGroups1'];
+            $groups = str_replace('\\', "", $groups);
+            //echo $groups;
+
+            $jsonGroups = json_decode($groups);
+            foreach ($jsonGroups as $tkGroup) {
+                $token = "_tweet_" . $tkGroup;
+                foreach ($_POST['lead'] as $idLead) {
+                    $query = "delete FROM wp_usermeta where meta_key = '$token' and meta_value = '$idLead' and user_id = " . get_current_user_id();
+                    //echo $query;
+                    $twitterMeta = $wpdb->get_results($query);
+                    //var_dump($twitterMeta);
+                    $l = add_user_meta(get_current_user_id(), $token, $idLead, false);
+                }
+            }
+
+            echo '<div class="notice notice-success"> 
+                    <p><strong>Contatos do twitter vinculados aos grupos selecionados.</strong></p>
+                 </div>';
         }
     }
 
@@ -369,17 +386,21 @@ class TT_Example_List_Table extends WP_List_Table {
 
         $wp_upload_dir = wp_upload_dir();
 
-        $filename = $wp_upload_dir['path'] . '/t1_' . get_current_user_id . '_' . date('d') . '.cache';
+        $filename = $wp_upload_dir['path'] . '/t2_' . get_current_user_id . '_' . date('d_m_y') . '.cache';
 
         //echo $filename;
         $myFollowers = null;
         if (file_exists($filename)) {
+            //echo "cache";
             $handle = fopen($filename, "r");
             $contents = fread($handle, filesize($filename));
             fclose($handle);
             $myFollowers = unserialize($contents);
-            //var_dump($myFollowers);
+            echo '<div class="notice notice-warning"> 
+                    <p><strong>Contatos do twitter carregados do cache. Proxima sincronização em 24 horas</strong></p>
+                 </div>';
         } else {
+            //echo "live";
             $ck = get_user_meta(get_current_user_id(), '_ck', true);
             $cs = get_user_meta(get_current_user_id(), '_cs', true);
             $at = get_user_meta(get_current_user_id(), '_at', true);
@@ -388,9 +409,23 @@ class TT_Example_List_Table extends WP_List_Table {
             $twitterConn = new TwitterOAuth($ck, $cs, $at, $ac);
             // var_dump($twitterConn);
             $myFollowers = $twitterConn->get("followers/list", ["count" => 200]);
+            $myFollowers1 = $myFollowers;
+            $hasMore = true;
+            while ($hasMore) {
+                if ($myFollowers1->next_cursor > 0) {
+                    $myFollowers1 = $twitterConn->get("followers/list", ["count" => 200, "cursor" => $myFollowers1->next_cursor]);
+                    $myFollowers->users = array_merge($myFollowers->users, $myFollowers1->users);
+                } else {
+                    $hasMore = false;
+                }
+            }
+
             $open = fopen($filename, "a");
             $write = fputs($open, serialize($myFollowers));
             fclose($open);
+            echo '<div class="notice notice-warning"> 
+                    <p><strong>Contatos do twitter sincronizados.<br> O cache criado expira em 24 horas.</strong></p>
+                 </div>';
         }
 
         if (isset($myFollowers->errors)) {
@@ -402,10 +437,20 @@ class TT_Example_List_Table extends WP_List_Table {
         //echo "<pre>";
         // var_dump($myFollowers->users);
         //  die;
-        $vet = array();
+        //var_dump($_POST);//die;
+        $token = "_tweet_" . strtoupper($_POST['f_group']);
+        //echo $token;
+        $lFilter = get_user_meta(get_current_user_id(), $token, false);
+        ;
+        //var_dump($lFilter);
+
         foreach ($myFollowers->users as $follower) {
             //var_dump($follower);
             // die;
+            if (isset($_POST['f_group'])&&$_POST['f_group']!==""&&!in_array($follower->id, $lFilter)) {
+                continue;
+            }
+
             $vet[] = array(
                 'ID' => $follower->id,
                 'title' => $follower->name,

@@ -1,4 +1,7 @@
 <?php
+
+use Abraham\TwitterOAuth\TwitterOAuth;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -185,36 +188,19 @@ class TwitterControl {
         if ($isFine === true) {
             echo '<p><strong class="notice-info">Credenciais do twitter salvas com sucesso.</strong></p>';
         }
-        $t_ac = get_user_meta(get_current_user_id(), IC, false);
-        if (empty($t_ac[0])) {
-            echo '<p><strong>Credenciais ainda nao verificadas. <a href="#">Testar conexão</a></strong></p>';
+        $ck = get_user_meta(get_current_user_id(), '_ck', true);
+        $cs = get_user_meta(get_current_user_id(), '_cs', true);
+        $at = get_user_meta(get_current_user_id(), '_at', true);
+        $ac = get_user_meta(get_current_user_id(), '_ac', true);
+        if (empty($ck) || empty($cs) || empty($at) || empty($ac)) {
+            echo '<p><strong>Credenciais ainda nao verificadas. <a href="#">Testar conexão 11</a></strong></p>';
         } else {//Show Usage Chart
-            ?>
-            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
-            <link href="<?php echo plugins_url('css/gijgo.css', __FILE__); ?>" rel="stylesheet" type="text/css" />
-            <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-            <script src="<?php echo plugins_url('js/gijgo.js', __FILE__); ?>" type="text/javascript"></script>
-            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-            <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-            <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-            <div id="graph"></div>
-            <script>
-                Morris.Bar({
-                    element: 'graph',
-                    data: [
-                        {x: 'Mensagens enviadas', a: 100},
-                        {x: 'Leads importados', a: 75},
-                        {x: 'Tweets favoritados', a: 50},
-                        {x: 'Retweets', a: 75},
-                        {x: 'Seguidores', a: 50},
-                        {x: 'Seguindo', a: 75}
-                    ],
-                    xkey: 'x',
-                    ykeys: ['a'],
-                    labels: ['Series A']
-                });
-            </script>
-            <?php
+            // echo $cs; die;
+            //$connection = new TwitterOAuth($ck, $cs, $at, $ac);
+            //$messages = $connection->post("direct_messages/new", ["screen_name" => "CitywatchBot", "text" => "Este é um teste"]);
+
+            //var_dump($messages);
+            echo '<p><strong>Conectado com o seu APP no Twitter!</p>';
         }
     }
 

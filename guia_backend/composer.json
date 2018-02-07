@@ -14,7 +14,8 @@
         "geocoder-php/geonames-provider": "dev-master",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/locationiq-provider": "dev-master",
-        "google/apiclient": "v2.2.1"
+        "google/apiclient": "v2.2.1",
+        "paulao-dev/chat-bot-php-facebook": "dev-master"
     },
     "require-dev": {
         "abraham/twitteroauth": "0.7.4"
