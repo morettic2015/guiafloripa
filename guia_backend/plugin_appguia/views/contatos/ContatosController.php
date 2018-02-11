@@ -85,64 +85,77 @@ class ContatosController {
 
     public function importOutlook($request) {
         global $wpdb;
-        $gContacts = json_decode($_SESSION['contacts_outlook']);
+        $gContacts = $_SESSION['searchArray'];
         $list = json_decode(str_replace('\\', "", str_replace('"', "", $request['ids'])));
         $totalAtLeas = $this->getTotalLeadsOrDie();
-
         if (count($list) > $totalAtLeas) {
             echo "{'error':'Limite ultrapassado'}";
             wp_die();
         }
-
+       
         foreach ($list as $id) {
             $totalAtLeas--;
+            $leadOutlookImport = $gContacts[$id-1];
             //echo $gContacts[$id - 1]->email;
-            $query1 = "SELECT count(*) as total,ID  FROM wp_users WHERE (user_email) = ('" . $gContacts[$id - 1]->emailAddresses[0]->address . "')";
-            //echo $query1;
+            $query1 = "SELECT count(*) as total,ID  FROM wp_users WHERE (user_email) = ('" . $leadOutlookImport->emailAddresses[0]->address . "')";
+            // echo $query1;die;
             $hasLead = $wpdb->get_results($query1);
+
+            //var_dump($hasLead);die;
             //var_dump($hasLead);
             if ($hasLead[0]->total > 0) {
                 add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($hasLead[0]->ID), false);
+                echo "Updated" . $hasLead[0]->ID;
             } else {
-                //var_dump($gContacts[$id - 1]);
-                $stripMail = sanitize_title($gContacts[$id - 1]->emailAddresses[0]->address);
+                //var_dump($leadOutlookImport);
+                $stripMail = sanitize_title($leadOutlookImport->emailAddresses[0]->address);
+                $rdmUser = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,10);
                 $userdata = array(
-                    'user_login' => $stripMail,
-                    'user_nicename' => is_null($gContacts[$id - 1]->displayName)?:sanitize_title($gContacts[$id - 1]->displayName),
-                    'user_url' => count($gContacts[$id - 1]->websites) > 0 ? $gContacts[$id - 1]->websites[0]->address : "",
-                    'user_email' => sanitize_email($gContacts[$id - 1]->emailAddresses[0]->address),
-                    'first_name' => is_null($gContacts[$id - 1]->givenName) ? "" : $gContacts[$id - 1]->givenName,
-                    'nickname' => is_null($gContacts[$id - 1]->displayName) ? "" : sanitize_title($gContacts[$id - 1]->displayName),
-                    'last_name' => is_null($gContacts[$id - 1]->surname) ? "" : $gContacts[$id - 1]->surname,
+                    'user_login' => empty($stripMail)?$rdmUser:$stripMail,
+                    'user_nicename' => is_null($leadOutlookImport->displayName) ? "" : sanitize_title($leadOutlookImport->displayName),
+                    'user_url' => count($leadOutlookImport->websites) > 0 ? $leadOutlookImport->websites[0]->address : "http://",
+                    'user_email' => sanitize_email($leadOutlookImport->emailAddresses[0]->address),
+                    'first_name' => is_null($leadOutlookImport->givenName) ? "" : $leadOutlookImport->givenName,
+                    'nickname' => is_null($leadOutlookImport->displayName) ? "" : sanitize_title($leadOutlookImport->displayName),
+                    'last_name' => is_null($leadOutlookImport->surname) ? "" : $leadOutlookImport->surname,
                     'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
                 );
                 $user_id = wp_insert_user($userdata);
-                //echo $user_id;
-                if (count($gContacts[$id - 1]->phones) > 0) {
-                    update_user_meta($user_id, 'comercial', $gContacts[$id - 1]->phones[0]->number);
+                var_dump($userdata);
+                echo $user_id;
+                if (!is_wp_error($user_id)) {
+                    //echo $user_id;
+                    if (count($leadOutlookImport->phones) > 0) {
+                        update_user_meta($user_id, 'comercial', $leadOutlookImport->phones[0]->number);
+                    }
+                    //var_dump($leadOutlookImport->phoneNumber);
+                    if (count($leadOutlookImport->phones) > 1) {
+                        update_user_meta($user_id, 'fixo', $leadOutlookImport->phones[1]->number);
+                    }
+                    //var_dump($leadOutlookImport->phoneNumber);
+                    if (count($leadOutlookImport->phones) > 2) {
+                        update_user_meta($user_id, '_whatsapp', $leadOutlookImport->phones[1]->number);
+                    }
+                    $address = count($leadOutlookImport->postalAddresses) > 0 ? $leadOutlookImport->postalAddresses[0]->address->city : "";
+                    update_user_meta($user_id, 'actor', $leadOutlookImport->title);
+                    update_user_meta($user_id, 'organization', $leadOutlookImport->companyName);
+                    //update_user_meta($user_id, 'content_url', $leadOutlookImport->avatar);
+                    update_user_meta($user_id, 'description', $leadOutlookImport->personNotes);
+                    update_user_meta($user_id, 'address', $address);
+                    update_user_meta($user_id, '_outlook', $leadOutlookImport->id);
+                    add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
                 }
-                //var_dump($gContacts[$id - 1]->phoneNumber);
-                if (count($gContacts[$id - 1]->phones) > 1) {
-                    update_user_meta($user_id, 'fixo', $gContacts[$id - 1]->phones[1]->number);
-                }
-                //var_dump($gContacts[$id - 1]->phoneNumber);
-                if (count($gContacts[$id - 1]->phones) > 2) {
-                    update_user_meta($user_id, '_whatsapp', $gContacts[$id - 1]->phones[1]->number);
-                }
-                $address = count($gContacts[$id - 1]->postalAddresses) > 0 ? $gContacts[$id - 1]->postalAddresses[0]->address->city : "";
-                update_user_meta($user_id, 'actor', $gContacts[$id - 1]->title);
-                update_user_meta($user_id, 'organization', $gContacts[$id - 1]->companyName);
-                //update_user_meta($user_id, 'content_url', $gContacts[$id - 1]->avatar);
-                update_user_meta($user_id, 'description', $gContacts[$id - 1]->personNotes);
-                update_user_meta($user_id, 'address', $address);
-                update_user_meta($user_id, '_outlook', $gContacts[$id - 1]->id);
-                add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
             }
             if ($totalAtLeas == 0)
                 break;
         }
         $wpdb->close();
         echo $totalAtLeas;
+
+        /*  $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
+
+
+          wp_mail("malacma@hotmail.com", "Lead Imports", $_SESSION['contacts_outlook'], $headers); */
     }
 
     public function importGmail($request) {

@@ -93,7 +93,7 @@ function extra_user_profile_fields($user) {
     </table>
     <a name="twitter"/>
     <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
-   
+
     <ul>
         <li>1) No <a href="https://apps.twitter.com/" target="_blank">Gerenciador de aplicativos do Twitter</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
         <li>2) Na guia 'Permissões', selecione 'Ler, Escrever e acessar mensagens diretas' na área 'Acesso' e clique em 'Configurações de atualização'.</LI>
@@ -101,7 +101,7 @@ function extra_user_profile_fields($user) {
         <li>4) Digite o nome de usuário do botão no respectivo campo abaixo.</LI>
         <li>5) Na guia 'Chave e Acesso Tokens', copie a Chave do Consumidor, o Segredo do Consumidor, o Token de Acesso e o Token de Acesso segure e cole nos respectivos campos abaixo.</LI>
     </ul>
-  
+
 
     <table class="form-table">
         <tr>
@@ -373,13 +373,13 @@ function wpse_91693_register() {
             'app_guiafloripa_manager_backend', // menu slug
             'wpse_91693_render', null, 6
     );
-    /* add_menu_page(
-      'Estabelecimento', // page title
-      'Estabelecimento', // menu title
-      'read', // capability
-      'app_guiafloripa_empresa', // menu slug
-      'asd', null, 6
-      ); */
+    add_menu_page(
+            'Meu Negócio', // page title
+            'Negócio', // menu title
+            'read', // capability
+            'app_guiafloripa_negocio', // menu slug
+            'app_guiafloripa_negocio', null, 1
+    );
     add_menu_page(
             'Meus Eventos', // page title
             'Eventos', // menu title
@@ -468,6 +468,10 @@ function wpse_91693_register() {
     //add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Sincronizar', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_render');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Estatisticas', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_stats');
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');
+}
+
+function app_guiafloripa_negocio() {
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/page.php';
 }
 
 function app_guiafloripa_eventos_cal() {
@@ -798,17 +802,18 @@ function share_dashboard_widget_content() {
 }
 
 function wpb_sender_email($original_email_address) {
-    return 'noreply@experienciasdigitais.com.br';
+    return 'root@experienciasdigitais.com.br';
 }
 
 // Function to change sender name
 function wpb_sender_name($original_email_from) {
-    return 'noreply@experienciasdigitais.com.br';
+    return 'Experiências Digitais';
 }
 
 function remove_dashboard_widgets() {
     remove_meta_box('dashboard_activity', 'dashboard', 'normal');
     remove_meta_box('e-dashboard-overview', 'dashboard', 'normal'); //rmove elementor
+    remove_meta_box('themeisle', 'dashboard', 'normal');
 }
 
 function header_options_guia_app() {
@@ -833,7 +838,8 @@ function header_options_guia_app() {
 function remove_admin_bar_links() {
     global $wp_admin_bar;
     // $wp_admin_bar->remove_menu('site-name');        // Remove the site name menu
-    $wp_admin_bar->remove_menu('view-site');        // Remove the view site link
+    $wp_admin_bar->remove_menu('view-site');
+    $wp_admin_bar->remove_menu('view-store');        // Remove the view site link
 }
 
 // Our custom post type function
@@ -851,6 +857,33 @@ function create_event_post() {
         'rewrite' => array('slug' => 'eventos'),
             )
     );
+    // Add new taxonomy, make it hierarchical like categories
+//first do the translations part for GUI
+
+    $labels = array(
+        'name' => _x('Tipo de Negócios', 'tipo de negócio do anunciante'),
+        'singular_name' => _x('business_type', 'tipo de negócio do anunciante'),
+        'search_items' => __('Buscar tipo de negóio'),
+        'all_items' => __('Todos os tippos de negócio'),
+        'parent_item' => __('Parent Topic'),
+        'parent_item_colon' => __('Parent Topic:'),
+        'edit_item' => __('Edit Topic'),
+        'update_item' => __('Update Topic'),
+        'add_new_item' => __('Add New Topic'),
+        'new_item_name' => __('Novo Negógio'),
+        'menu_name' => __('Tipo de negócio'),
+    );
+
+// Now register the taxonomy
+
+    register_taxonomy('business_type', array('post'), array(
+        'hierarchical' => true,
+        'labels' => $labels,
+        'show_ui' => false,
+        'show_admin_column' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'business_type'),
+    ));
 }
 
 function my_post_type_editor_settings($settings) {

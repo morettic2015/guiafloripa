@@ -288,6 +288,10 @@ class EventControl extends stdClass {
                     $this->createCampaign($c1, $postID);
                     $app_db->close();
                 }
+              //  $headers[] = 'From: EXPD <root@experienciasdigitais.com.br>';
+               
+               // wp_mail("malacma@gmail.com", "Novo Evento Importado do Facebook:".$eventFace->name, $eventFace->description, $headers);
+
                 return $eventFace;
             }
         }
@@ -507,7 +511,6 @@ class EventControl extends stdClass {
         $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
         //$headers[] = 'Cc: birthdayarchive@example.com';
         //$headers[] = 'Bcc: birthdaycheck@example.com';
-
 // Mail it
         mail("malacma@gmail.com", "Novo Evento cadastrado", $request['titEvent'], implode("\r\n", $headers));
 

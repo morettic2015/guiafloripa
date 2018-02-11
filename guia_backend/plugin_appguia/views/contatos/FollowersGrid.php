@@ -25,7 +25,7 @@ class TT_Example_List_Table extends WP_List_Table {
             'avatar' => _x('Foto', 'Foto', 'wp-list-table-example'),
             'title' => _x('Nome', 'Nome', 'wp-list-table-example'),
             'email' => _x('Apelido', 'Column label', 'wp-list-table-example'),
-            'desc' => _x('Informações', 'Column label', 'wp-list-table-example'),
+            'desc' => _x('Informações do Perfil', 'Column label', 'wp-list-table-example'),
             'murl' => _x('Website', 'Column label', 'wp-list-table-example'),
         );
 

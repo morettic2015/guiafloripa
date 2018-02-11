@@ -17,33 +17,8 @@ $wpdb->close();
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<style>
-    .droppedOne{
-        background-color: #F06292 !important;
-    }
 
-    .fixedMail{
-        background-color: #d50000 !important;
-    }
-    .fixedTwitter{
-        background-color: #311b92 !important;
-    }
-    .fixedNotification{
-        background-color: #311b92 !important;
-    }
-    option:hover {
-        color:white !important;
-        background-color: #311b92 !important;
-        border: 8px;
-        border-style: double;
 
-    }
-    #c_groups {border: 1px;width: 200px}
-    .iconBt {margin: 3px; color: white}
-    .draggable { width: 80px; min-height: 90px;max-height: 110px; padding: 5px; border: 1px;border-color: #263238; float: left; margin: 5 10px 10px 5; font-size: .9em; }
-    .ui-widget-header p, .ui-widget-content p { margin: 0; }
-    #snaptarget { height: 40vh; width: 60vh; margin: 0px; top: 0px;position: inherit; border: 1px;border-style: dotted }
-</style>
 
 <a name="top"></a>
 <div class="wrap">
@@ -57,6 +32,13 @@ $wpdb->close();
             <form name="frmCampaign" id="frmCampaign" >
                 <table class="form-table editcomment">
                     <tbody>
+                        <tr>
+                            <td class="first" style="text-align: right">Publicada</td>
+                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                <input class="singleOne" type="checkbox" name="published" id="published" value="1" style="height: 15px;width: 20px">Ativar campanha ao salvar
+
+                            </td>
+                        </tr>
                         <tr>
                             <td class="first" style="text-align: right">Campanha</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
@@ -318,7 +300,7 @@ $wpdb->close();
     var mdialog1;
     var mdialog2;
     jQuery(function ($) {
-        $( "#tabs" ).tabs();
+        $("#tabs").tabs();
         $("#snaptarget").droppable({
             classes: {
                 'ui-droppable-hover': 'page-title-action'
@@ -357,5 +339,82 @@ $wpdb->close();
         mdialog2 = $("#dialog-confirm2").dialog(winDialogConfig);
     });
 </script>
+<style>
+    .droppedOne{
+        background-color: #F06292 !important;
+    }
+
+    .fixedMail{
+        background-color: #d50000 !important;
+    }
+    .fixedTwitter{
+        background-color: #311b92 !important;
+    }
+    .fixedNotification{
+        background-color: #311b92 !important;
+    }
+    option:hover {
+        color:white !important;
+        background-color: #311b92 !important;
+        border: 8px;
+        border-style: double;
+
+    }
+    #c_groups {border: 1px;width: 200px}
+    .iconBt {margin: 3px; color: white}
+    .draggable { width: 80px; min-height: 90px;max-height: 110px; padding: 5px; border: 1px;border-color: #263238; float: left; margin: 5 10px 10px 5; font-size: .9em; }
+    .ui-widget-header p, .ui-widget-content p { margin: 0; }
+    #snaptarget { height: 40vh; width: 60vh; margin: 0px; top: 0px;position: inherit; border: 1px;border-style: dotted }
+
+    input[type="checkbox"]{
+        appearance:none;
+        width:40px;
+        height:16px;
+        border:1px solid #aaa;
+        border-radius:2px;
+        background:#ebebeb;
+        position:relative;
+        display:inline-block;
+        overflow:hidden;
+        vertical-align:middle;
+        transition: background 0.3s;
+        box-sizing:border-box;
+    }
+    input[type="checkbox"]:after{
+        content:'';
+        position:absolute;
+        top:-1px;
+        left:-1px;
+        width:14px;
+        height:14px;
+        background:white;
+        border:1px solid #aaa;
+        border-radius:2px;
+        transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    }
+    input[type="checkbox"]:checked{
+        background:#a6c7ff;
+        border-color:#8daee5;
+    }
+    input[type="checkbox"]:checked:after{
+        left:23px;
+        border-color:#8daee5;
+    }
+
+    input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
+    input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
+        left:0px;
+    }
+
+    input[type="checkbox"]:hover:checked:not(:disabled):after,
+    input[type="checkbox"]:focus:checked:not(:disabled):after{
+        left:22px;
+    }
+
+    input[type="checkbox"]:disabled{
+        opacity:0.5;
+    }
+
+</style>
 <?php
 //wp_die(); ?>

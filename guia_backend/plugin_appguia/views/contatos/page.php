@@ -4,7 +4,7 @@
         <p class="search-box">
             <label class="screen-reader-text" for="search_id-search-input">
                 Buscar contatos:</label> 
-            <input id="search_id-search-input" type="text" name="s" value="" /> 
+            <input id="search_id-search-input" type="text" name="s" value="<?php echo $_POST['s']; ?>" /> 
             <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
         </p>
         <div class="notice notice-info"> 

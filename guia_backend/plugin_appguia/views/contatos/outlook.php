@@ -78,11 +78,13 @@ if (isset($_GET['source'])) {
                     </tr>
 
                     <?php
+                    $searchArray = array();
                     foreach ($myContacts as $std) {
                         if (filter_var($std->emailAddresses[0]->address, FILTER_VALIDATE_EMAIL)) {
                             if (in_array($std->emailAddresses[0]->address, $myLeadsL)) {
                                 continue; //already exists
                             }
+                            $searchArray[] = $std;
                             ?>
                             <tr id="tr_<?php echo $count++ ?>">
                                 <td class="first" style="width: 5%"><input title="Importar <?php echo $std->emailAddresses[0]->address; ?>" alt="Importar <?php echo $std->emailAddresses[0]->address; ?>" value="<?php echo $count ?>" type="checkbox"></td>
@@ -93,9 +95,11 @@ if (isset($_GET['source'])) {
                             <?php
                         }
                     }
+                    $_SESSION['searchArray'] = $searchArray;
                     echo '<div class="notice notice-success" id="msg"> 
                     <p><strong>Foram localizados ' . $count . ' contatos. Selecione os contatos que deseja importar. <br> <code>Seu plano permite importar mais ' . $rest . ' contatos</code></strong></p>
                  </div>';
+                    //var_dump($_SESSION['searchArray']);
                     ?>
 
                 </tbody>
