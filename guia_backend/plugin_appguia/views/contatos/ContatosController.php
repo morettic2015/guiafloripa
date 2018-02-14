@@ -92,10 +92,10 @@ class ContatosController {
             echo "{'error':'Limite ultrapassado'}";
             wp_die();
         }
-       
+
         foreach ($list as $id) {
             $totalAtLeas--;
-            $leadOutlookImport = $gContacts[$id-1];
+            $leadOutlookImport = $gContacts[$id - 1];
             //echo $gContacts[$id - 1]->email;
             $query1 = "SELECT count(*) as total,ID  FROM wp_users WHERE (user_email) = ('" . $leadOutlookImport->emailAddresses[0]->address . "')";
             // echo $query1;die;
@@ -109,9 +109,9 @@ class ContatosController {
             } else {
                 //var_dump($leadOutlookImport);
                 $stripMail = sanitize_title($leadOutlookImport->emailAddresses[0]->address);
-                $rdmUser = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,10);
+                $rdmUser = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, 10);
                 $userdata = array(
-                    'user_login' => empty($stripMail)?$rdmUser:$stripMail,
+                    'user_login' => empty($stripMail) ? $rdmUser : $stripMail,
                     'user_nicename' => is_null($leadOutlookImport->displayName) ? "" : sanitize_title($leadOutlookImport->displayName),
                     'user_url' => count($leadOutlookImport->websites) > 0 ? $leadOutlookImport->websites[0]->address : "http://",
                     'user_email' => sanitize_email($leadOutlookImport->emailAddresses[0]->address),
@@ -452,39 +452,35 @@ class ContatosController {
                 break;
         }
         $total = $max - count($cp);
+        $totalDiv1 = $total / 5;
         ?>
 
-        <!--  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
-          <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-          <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-          <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-          <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script> -->
+        <strong>Você tem <?php echo count($cp); ?> contatos de <?php echo $max; ?> possíveis para o seu plano</strong>
+      <!--  <script type="text/javascript">
+            google.charts.load('current', {'packages': ['gauge']});
+            google.charts.setOnLoadCallback(drawChart);
 
-        <h3>Você tem <?php echo count($cp); ?> contatos de <?php echo $max; ?> possíveis para o seu plano</h3>
-        <!-- <div id="graph1" style="height: 180px;width: 100%"></div>
-         <script>
-          /*   Morris.Donut({
-                 element: 'graph1',
-                 data: [
-                     {value: <?php echo $max; ?>, label: 'Total do Plano'},
-                     {value: <?php echo count($cp); ?>, label: 'Cadastrados'},
-                 ],
-                 backgroundColor: '#ccc',
-                 labelColor: '#f79129',
-                 colors: [
-                     '#2499c8',
-                     '#f79129',
-                     '#a4ce3f',
-                     '#c0358a',
-                 ],
-                 formatter: function (x) {
-                     return x;
-                 }
-             });*/
+            function drawChart() {
 
-             //document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
-         </script> -->
+                var data = google.visualization.arrayToDataTable([
+                    ['Contatos', 'Total'],
+                    ['Contatos', <?php echo count($cp); ?>]
+                ]);
 
+                var options = {
+                    max:<?php echo $max; ?>,
+                    width: 400, height: 300,
+                    redFrom: <?php echo intval($max - $totalDiv1); ?>, redTo: <?php echo $max; ?>,
+                    yellowFrom: <?php echo intval($max - ($totalDiv1 * 2.5)); ?>, yellowTo: <?php echo intval($max - ($totalDiv1 * 1)); ?>,
+                    minorTicks: 20
+                };
+
+                var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            }
+        </script>-->
+
+        <div id="chart_div" style="width: 400px; height: 300px;margin-left: 10px"></div>
         <?php
     }
 

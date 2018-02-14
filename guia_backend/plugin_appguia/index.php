@@ -648,49 +648,31 @@ function wp_login($login, $pass) {
  * Custom Widgets
  */
 function add_email_dashboard_widgets() {
-    wp_add_dashboard_widget(
+   /* wp_add_dashboard_widget(
             'wpemail_dashboard_widget', // Widget slug.
-            'Emails', // Title.
+            'Campanhas', // Title.
             'email_dashboard_widget_content' // Display function.
-    );
+    );*/
     wp_add_dashboard_widget(
             'wpquota_dashboard_widget', // Widget slug.
             'Estatísticas de uso', // Title.
             'cota_dashboard_widget_content' // Display function.
     );
-    $my_widget = $wp_meta_boxes['dashboard']['normal']['core']['wpquota_dashboard_widget'];
-    unset($wp_meta_boxes['dashboard']['normal']['core']['wpquota_dashboard_widget']);
-    $wp_meta_boxes['dashboard']['side']['core']['wpquota_dashboard_widget'] = $my_widget;
     wp_add_dashboard_widget(
             'wpplano_dashboard_widget', // Widget slug.
             'Seu Plano', // Title.
             'plano_dashboard_widget_content' // Display function.
     );
     wp_add_dashboard_widget(
-            'wppush_dashboard_widget', // Widget slug.
-            'Dispositivos', // Title.
-            'push_dashboard_widget_content' // Display function.
-    );
-    global $wp_meta_boxes;
-    $my_widget = $wp_meta_boxes['dashboard']['normal']['core']['wppush_dashboard_widget'];
-    unset($wp_meta_boxes['dashboard']['normal']['core']['wppush_dashboard_widget']);
-    $wp_meta_boxes['dashboard']['side']['core']['wppush_dashboard_widget'] = $my_widget;
-    wp_add_dashboard_widget(
             'wptwitter_dashboard_widget', // Widget slug.
-            'Twitter BOT', // Title.
+            'Twitter', // Title.
             'twitter_dashboard_widget_content' // Display function.
     );
-    $my_widget = $wp_meta_boxes['dashboard']['normal']['core']['wptwitter_dashboard_widget'];
-    unset($wp_meta_boxes['dashboard']['normal']['core']['wptwitter_dashboard_widget']);
-    $wp_meta_boxes['dashboard']['side']['core']['wptwitter_dashboard_widget'] = $my_widget;
     wp_add_dashboard_widget(
             'wptips_dashboard_widget', // Widget slug.
             'Dicas e tutorias', // Title.
             'tips_dashboard_widget_content' // Display function.
     );
-    $my_widget = $wp_meta_boxes['dashboard']['normal']['core']['wptips_dashboard_widget'];
-    unset($wp_meta_boxes['dashboard']['normal']['core']['wptips_dashboard_widget']);
-    $wp_meta_boxes['dashboard']['side']['core']['wptips_dashboard_widget'] = $my_widget;
     wp_add_dashboard_widget(
             'wpleads_dashboard_widget', // Widget slug.
             'Contatos', // Title.
@@ -703,10 +685,69 @@ function add_email_dashboard_widgets() {
     );
 }
 
+function cota_dashboard_widget_content() {
+    ?>
+    <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ["Recurso", "total", {role: "style"}],
+                ["Eventos cadastrados", 80, "#880e4f"],
+                ["Email criados", 894, "#d500f9"],
+                ["Email enviados", 894, "#311b92"],
+                ["Push criadas", 1049, "#f4ff81"],
+                ["Push enviadas", 1049, "#ff5722"],
+                ["Twitter", 1930, "#263238"],
+                ["Midias", 300, "#80deea"],
+                ["Uso de disco", 300, "#e91e63"],
+                ["Contatos", 2145, "#00e676"]
+            ]);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0, 1,
+                {calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"},
+                2]);
+
+            var options = {
+                title: "Estatísticas de uso do serviço",
+                bar: {groupWidth: "25%"},
+                legend: {position: "none"},
+            };
+            var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+            chart.draw(view, options);
+        }
+    </script>
+
+
+    <?php
+}
+
 function events_dashboard_widget_content() {
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $myEvents = $ec->eventsFullList();
+    //var_dump($myEvents);
+    $vet = array("draft" => 0, "trash" => 0, "publish" => 0);
+    foreach ($myEvents as $ev) {
+        if ($ev->post_status === "publish") {
+            $vet["publish"] ++;
+        } else if ($ev->post_status === "trash") {
+            $vet["trash"] ++;
+        } else {
+            $vet["draft"] ++;
+        }
+
+        //  echo $ev->post_status;
+    }
     ?>
 
-    <div id="piechart" style="width: 100%; height: 300px;"></div>
+    <div id="piechart" style="width: 100%;max-width: 400px; height: 300px;"></div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages': ['corechart']});
@@ -715,16 +756,14 @@ function events_dashboard_widget_content() {
         function drawChart() {
 
             var data = google.visualization.arrayToDataTable([
-                ['Task', 'Hours per Day'],
-                ['Work', 11],
-                ['Eat', 2],
-                ['Commute', 2],
-                ['Watch TV', 2],
-                ['Sleep', 7]
+                ['Status dos eventos', 'Nº de Ocorrências'],
+                ['Publicados', <?php echo $vet["publish"]; ?>],
+                ['Rascunho', <?php echo $vet["draft"]; ?>],
+                ['Lixeira', <?php echo $vet["trash"]; ?>]
             ]);
 
             var options = {
-                title: 'My Daily Activities'
+                title: 'Visão geral dos meus eventos'
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -837,9 +876,10 @@ function header_options_guia_app() {
 //Remove visit site menu
 function remove_admin_bar_links() {
     global $wp_admin_bar;
-    // $wp_admin_bar->remove_menu('site-name');        // Remove the site name menu
+    //$wp_admin_bar->remove_menu('site-name');        // Remove the site name menu
     $wp_admin_bar->remove_menu('view-site');
-    $wp_admin_bar->remove_menu('view-store');        // Remove the view site link
+    $wp_admin_bar->remove_menu('view-store');
+    $wp_admin_bar->remove_menu('new-content'); // Remove the view site link
 }
 
 // Our custom post type function
@@ -903,6 +943,37 @@ function twitter_dashboard_widget_content() {
     $tc = new TwitterControl();
     $is = $tc->verifyConfig();
     $tc->dashBoardInfo($is);
+    $tweets = $tc->getTermsForTree();
+    ?>
+    <div id="wordtree_basic" style="width: 100%;max-width: 400px; height: 233px;"></div>
+    <script type="text/javascript">
+        google.charts.load('current', {packages: ['wordtree']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([['HashTags'],
+    <?php
+    foreach ($tweets as $t12) {
+        echo "['" . str_replace("#", "# ", $t12) . "'],";
+    }
+    ?>
+            ]);
+
+            var options = {
+                wordtree: {
+                    format: 'implicit',
+                    word: '#'
+                }
+            };
+
+            var chart = new google.visualization.WordTree(document.getElementById('wordtree_basic'));
+            chart.draw(data, options);
+        }
+    </script>
+
+
+
+    <?php
 }
 
 /**

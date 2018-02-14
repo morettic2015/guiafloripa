@@ -296,6 +296,25 @@ class TwitterControl {
 
         return $ret;
     }
+    
+    public function getTermsForTree(){
+        global $wpdb;
+        $query = "SELECT * FROM wp_usermeta WHERE user_id = " . get_current_user_id() . "  and meta_key  ='_term_twitter'";
+        // var_dump($wpdb);
+        // echo $query;
+        $twitterMeta = $wpdb->get_results($query);
+        //var_dump($twitterMeta);
+        //
+        //
+        $vet = array();
+        foreach ($twitterMeta as $t) {
+            //var_dump($t);
+
+            $obj = json_decode($t->meta_value);
+            $vet[] = $obj->hashtag;
+        }
+        return $vet;
+    }
 
     public function getTwitterTerms() {
         $twitterMeta = get_user_meta(get_current_user_id(), META_KEY, false);

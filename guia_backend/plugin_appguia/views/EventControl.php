@@ -123,6 +123,44 @@ class EventControl extends stdClass {
         return $events;
     }
 
+    public function eventsFullList() {
+        $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
+        if (empty($lEvents)) {
+            $lEvents = [];
+        } else {
+            $lEvents = unserialize($lEvents);
+        }
+        $myEvents = "";
+        foreach ($lEvents as $e) {
+            if (empty($e))
+                continue;
+            $myEvents .= $e . ",";
+        }
+        $myEvents .= "-1";
+
+        //echo $myEvents;
+        //Make query
+        //Connect to database
+        //Only if not cached
+        $events = wp_cache_get('my_events1');
+        if (false === $events) {
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            $query = "
+                SELECT 
+                    a.*,DATE_FORMAT(a.post_modified, '%d/%m/%Y %H:%m:%s') as dt_formated,  
+                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtstart') - (2*3600) as dtStart,
+                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtend') - (2*3600) as dtEnd
+                FROM wp_posts as a 
+                where 
+                    id in ($myEvents)";
+            //echo $myEvents;
+            $events = $app_db->get_results($query);
+            wp_cache_set('my_events', $data);
+            $app_db->close();
+        }
+        return $events;
+    }
+
     public function loadMyEvents() {
         $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
         if (empty($lEvents)) {
@@ -288,9 +326,8 @@ class EventControl extends stdClass {
                     $this->createCampaign($c1, $postID);
                     $app_db->close();
                 }
-              //  $headers[] = 'From: EXPD <root@experienciasdigitais.com.br>';
-               
-               // wp_mail("malacma@gmail.com", "Novo Evento Importado do Facebook:".$eventFace->name, $eventFace->description, $headers);
+                //  $headers[] = 'From: EXPD <root@experienciasdigitais.com.br>';
+                // wp_mail("malacma@gmail.com", "Novo Evento Importado do Facebook:".$eventFace->name, $eventFace->description, $headers);
 
                 return $eventFace;
             }
