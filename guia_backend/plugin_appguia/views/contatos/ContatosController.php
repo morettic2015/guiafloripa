@@ -196,13 +196,14 @@ class ContatosController {
                 if (count($gContacts[$id - 1]->phoneNumbers) > 0) {
                     update_user_meta($user_id, 'comercial', $gContacts[$id - 1]->phoneNumbers[0]->number);
                 }
-                var_dump($gContacts[$id - 1]->phoneNumber);
+                //var_dump($gContacts[$id - 1]->phoneNumber);
                 if (count($gContacts[$id - 1]->phoneNumbers) > 1) {
                     update_user_meta($user_id, 'fixo', $gContacts[$id - 1]->phoneNumbers[1]->number);
                 }
                 update_user_meta($user_id, 'content_url', $gContacts[$id - 1]->avatar);
                 update_user_meta($user_id, 'description', $gContacts[$id - 1]->biographies);
                 update_user_meta($user_id, 'address', $gContacts[$id - 1]->addresses);
+                update_user_meta($user_id, '_google', $user_id);
                 add_user_meta(get_current_user_id(), MY_LEADS_LIST, ($user_id), false);
             }
             if ($totalAtLeas == 0)

@@ -374,12 +374,13 @@ function wpse_91693_register() {
             'wpse_91693_render', null, 6
     );
     add_menu_page(
-            'Meu Negócio', // page title
-            'Negócio', // menu title
+            'Meus Negócios', // page title
+            'Negócios', // menu title
             'read', // capability
             'app_guiafloripa_negocio', // menu slug
             'app_guiafloripa_negocio', null, 1
     );
+    add_submenu_page('app_guiafloripa_negocio', 'Edite seu Negócio', 'Adicionar', 'read', 'app_guiafloripa_negocio_add', 'app_guiafloripa_negocio_add');
     add_menu_page(
             'Meus Eventos', // page title
             'Eventos', // menu title
@@ -428,7 +429,13 @@ function wpse_91693_register() {
             'app_guiafloripa_mail', null, 3
     );
     add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_mail_add');
-
+    add_menu_page(
+            'Minhas Mídias', // page title
+            'Midias', // menu title
+            'read', // capability
+            'app_guiafloripa_midia', // menu slug
+            'app_guiafloripa_midia', null, 1
+    );
     /*    add_menu_page(
       'Chatbot', // page title
       'Chatbot', // menu title
@@ -471,6 +478,10 @@ function wpse_91693_register() {
 }
 
 function app_guiafloripa_negocio() {
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/negocio.php';
+}
+
+function app_guiafloripa_negocio_add() {
     include_once PLUGIN_ROOT_DIR . 'views/negocio/page.php';
 }
 
@@ -648,11 +659,11 @@ function wp_login($login, $pass) {
  * Custom Widgets
  */
 function add_email_dashboard_widgets() {
-   /* wp_add_dashboard_widget(
-            'wpemail_dashboard_widget', // Widget slug.
-            'Campanhas', // Title.
-            'email_dashboard_widget_content' // Display function.
-    );*/
+    /* wp_add_dashboard_widget(
+      'wpemail_dashboard_widget', // Widget slug.
+      'Campanhas', // Title.
+      'email_dashboard_widget_content' // Display function.
+      ); */
     wp_add_dashboard_widget(
             'wpquota_dashboard_widget', // Widget slug.
             'Estatísticas de uso', // Title.

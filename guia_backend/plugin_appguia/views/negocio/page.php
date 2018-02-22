@@ -1,10 +1,14 @@
 <?php
 include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
 $nc = new NegocioController();
-$business = $nc->insertUpdateNegocio($_POST);
-/*echo "<pre>";
-var_dump($business->terms);
-echo "</pre>";*/
+if (isset($_POST['nmNegocio'])) {
+    $business = $nc->insertUpdateNegocio($_POST);
+} else {
+    $business = $nc->findNegocioById($_GET['id']);
+}
+/* echo "<pre>";
+  var_dump($business);
+  echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -231,6 +235,7 @@ echo "</pre>";*/
                     <b>Fotos do meu negócio.</b>
                 </p>
                 <p>
+                    <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id:isset($_GET['id'])?$_GET['id']:""; ?>"/>
                     <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                     <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                     <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
@@ -239,13 +244,13 @@ echo "</pre>";*/
                         <tr>
                             <td class="first" style="text-align: right" id="titPgFace">Logotipo</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
-                                <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+<?php echo!empty($business->meta['picLogoURL'][0]) ? "<a href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                             </td>
                         </tr>
                         <tr>
                             <td class="first" style="text-align: right" id="titPgFace">Foto de capa</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
-                                <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+<?php echo!empty($business->meta['picCapaURL'][0]) ? "<a href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                             </td>
                         </tr>
                         <tr>
@@ -432,7 +437,7 @@ echo "</pre>";*/
                     }
                     if (response.category_list !== undefined) {
                         for (i = 0; i < response.category_list.length; i++) {
-                            $("#businessType").append($("<option></option>").val(response.category_list[i].id+":"+response.category_list[i].name).html(response.category_list[i].name));
+                            $("#businessType").append($("<option></option>").val(response.category_list[i].id + ":" + response.category_list[i].name).html(response.category_list[i].name));
                         }
                     }
                     if (response.picture !== undefined) {
@@ -476,6 +481,6 @@ echo "</pre>";*/
         js.src = "https://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
-    
+
     document.getElementById('businessType').value = '<?php echo isset($business->meta[BUSINESS_TYPE][0]) ? $business->meta[BUSINESS_TYPE][0] : ""; ?>';
 </script>

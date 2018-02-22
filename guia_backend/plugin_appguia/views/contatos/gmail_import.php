@@ -1,7 +1,7 @@
 <?php
 //echo PLUGIN_ROOT_DIR;
 
-$secret = '~/.credentials/google_contacts_' . date('d-m-Y') . '_' . get_current_user_id() . '.json';
+$secret = '~/.credentials/google_contacts_' . date('d-m-Y-H') . '_' . get_current_user_id() . '.json';
 include_once '/var/www/guiafloripa.morettic.com.br/vendor/autoload.php';
 define('APPLICATION_NAME', 'GuiaFloripa Load LEads');
 define('CREDENTIALS_PATH', $secret);
@@ -115,6 +115,7 @@ if (count($results->getConnections()) == 0) {
                     $count = 0;
                     $gContacts = $results->getConnections();
                     foreach ($gContacts as $person) {
+                        //var_dump($person);die;
                         if (in_array($person['emailAddresses'][0]['value'], $myLeadsL)) {
                             continue; //already exists
                         }

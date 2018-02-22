@@ -21,9 +21,7 @@ class NegocioController extends stdClass {
 
         if (count($request) > 0) {
             //echo "<pre>";
-            $query = "select ID from wp_posts where post_author = " . get_current_user_id() . " and post_type = 'business'";
-            //echo $query;
-            $business = $wpdb->get_results($query);
+           
             $post_data = array(
                 'post_title' => $request['nmNegocio'],
                 'post_content' => $request['txtDesc'],
@@ -31,12 +29,12 @@ class NegocioController extends stdClass {
                 'post_author' => get_current_user_id()
             );
 
-            if (!empty($business)) {//Update post
+            if (!empty($request['idNegocio'])) {//Update post
                 //var_dump($business);die;
-                $post_data['ID'] = $business[0]->ID;
+                $post_data['ID'] = $request['idNegocio'];
             }
             $post_id = wp_insert_post($post_data);
-            update_post_meta($post_id, 'facePage', empty($request['facePage'])?$request['facePage1']:$request['facePage']);
+            update_post_meta($post_id, 'facePage', empty($request['facePage']) ? $request['facePage1'] : $request['facePage']);
             update_post_meta($post_id, 'foneNegocio', $request['foneNegocio']);
             update_post_meta($post_id, 'whatsNegocio', $request['whatsNegocio']);
             update_post_meta($post_id, 'urlNegocio', $request['urlNegocio']);
@@ -79,6 +77,7 @@ class NegocioController extends stdClass {
             $this->updateTerms($request, $post_id);
 
             $std = new stdClass();
+            $std->id = $post_id;
             $std->post = get_post($post_id);
             $std->meta = get_post_meta($post_id);
 
@@ -97,6 +96,7 @@ class NegocioController extends stdClass {
             //var_dump($business);
             if (!empty($business)) {
                 $std = new stdClass();
+                $std->id = $business[0]->ID;
                 $std->post = get_post($business[0]->ID);
                 $std->meta = get_post_meta($business[0]->ID);
                 //$std->terms = wp_get_object_terms($business[0]->ID, BUSINESS_TYPE);
@@ -108,6 +108,25 @@ class NegocioController extends stdClass {
         }
     }
 
+    public function findNegocioById($id) {
+        global $wpdb;
+        $query = "select ID from wp_posts where post_author = " . get_current_user_id() . " and post_type = 'business' and ID = $id";
+        //echo $query;
+        $business = $wpdb->get_results($query);
+        //var_dump($business);
+        if (!empty($business)) {
+            $std = new stdClass();
+            $std->id = $business[0]->ID;
+            $std->post = get_post($business[0]->ID);
+            $std->meta = get_post_meta($business[0]->ID);
+            //$std->terms = wp_get_object_terms($business[0]->ID, BUSINESS_TYPE);
+            // $wpdb->close();
+
+            return $std;
+        }
+        return null;
+    }
+
     private function updateTerms($request, $post_id) {
         $term = explode(":", $request['businessType']);
         if (count($term) > 1) {
@@ -116,7 +135,7 @@ class NegocioController extends stdClass {
                 $term = get_term_by('name', $term[1], BUSINESS_TYPE);
                 $term_id = $term->term_id;
             } else {
-                echo "Novo";
+                //echo "Novo";
                 $term_id = $term_id_wp['term_id'];
             }
             update_post_meta($post_id, BUSINESS_TYPE, $term_id);
