@@ -110,8 +110,8 @@ class NegocioGrid extends WP_List_Table {
     protected function get_sortable_columns() {
         $sortable_columns = array(
             'title' => array('title', false),
-            'rating' => array('rating', false),
-            'director' => array('director', false),
+           // 'rating' => array('rating', false),
+           // 'director' => array('director', false),
         );
 
         return $sortable_columns;

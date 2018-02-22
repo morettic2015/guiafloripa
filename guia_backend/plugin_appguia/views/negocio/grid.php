@@ -14,7 +14,7 @@
 </div>
 <style>
     .column-director { text-align: left; width:70px !important; overflow:hidden }
-    .column-rating { text-align: left; width:120px !important; overflow:hidden }
+    .column-rating { text-align: left; width:200px !important; overflow:hidden }
    
     input[type="checkbox"]{
         appearance:none;

@@ -6,8 +6,10 @@ if (isset($_POST['nmNegocio'])) {
 } else {
     $business = $nc->findNegocioById($_GET['id']);
 }
-/* echo "<pre>";
+/*echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
+echo "<pre>";
   var_dump($business);
+  var_dump($_POST);
   echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -235,7 +237,7 @@ if (isset($_POST['nmNegocio'])) {
                     <b>Fotos do meu negócio.</b>
                 </p>
                 <p>
-                    <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id:isset($_GET['id'])?$_GET['id']:""; ?>"/>
+                    <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:""); ?>"/>
                     <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                     <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                     <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>

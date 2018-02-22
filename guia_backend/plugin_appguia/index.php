@@ -489,6 +489,10 @@ function app_guiafloripa_eventos_cal() {
     include_once PLUGIN_ROOT_DIR . 'views/events_calendar.php';
 }
 
+function app_guiafloripa_midia() {
+    include_once PLUGIN_ROOT_DIR . 'views/media/page.php';
+}
+
 function app_guiafloripa_eventos_add() {
     wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');
