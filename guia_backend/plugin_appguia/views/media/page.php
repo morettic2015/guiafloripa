@@ -1,63 +1,55 @@
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <h1><?php
+        echo esc_html(get_admin_page_title());
+        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="#" class="page-title-action">Download</a><?php } ?></h1>
     <div class="notice notice-info"> 
-        <p>Biblioteca de mídias</p>
+        <p><label><input type="checkbox" id="checkAll" name="checkAll"/> Selecione todas a mídias </label></p>
     </div>
+
+
     <?php
-    $image_ids = get_posts(
-            array(
-                'post_type' => 'attachment',
-                'post_mime_type' => 'image',
-                'post_author' => get_current_user_id(),
-                'post_status' => 'inherit',
-                'posts_per_page' => - 1,
-                'fields' => 'ids',
-    ));
-
-    // var_dump($image_ids);
-
-    $diskQuote = 0;
-    foreach ($image_ids as $i) {
-        // echo $i;
-        $attachment_meta = wp_get_attachment_metadata($i);
-
-        // echo $attachment_meta['filesizeHumanReadable'];
-        $diskQuote += filesize(get_attached_file($i));
-
-        // $metadata = wp_get_attachment_metadata($attachment_id);
-        //  echo $metadata['filesize'];
-    }
-
-    echo '<div class="notice notice-warning"> 
-                    <p><strong>Total de disco utilizado ' . round($diskQuote / 1000000, 2) . 'MB.</strong></p>
-                 </div>';
-
-    $total = count($images);
-    $limit = $total / 3;
-    $images = array_map("wp_get_attachment_url", $image_ids);
+    include_once PLUGIN_ROOT_DIR . 'views/media/MediaController.php';
+    $mc = new MediaController();
+    $mc->removeMedia($_POST);
+    $images = $mc->loadMedias();
     foreach ($images as $obj) {
+
+        $attach_id = $mc->get_attachment_id($obj);
+        //$path = str_replace("https://app.guiafloripa.com.br/wp-content/uploads/", "/var/www/app.guiafloripa.com.br/wp-content/uploads/", $obj);
+        //wp_generate_attachment_metadata($attach_id, $path);
         ?>
-        <div class="gallery">
-            <a href="<?php echo $obj; ?>" target="_BLANK">
-                <img src="<?php echo $obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
-            </a>
-        </div>
+        <form method="post" action="admin.php?page=app_guiafloripa_midia">
+            <div class="gallery">
+                <center>
+                    <a href="<?php echo $obj; ?>" target="_BLANK">
+                        <img src="<?php echo $obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
+                    </a>
+                    <br>
+                    <input type="checkbox" name="mediaId" value="<?php echo $obj; ?>"/>
+                    <a class="button button-primary button_size" href="<?php echo $obj; ?>" target="_BLANK">Visualizar</a> 
+                    <input type="hidden" name="mediaName" value="<?php echo $obj; ?>"/>
+                    <input type="hidden" name="mediaId" value="<?php echo $attach_id; ?>"/>
+                    <input type="submit" name="Excluir" value="Excluir" class="button button-primary button_size"/>
+                   <!-- <a class="button button-primary button_size" href="<?php echo $obj; ?>" target="_BLANK">Info</a> -->
+                </center>
+            </div>
+        </form>
         <?php
     }
     ?>
-
 </div>
-
-
-
 <style>
+    .button_size{
+        width: 120px;
+    }
     div.gallery {
         margin: 8px;
-        border: 1px solid #ccc;
+        border: 1px dotted #ccc;
         float: left;
         width: 300px;
-        height: 180px;
-       
+        height: 220px;
+
     }
 
     div.gallery:hover {
@@ -74,4 +66,84 @@
         padding: 15px;
         text-align: center;
     }
+    input[type="checkbox"]{
+        appearance:none;
+        width:36px;
+        height:25px;
+        border:1px solid #aaa;
+        border-radius:2px;
+        background:#ebebeb;
+        position:relative;
+        display:inline-block;
+        overflow:hidden;
+        vertical-align:middle;
+        margin-top: 2px;
+        margin-right: 0px; 
+        transition: background 0.3s;
+        box-sizing:border-box;
+    }
+    input[type="checkbox"]:after{
+        content:'';
+        position:absolute;
+        top:-1px;
+        left:-1px;
+        width:7px;
+        height:25px;
+        background:white;
+        border:1px solid #aaa;
+        border-radius:2px;
+        transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    }
+    input[type="checkbox"]:checked{
+        background:#a6c7ff;
+        border-color:#8daee5;
+    }
+    input[type="checkbox"]:checked:after{
+        left:13px;
+        border-color:#8daee5;
+    }
+
+    input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
+    input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
+        left:0px;
+    }
+
+    input[type="checkbox"]:hover:checked:not(:disabled):after,
+    input[type="checkbox"]:focus:checked:not(:disabled):after{
+        left:22px;
+    }
+
+    input[type="checkbox"]:disabled{
+        opacity:0.5;
+    }
 </style>
+<script>
+    jQuery("#checkAll").click(function () {
+        jQuery('input:checkbox').prop('checked', this.checked);
+    });
+    function upload_new_img(obj)
+    {
+        var file_frame;
+        var img_name = jQuery(obj).closest('p').find('.upload_image');
+        if (file_frame) {
+            file_frame.open();
+            return;
+        }
+
+        file_frame = wp.media.frames.file_frame = wp.media(
+                {
+                    title: 'Logotipo',
+                    button: {
+                        text: jQuery(this).data('uploader_button_text')
+                    },
+                    multiple: false
+                }
+        );
+        file_frame.on('select', function () {
+            attachment = file_frame.state().get('selection').first().toJSON();
+            file_frame.close();
+            window.location.href = "admin.php?page=app_guiafloripa_midia";
+        });
+        file_frame.open();
+    }
+</script>

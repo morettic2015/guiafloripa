@@ -490,6 +490,11 @@ function app_guiafloripa_eventos_cal() {
 }
 
 function app_guiafloripa_midia() {
+    wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
+    wp_enqueue_style('thickbox');
     include_once PLUGIN_ROOT_DIR . 'views/media/page.php';
 }
 
