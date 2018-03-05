@@ -32,6 +32,7 @@ require 'BugTracker.php';
 require 'ZombieController.php';
 require 'TwitterBOT.php';
 require 'PortalController.php';
+require './template/Template.php';
 
 
 /**
@@ -90,6 +91,61 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     //Response Busca Hoje
     return $newResponse->withJson($data, 201);
 });
+/**
+ * @Create Email
+ * 
+ * curl -d "emailID=86&titulo=Titulo do Email&desc=Email de teste&subject=Assunto da porra do email 2&author=Moretto LTDA 2&html=<b>t</b></h1>asdfasdfasadfadfasdfdfasdf 2</h1>&plain=Texto livr1e do email&call=Chamada do texto 2&facebook=http://facebook.com/morettotic&twitter=http://twitter.com/malacma&button=Visite nosso site 2&href=https://morettic.com.br" -X POST https://guiafloripa.morettic.com.br/new_email/
+ * 
+ * 
+ */
+$app->post('/new_email/', function (Request $request, Response $response) use ($app) {
+    //Content Type JSON Cross Domain JSON
+    //Cache 100 days
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+    //Return Eventos for today
+    $dt = $request->getParsedBody();
+    $data = new stdClass();
+    $data->titulo = filter_var($dt['titulo'], FILTER_SANITIZE_STRING);
+    $data->desc = filter_var($dt['desc'], FILTER_SANITIZE_STRING);
+    $data->subject = filter_var($dt['subject'], FILTER_SANITIZE_STRING);
+    $data->author = filter_var($dt['author'], FILTER_SANITIZE_STRING);
+    $data->html = filter_var($dt['html'], FILTER_SANITIZE_STRING);
+    $data->plain = filter_var($dt['plain'], FILTER_SANITIZE_STRING);
+    $data->call = filter_var($dt['call'], FILTER_SANITIZE_STRING);
+    $data->twitter = filter_var($dt['twitter'], FILTER_SANITIZE_STRING);
+    $data->facebook = filter_var($dt['facebook'], FILTER_SANITIZE_STRING);
+    $data->button = filter_var($dt['button'], FILTER_SANITIZE_STRING);
+    $data->href = filter_var($dt['href'], FILTER_SANITIZE_STRING);
+    $data->emailID = filter_var($dt['emailID'], FILTER_SANITIZE_STRING);
+    //Create Email Template
+    $template = new Template('./template/template1.html');
+    $template->set('{subject}', $data->subject);
+    $template->set('{html_src}', $data->html);
+    $template->set('{call_src}', $data->call);
+    $template->set('{twitter}', $data->twitter);
+    $template->set('{facebook}', $data->facebook);
+    $template->set('{button_text}', $data->button);
+    $template->set('{button_href}', $data->href);
+    $data->template = $template->render();
+    //var_dump($data);die;
+    $data->response = LeadController::createEmail(
+            $data->titulo, 
+            $data->desc, 
+            $data->subject, 
+            $data->author, 
+            $data->template, 
+            $data->plain,
+            $data->emailID
+    );
+    $data->res = $request->getParsedBody();
+    logActions("estabelecimentos");
+    //Response Busca Hoje
+    return $newResponse->withJson($data, 201);
+});
+
 /**
  * @get A Place by id
  */
@@ -213,12 +269,12 @@ $app->post('/event_persist/', function (Request $request, Response $response) us
     $data = new stdClass();
     //DB::debugMode();
     $dt = $request->getParsedBody();
- /*   $data->placeID = filter_var($dt['pId'], FILTER_SANITIZE_STRING);
-    $data->eventID = filter_var($dt['eventID'], FILTER_SANITIZE_STRING);
-    $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING);*/
+    /*   $data->placeID = filter_var($dt['pId'], FILTER_SANITIZE_STRING);
+      $data->eventID = filter_var($dt['eventID'], FILTER_SANITIZE_STRING);
+      $data->email = filter_var($dt['email'], FILTER_SANITIZE_STRING); */
     //  var_dump($data);
     //   die;
-  //  $data = ProfileController::favoriteOne($data);
+    //  $data = ProfileController::favoriteOne($data);
     logActions("'/event_persist/'");
     return $newResponse->withJson($data, 200);
 });
@@ -245,6 +301,32 @@ $app->get('/push/', function (Request $request, Response $response) use ($app) {
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     $data = PushController::dailyNotification();
+    logActions("PUSH");
+    return $newResponse->withJson($data, 201);
+});
+/**
+ * @Cron Run Once a Day 13:00 o Clock
+ * @Push Send daily push by onesignal PushNotifications
+ */
+$app->get('/push_random/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = PushController::randomEvents();
+    logActions("PUSH");
+    return $newResponse->withJson($data, 201);
+});
+/**
+ * @Cron Run Once a Day 13:00 o Clock
+ * @Push Send daily push by onesignal PushNotifications
+ */
+$app->get('/push_estreia/', function (Request $request, Response $response) use ($app) {
+    $newResponse = $response->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    $data = PushController::estreiasPush();
     logActions("PUSH");
     return $newResponse->withJson($data, 201);
 });

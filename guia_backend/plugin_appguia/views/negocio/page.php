@@ -1,13 +1,15 @@
 <?php
 include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
 $nc = new NegocioController();
+$rest = $nc->getMaxBusiness();
 if (isset($_POST['nmNegocio'])) {
     $business = $nc->insertUpdateNegocio($_POST);
 } else {
     $business = $nc->findNegocioById($_GET['id']);
 }
-/*echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
-echo "<pre>";
+
+/* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
+  echo "<pre>";
   var_dump($business);
   var_dump($_POST);
   echo "</pre>"; */
@@ -16,7 +18,7 @@ echo "<pre>";
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <form name="frm_negocio" method="post">
     <div class="wrap">
-        <h1><?php echo esc_html(get_admin_page_title()); ?><a href="javascript:loadFacebook()" class="page-title-action">Sincronizar com página do Facebook</a></h1>
+        <h1><?php echo esc_html(get_admin_page_title()); ?><a href="javascript:loadFacebook()" class="page-title-action">Importar página do Facebook</a></h1>
         <div class="notice notice-info" id="msg"> 
             <p>Configure o seu negócio</p>
         </div>
@@ -25,7 +27,9 @@ echo "<pre>";
                 <li><a href="#tabs-2">Dados Gerais</a></li>
                 <li><a href="#tabs-3">Horários</a></li>
                 <li><a href="#tabs-4">Endereço</a></li>
-                <li><a href="#tabs-5">Fotos</a></li>
+                <?php if (!empty(get_user_meta(get_current_user_id(), "_plano_type", true))) { ?>
+                    <li><a href="#tabs-5">Fotos</a></li>
+                <?php } ?>
                 <li><a href="#tabs-6">Configurações</a></li>
             </ul>
             <div id="tabs-2">
@@ -40,29 +44,47 @@ echo "<pre>";
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="facePages"></td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Nome da Empresa</td>
+                            <td class="first" style="text-align: right">Nome da Empresa*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="text" name="nmNegocio" id="nmNegocio" placeholder="Nome do meu negócio" style="width: 100%" value="<?php echo isset($business->post) ? $business->post->post_title : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Tipo do Negócio</td>
+                            <td class="first" style="text-align: right">Categorias do Facebook</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <?php
                                 $terms = get_terms(array('taxonomy' => 'business_type', 'hide_empty' => false));
                                 //  var_dump($terms);
                                 ?>
                                 <select name="businessType" id="businessType">
-                                    <option value="0" selected="true">Selecione</option> 
                                     <?php
+                                    echo '<optgroup label="Categorias do Facebook">';
                                     foreach ($terms as $t) {
                                         echo "<option value='" . $t->term_id . "'>" . $t->name . "</option>";
                                     }
+                                    echo '</optgroup>';
                                     ?>
 
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="first" style="text-align: right">Categorias do Guia Floripa*</td>
+                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                <select name="businessTypeGuia" id="businessTypeGuia">
+                                    <?php
+                                    $mc = $nc->getCategoriasGuia(NULL);
+                                    echo '<optgroup label="Categorias do Guiafloripa">';
+                                    foreach ($mc as $t) {
+                                        echo "<option value='" . $t->term_id . "'>" . $t->name . "</option>";
+                                    }
+                                    echo '</optgroup>';
+                                    ?>
+
+                                </select>
+                            </td>
+                        </tr>
+
                         <tr>
                             <td class="first" style="text-align: right">Cnpj</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
@@ -88,7 +110,7 @@ echo "<pre>";
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Fone Comercial</td>
+                            <td class="first" style="text-align: right">Fone Comercial*</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="tel" name="foneNegocio" id="foneNegocio" placeholder="+5548 32220617" value="<?php echo isset($business->meta['foneNegocio']) ? $business->meta['foneNegocio'][0] : ""; ?>"/>
                             </td>
@@ -132,6 +154,7 @@ echo "<pre>";
                                 ?>
                             </td>
                         </tr>
+
                     </tbody>
                 </table>
                 </p>
@@ -232,41 +255,62 @@ echo "<pre>";
                 </table>
                 </p>
             </div>
-            <div id="tabs-5">
-                <p>
-                    <b>Fotos do meu negócio.</b>
-                </p>
-                <p>
-                    <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:""); ?>"/>
-                    <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
-                    <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
-                    <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
-                <table class="form-table editcomment" style="max-width: 600px">
-                    <tbody>
-                        <tr>
-                            <td class="first" style="text-align: right" id="titPgFace">Logotipo</td>
-                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
-<?php echo!empty($business->meta['picLogoURL'][0]) ? "<a href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="first" style="text-align: right" id="titPgFace">Foto de capa</td>
-                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
-<?php echo!empty($business->meta['picCapaURL'][0]) ? "<a href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="first" style="text-align: right" id="titPgFace">Galeria de imagens</td>
-                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px"><a href="#">Editar</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                </p>
-            </div>
+            <?php if (!empty(get_user_meta(get_current_user_id(), "_plano_type", true))) { ?>
+                <div id="tabs-5">
+                    <p>
+                        <b>Fotos do meu negócio.</b>
+                    </p>
+                    <p>
+                        <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id : (isset($_GET['id']) ? $_GET['id'] : ""); ?>"/>
+                        <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
+                        <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
+                        <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
+                    <table class="form-table editcomment" style="max-width: 600px">
+                        <tbody>
+                            <tr>
+                                <td class="first" style="text-align: right" id="titPgFace">Logotipo</td>
+                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
+                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="first" style="text-align: right" id="titPgFace">Foto de capa</td>
+                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
+                                    <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="first" style="text-align: right" id="titPgFace">Galeria de imagens</td>
+                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px"><a href="#">Editar</a>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    </p>
+                </div>
+            <?php } ?>
             <div id="tabs-6">
                 <p>
-
+                <h2>Configurações do Guia Floripa</h2>
+                <label><input type="checkbox" name="chkSyncGuia" value="chk_guia">Enviar para publicação no Guia Floripa ao salvar</label><br>
+                <label><input type="checkbox" name="chkSyncGuiaAPP" value="chk_app">Enviar para publicação no App Guia Floripa</label><br>
+                <h2>Configurações do Google</h2>
+                <ul>
+                    <li>1) No <a href="#" target="_blank">Google</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
+                    <li>2) Copie e cole o token de autenticação de seu APP.</LI>
+                </ul>
+                <label><input type="checkbox" name="chkGoogle" id="chkGoogle" value="chk_app">Atualizar página do Google Business ao salvar</label><br>
+                <label>Chave do Google APP<br><input disabled="" type="text" id="google_token"  name="google_token" value="" style="width: 300px"></label><br>
+                <h2>Configurações do Facebook</h2>
+                <ul>
+                    <li>1) No <a href="https://developers.facebook.com/" target="_blank">Facebook developers</a> crie um aplicativo</LI>
+                    <li>2) Vincule o seu novo APP com a pagina do Facebook desejada.</LI>
+                    <li>3) <a href="#">Autorize seu APP</a> para gerenciar sua página do Facebook.</LI>
+                </ul>
+                <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
+                <label>Facebook APP ID<br><input disabled="" type="text" name="face_appid" id="face_appid" value="" style="width: 300px"></label><br>
+                <label>Facebook APP SECRET<br><input disabled="" type="text" name="face_appsecret" id="face_appsecret" value="" style="width: 300px"></label><br>
                 </p>
             </div>
             <input type="submit" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
@@ -274,10 +318,86 @@ echo "<pre>";
         <hr/>
     </div>
 </form>
+<style>
+    input[type="checkbox"]{
+        appearance:none;
+        width:20px;
+        height:16px;
+        border:1px solid #aaa;
+        border-radius:2px;
+        background:#ebebeb;
+        position:relative;
+        display:inline-block;
+        overflow:hidden;
+        vertical-align:middle;
+        margin-right: 10px; 
+        transition: background 0.3s;
+        box-sizing:border-box;
+    }
+    input[type="checkbox"]:after{
+        content:'';
+        position:absolute;
+        top:-1px;
+        left:-1px;
+        width:7px;
+        height:14px;
+        background:white;
+        border:1px solid #aaa;
+        border-radius:2px;
+        transition: left 0.1s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    }
+    input[type="checkbox"]:checked{
+        background:#a6c7ff;
+        border-color:#8daee5;
+    }
+    input[type="checkbox"]:checked:after{
+        left:13px;
+        border-color:#8daee5;
+    }
+
+    input[type="checkbox"]:hover:not(:checked):not(:disabled):after,
+    input[type="checkbox"]:focus:not(:checked):not(:disabled):after{
+        left:0px;
+    }
+
+    input[type="checkbox"]:hover:checked:not(:disabled):after,
+    input[type="checkbox"]:focus:checked:not(:disabled):after{
+        left:22px;
+    }
+
+    input[type="checkbox"]:disabled{
+        opacity:0.5;
+    }
+    .alert{
+        margin: 0 auto;
+        margin-top: 50px;
+        max-width: 640px;
+        min-width: 250px;
+        width: 80% !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: auto !important;
+    }
+</style>
 <script>
     jQuery(function ($) {
         $("#tabs").tabs();
-
+        $('#chkFace').click(function () {
+            if ($(this).is(":checked")) {
+                $("#face_appid").removeAttr("disabled");
+                $("#face_appsecret").removeAttr("disabled");
+            } else {
+                $("#face_appid").prop("disabled", "disabled");
+                $("#face_appsecret").prop("disabled", "disabled");
+            }
+        });
+        $('#chkGoogle').click(function () {
+            if ($(this).is(":checked")) {
+                $("#google_token").removeAttr("disabled");
+            } else {
+                $("#google_token").prop("disabled", "disabled");
+            }
+        });
     });
     function loadPlaces(element) {
         var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + element.value + "&key=AIzaSyDI-SU8nROAogbZWGveHUm3bT4FA5_Aujo"
@@ -485,4 +605,5 @@ echo "<pre>";
     }(document, 'script', 'facebook-jssdk'));
 
     document.getElementById('businessType').value = '<?php echo isset($business->meta[BUSINESS_TYPE][0]) ? $business->meta[BUSINESS_TYPE][0] : ""; ?>';
+    document.getElementById('businessTypeGuia').value = '<?php echo isset($business->meta['businessTypeGuia'][0]) ? $business->meta['businessTypeGuia'][0] : ""; ?>';
 </script>

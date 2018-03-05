@@ -47,12 +47,12 @@ class MediaController {
            // echo $query;
             $cp = $wpdb->get_results($query);
             
-            var_dump($cp);
+           // var_dump($cp);
             if (count($cp) > 0) {
                 echo '<div class="notice notice-error"><p><strong>A mídia selecionada está vinculada e não pode ser removida.</strong></p></div>';
             } else {
                 $ret = wp_delete_attachment($request['mediaId']);
-                var_dump($ret);
+                //var_dump($ret);
                 if (isset($ret->ID)) {
                     echo '<div class="notice notice-success"><p><strong>Media removida com sucesso.</strong></p></div>';
                 } else {

@@ -460,7 +460,15 @@ function wpse_91693_register() {
     add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
     add_submenu_page('app_guiafloripa_twitter', 'Minhas Hashtags', ' Hashtags', 'read', 'app_guiafloripa_twitter', 'wpse_91693_twitter');
     add_submenu_page('app_guiafloripa_twitter', 'Meus Seguidores', 'Seguidores', 'read', 'app_guiafloripa_twitter_followers', 'app_guiafloripa_twitter_followers');
-
+    add_menu_page(
+            'Facebook posts', // page title
+            'Facebook', // menu title
+            'read', // capability
+            'app_guiafloripa_facebook', // menu slug
+            'app_guiafloripa_facebook', null, 4
+    );
+    add_submenu_page('app_guiafloripa_facebook', 'Criar post', 'Criar', 'read', 'app_guiafloripa_facebook_add', 'app_guiafloripa_facebook_add');
+   
     add_menu_page(
             'Minhas Campanhas', // page title
             'Campanhas', // menu title

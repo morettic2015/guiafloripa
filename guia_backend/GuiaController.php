@@ -63,6 +63,8 @@ class GuiaController extends stdClass {
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
      */
 
+    
+
     public static function getEventosDeHoje() {
         //Set Charset
         $dayOfWeek = date("D");
@@ -726,19 +728,19 @@ class GuiaController extends stdClass {
         $tomorrow = date('Y-m-d', $time);
         $dayOfWeek = date("D");
 //If date is empty or another shit
-     /*   $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
-                . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
-                . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type
-                . " and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]')";*/
-         $query = "select * from viewEventPlaceType where idType = '$type' and DATE(dtFrom) >= date('$today') AND DATE(dtUntil)<= date('$today')
+        /*   $query = "select * from viewEventPlaceType where (((dtFrom >= (now()- INTERVAL  360 MINUTE)"
+          . " and dtUntil<=NOW() + INTERVAL  360 MINUTE))"
+          . " or ((dtFrom <= now()- INTERVAL  360 MINUTE) and dtUntil>=NOW())) and idType = " . $type
+          . " and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]')"; */
+        $query = "select * from viewEventPlaceType where idType = '$type' and DATE(dtFrom) >= date('$today') AND DATE(dtUntil)<= date('$today')
                     union
                    select * from viewEventPlaceType where (NOW() between dtFrom and dtUntil) and idType =$type and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil  DESC";
-    
+
 //      
         //echo $query;die();
         //$query2 = "select * from viewEventPlaceType where idType = " . $type
-         //       . " and DATE(dtFrom) >= date('" . $dtOrigem
-         //       . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";
+        //       . " and DATE(dtFrom) >= date('" . $dtOrigem
+        //       . "') AND DATE(dtUntil)<= date('" . $dtFim . "')";
         $query2 = "select * from viewEventPlaceType where idType = '$type' and DATE(dtFrom) >= date('$dtOrigem') AND DATE(dtUntil)<= date('$dtFim')
                     union
                    select * from viewEventPlaceType where (NOW() between dtFrom and dtUntil) and idType =$type and (deRecurring like '%$dayOfWeek%' or deRecurring like '[]') order by dtUntil  DESC";
@@ -801,7 +803,7 @@ class GuiaController extends stdClass {
         //DB::debugMode();
         $conn = new MysqlDB();
         $query = "select * from $view where endereco is not null order by ID desc";
-       // echo $query;die;
+        // echo $query;die;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         $i = 0;

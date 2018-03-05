@@ -33,6 +33,30 @@ class LeadController extends stdClass {
         return $response;
     }
 
+    public static function createEmail($titulo, $description, $subject, $fromName, $customHtml, $plainText, $id = NULL) {
+        $name = "Template_Guia_" . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10 / strlen($x)))), 1, 10);
+        $data = array(
+            'title' => $titulo,
+            'name' => $name,
+            'fromName' => $fromName,
+            'subject' => $subject,
+            'customHtml' => $customHtml,
+            'description' => $description,
+            'plainText' => $plainText,
+            'emailType' => 'template',
+            'isPublished' => 1
+        );
+        $con = LeadController::connectMautic();
+        $emailApi = $con->api->newApi("emails", $con->auth, MAUTIC_INSTANCE_API);
+        if (empty($id) || is_null($id)) {
+            $email = $emailApi->create($data);
+        } else {
+            $email = $emailApi->edit($id, $data, true);
+        }
+
+        return $email;
+    }
+
     public static function createSegment($name, $alias, $desc) {
         $data = array(
             'name' => $name,
@@ -41,10 +65,10 @@ class LeadController extends stdClass {
             'isPublished' => 1
         );
         $con = LeadController::connectMautic();
-        
-        
+
+
         $segmentApi = $con->api->newApi("segments", $con->auth, MAUTIC_INSTANCE_API);
-        
+
         //var_dump($segmentApi);die;
         $segment = $segmentApi->create($data);
         return $segment;
@@ -53,7 +77,7 @@ class LeadController extends stdClass {
     /**
      * @Add Lead To Segment
      */
-    public static function addContactToSegment($contactId,$segmentID=MAUTIC_SEGMENT_ID) {
+    public static function addContactToSegment($contactId, $segmentID = MAUTIC_SEGMENT_ID) {
         $con = LeadController::connectMautic();
         $segmentApi = $con->api->newApi("segments", $con->auth, MAUTIC_INSTANCE_API);
         $response = $segmentApi->addContact($segmentID, $contactId);

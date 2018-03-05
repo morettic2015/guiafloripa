@@ -1,14 +1,25 @@
 <div class="wrap">
     <h1><?php
+        $plano = get_user_meta(get_current_user_id(), "_plano_type", true);
+        //var_dump($plano);
         echo esc_html(get_admin_page_title());
-        if (get_user_meta(get_current_user_id(), "_plano_type", true)) {
+        if ($plano) {
             ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="#" class="page-title-action">Download</a><?php } ?></h1>
-    <div class="notice notice-info"> 
-        <p><label><input type="checkbox" id="checkAll" name="checkAll"/> Selecione todas a mídias </label></p>
-    </div>
+
 
 
     <?php
+    if (empty($plano)) {
+        echo ' <div class="notice notice-warning"> 
+        <p>Seu plano nao permite anexar imagens. Faça upgrade de seu <a href="admin.php?page=app_guiafloripa_money">plano</a></p>
+    </div>';
+    } else {
+        echo ' <div class="notice notice-info"> 
+        <p><label><input type="checkbox" id="checkAll" name="checkAll"/> Selecione todas a mídias </label></p>
+    </div>';
+    }
+
+
     include_once PLUGIN_ROOT_DIR . 'views/media/MediaController.php';
     $mc = new MediaController();
     $mc->removeMedia($_POST);

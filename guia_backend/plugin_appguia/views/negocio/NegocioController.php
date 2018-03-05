@@ -12,8 +12,67 @@
  * @author Morettic LTDA
  */
 const BUSINESS_TYPE = "business_type";
+const _BYTE = 1;
+const _MEGA = 5;
+const _GIGA = 10;
+const _TERA = 50;
 
 class NegocioController extends stdClass {
+
+    public function getMaxBusiness() {
+        global $wpdb;
+        $myPlan = get_user_meta(get_current_user_id(), "_plano_type", true);
+        //echo $myPlan;
+        $tot_plan;
+        switch ($myPlan) {
+            case 1:
+                $tot_plan = _MEGA;
+                break;
+            case 2:
+                $tot_plan = _GIGA;
+                break;
+            case 3:
+                $tot_plan = _TERA;
+                break;
+            default :
+                $tot_plan = _BYTE;
+                break;
+        }
+
+        $query = "select count(ID) as total from wp_posts where post_author = " . get_current_user_id() . " and post_type = 'business'";
+        $business = $wpdb->get_results($query);
+        $rest = $tot_plan - $business[0]->total;
+        if ($rest > 0) {
+            echo ' <div class="notice notice-warning"><p>Seu plano permite gerenciar mais ' . $rest . ' negócios</p></div>';
+        } else {
+            echo ' <div class="notice notice-error"><p>Limite de negócios atingido. Faça upgrade de seu <a href="admin.php?page=app_guiafloripa_money">plano</a></p></div>';
+        }
+        return $rest;
+    }
+
+    public function getCategoriasGuia($request = NULL) {
+        if (is_null($request)) {
+            $query = "select term_id,name from wp_terms where term_id in (select term_id from wp_term_taxonomy where taxonomy = 'hierarquia' and parent = 0)";
+        } else {
+            $query = "select term_id,name from wp_terms where term_id in (select term_id from wp_term_taxonomy where taxonomy = 'hierarquia' and parent = $request)";
+        }
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $ret = $app_db->get_results($query);
+        return $ret;
+    }
+
+    public function logMail($negocio) {
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+
+// Additional headers
+        $headers[] = 'To: Comercial Guia Floripa <comercial@guiafloripa.com.br>';
+        $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
+        $headers[] = 'Cc: cesar_floripa@hotmail.com';
+        $headers[] = 'Bcc: malacma@hotmail.com';
+// Mail it
+        mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, "Negócio atualizado na base do Guiafloripa. Aguardando publicação....", implode("\r\n", $headers));
+    }
 
     //put your code here
     public function insertUpdateNegocio($request) {
@@ -21,13 +80,15 @@ class NegocioController extends stdClass {
 
         if (count($request) > 0) {
             //echo "<pre>";
-           
+
             $post_data = array(
                 'post_title' => $request['nmNegocio'],
                 'post_content' => $request['txtDesc'],
                 'post_type' => 'business',
                 'post_author' => get_current_user_id()
             );
+
+            $this->logMail($request['nmNegocio']);
 
             if (!empty($request['idNegocio'])) {//Update post
                 //var_dump($business);die;
@@ -73,6 +134,9 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, 'picLogoURL', $request['picLogoURL']);
             update_post_meta($post_id, 'picCapaURL', $request['picCapaURL']);
             update_post_meta($post_id, 'neigh', $request['neigh']);
+            update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']);
+
+
 
             $this->updateTerms($request, $post_id);
 

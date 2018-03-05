@@ -1,5 +1,12 @@
+<?php
+include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+$nc = new NegocioController();
+$rest = $nc->getMaxBusiness();
+?>
+
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_negocio_add" class="page-title-action">Adicionar</a></h1>
+    <h1><?php echo esc_html(get_admin_page_title());
+if ($rest > 0) { ?><a href="admin.php?page=app_guiafloripa_negocio_add" class="page-title-action">Adicionar</a><?php } ?></h1>
     <div class="notice notice-info"> 
         <p>Meus negócios cadastrados</p>
     </div>
@@ -8,14 +15,14 @@
         <!-- For plugins, we also need to ensure that the form posts back to our current page -->
         <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
         <!-- Now we can render the completed list table -->
-        <?php $test_list_table->display() ?>
+<?php $test_list_table->display() ?>
     </form>
 
 </div>
 <style>
     .column-director { text-align: left; width:70px !important; overflow:hidden }
     .column-rating { text-align: left; width:200px !important; overflow:hidden }
-   
+
     input[type="checkbox"]{
         appearance:none;
         width:20px;
