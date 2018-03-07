@@ -9,9 +9,9 @@ if (isset($_POST['nmNegocio'])) {
 }
 
 /* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
-  echo "<pre>";
-  var_dump($business);
-  var_dump($_POST);
+  echo "<pre>";*/
+  //var_dump($business);
+ /* var_dump($_POST);
   echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -37,20 +37,20 @@ if (isset($_POST['nmNegocio'])) {
                     <b>Dados do meu negócio.</b>
                 </p>
                 <p>
-                <table class="form-table editcomment">
+                <table class="form-table editcomment" style="max-width: 600px">
                     <tbody>
                         <tr>
-                            <td class="first" style="text-align: right;" id="titPgFace"></td>
+                            <td class="first" style="text-align: right;;max-width: 300px" id="titPgFace"></td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="facePages"></td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Nome da Empresa*</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Nome da Empresa*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="text" name="nmNegocio" id="nmNegocio" placeholder="Nome do meu negócio" style="width: 100%" value="<?php echo isset($business->post) ? $business->post->post_title : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Categorias do Facebook</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Categorias do Facebook</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <?php
                                 $terms = get_terms(array('taxonomy' => 'business_type', 'hide_empty' => false));
@@ -69,7 +69,7 @@ if (isset($_POST['nmNegocio'])) {
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Categorias do Guia Floripa*</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Categorias do Guia Floripa*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <select name="businessTypeGuia" id="businessTypeGuia">
                                     <?php
@@ -86,44 +86,44 @@ if (isset($_POST['nmNegocio'])) {
                         </tr>
 
                         <tr>
-                            <td class="first" style="text-align: right">Cnpj</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Cnpj</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="text" name="cnpjNegocio" placeholder="19.611.312/00001-18" value="<?php echo isset($business->meta['cnpjNegocio']) ? $business->meta['cnpjNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Email</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Email</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="email" name="emailNegocio" id="emailNegocio" placeholder="Email de contato do negócio" value="<?php echo isset($business->meta['emailNegocio']) ? $business->meta['emailNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Webite</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Webite</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" name="urlNegocio" id="urlNegocio" placeholder="http"  style="width: 100%" value="<?php echo isset($business->meta['urlNegocio']) ? $business->meta['urlNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Whatsapp</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Whatsapp</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="tel" name="whatsNegocio" placeholder="+55 48 996004929" value="<?php echo isset($business->meta['whatsNegocio']) ? $business->meta['whatsNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Fone Comercial*</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Fone Comercial*</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="tel" name="foneNegocio" id="foneNegocio" placeholder="+5548 32220617" value="<?php echo isset($business->meta['foneNegocio']) ? $business->meta['foneNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Página do Facebook</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Página do Facebook</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" name="faceNegocio" id="faceNegocio" placeholder="http" style="width: 100%"  value="<?php echo isset($business->meta['faceNegocio']) ? $business->meta['faceNegocio'][0] : ""; ?>"/>
                             </td>
 
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Google Business</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Google Business</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" id="googleNegocio" name="googleNegocio" placeholder="http" style="width: 100%" value="<?php echo isset($business->meta['googleNegocio']) ? $business->meta['googleNegocio'][0] : ""; ?>"/>
                             </td>
@@ -132,7 +132,7 @@ if (isset($_POST['nmNegocio'])) {
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Cartões de crédito</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Cartões de crédito</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="checkbox" name="american" value="american" <?php echo empty($business->meta['american'][0]) ? "  " : "  checked  "; ?>/>American
                                 <input type="checkbox" name="amex" value="amex" <?php echo empty($business->meta['amex'][0]) ? "  " : "  checked  "; ?>/>Amex
@@ -144,7 +144,7 @@ if (isset($_POST['nmNegocio'])) {
 
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right">Descrição do negócio</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Descrição do negócio</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <?php
                                 $content = isset($business->post) ? $business->post->post_content : "";
@@ -265,7 +265,7 @@ if (isset($_POST['nmNegocio'])) {
                         <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                         <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
-                    <table class="form-table editcomment" style="max-width: 600px">
+                    <table class="form-table editcomment" style="max-width: 400px">
                         <tbody>
                             <tr>
                                 <td class="first" style="text-align: right" id="titPgFace">Logotipo</td>
@@ -293,15 +293,15 @@ if (isset($_POST['nmNegocio'])) {
             <div id="tabs-6">
                 <p>
                 <h2>Configurações do Guia Floripa</h2>
-                <label><input type="checkbox" name="chkSyncGuia" value="chk_guia">Enviar para publicação no Guia Floripa ao salvar</label><br>
-                <label><input type="checkbox" name="chkSyncGuiaAPP" value="chk_app">Enviar para publicação no App Guia Floripa</label><br>
+                <label><input type="checkbox" name="chkSyncGuia" id="chkSyncGuia" value="chk_guia">Enviar para publicação no Guia Floripa ao salvar</label><br>
+                <label><input type="checkbox" name="chkSyncGuiaAPP" id="chkSyncGuiaAPP" value="chk_app">Enviar para publicação no App Guia Floripa</label><br>
                 <h2>Configurações do Google</h2>
                 <ul>
                     <li>1) No <a href="#" target="_blank">Google</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
                     <li>2) Copie e cole o token de autenticação de seu APP.</LI>
                 </ul>
                 <label><input type="checkbox" name="chkGoogle" id="chkGoogle" value="chk_app">Atualizar página do Google Business ao salvar</label><br>
-                <label>Chave do Google APP<br><input disabled="" type="text" id="google_token"  name="google_token" value="" style="width: 300px"></label><br>
+                <label>Chave do Google APP<br><input <?php echo !is_null($business->meta['chkGoogle'][0]) ? "checked=''" : ""; ?> type="text" id="google_token"  name="google_token" value="<?php echo isset($business->meta['_google_token_']) ? $business->meta['_google_token_'][0] : ""; ?>" style="width: 300px"></label><br>
                 <h2>Configurações do Facebook</h2>
                 <ul>
                     <li>1) No <a href="https://developers.facebook.com/" target="_blank">Facebook developers</a> crie um aplicativo</LI>
@@ -309,8 +309,8 @@ if (isset($_POST['nmNegocio'])) {
                     <li>3) <a href="#">Autorize seu APP</a> para gerenciar sua página do Facebook.</LI>
                 </ul>
                 <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
-                <label>Facebook APP ID<br><input disabled="" type="text" name="face_appid" id="face_appid" value="" style="width: 300px"></label><br>
-                <label>Facebook APP SECRET<br><input disabled="" type="text" name="face_appsecret" id="face_appsecret" value="" style="width: 300px"></label><br>
+                <label>Facebook APP ID<br><input <?php echo !is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
+                <label>Facebook APP SECRET<br><input <?php echo !is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
                 </p>
             </div>
             <input type="submit" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
@@ -606,4 +606,8 @@ if (isset($_POST['nmNegocio'])) {
 
     document.getElementById('businessType').value = '<?php echo isset($business->meta[BUSINESS_TYPE][0]) ? $business->meta[BUSINESS_TYPE][0] : ""; ?>';
     document.getElementById('businessTypeGuia').value = '<?php echo isset($business->meta['businessTypeGuia'][0]) ? $business->meta['businessTypeGuia'][0] : ""; ?>';
+    document.getElementById('chkSyncGuia').checked = <?php echo !is_null($business->meta['chkSyncGuia'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkSyncGuiaAPP').checked = <?php echo !is_null($business->meta['chkSyncGuiaAPP'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkGoogle').checked = <?php echo !is_null($business->meta['chkGoogle'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkFace').checked = <?php echo !is_null($business->meta['_chkFace'][0]) ? "true" : "false"; ?>;
 </script>

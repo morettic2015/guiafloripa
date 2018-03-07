@@ -61,6 +61,9 @@ class GuiaController extends stdClass {
 
     /*     * DATE_FORMAT(NOW() - INTERVAL FLOOR(RAND() * 14) DAY,'%Y-%m-%d')
      *   @ Recupera todos os eventos apresentados hoje com todas as categorias
+     * 
+     * 
+     * select titulo,from_unixtime((select dtstart+86400 from wp_cn_filme_post where id_wp_cn_filme = a.id limit 1),'%d %m %Y %h:%i:%s') as dt from wp_cn_filme as a  where id in (select id_wp_cn_filme from wp_cn_filme_post  where estreia = 2 and FROM_UNIXTIME(dtend)>now()) order by dt;
      */
 
     

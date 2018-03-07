@@ -32,6 +32,7 @@ require 'BugTracker.php';
 require 'ZombieController.php';
 require 'TwitterBOT.php';
 require 'PortalController.php';
+require './EmailController.php';
 require './template/Template.php';
 
 
@@ -91,6 +92,24 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     //Response Busca Hoje
     return $newResponse->withJson($data, 201);
 });
+
+$app->get('/week_news/', function (Request $request, Response $response) use ($app) {
+    //Content Type JSON Cross Domain JSON
+    //Cache 24 hours
+    $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
+    $newResponse = $resWithExpires->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    //Return Eventos for today
+    $data = new stdClass();
+    $data->types = $request->getAttribute('types');
+    $data = EmailController::createWeekNews();
+    logActions("week_news");
+    //Response Busca Hoje
+    return $newResponse->withJson($data, 201);
+});
+
 /**
  * @Create Email
  * 

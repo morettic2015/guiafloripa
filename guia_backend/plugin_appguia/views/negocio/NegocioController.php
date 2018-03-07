@@ -67,9 +67,9 @@ class NegocioController extends stdClass {
 
 // Additional headers
         $headers[] = 'To: Comercial Guia Floripa <comercial@guiafloripa.com.br>';
-        $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
+        $headers[] = 'From: Guia Floripa APP <contatos@app.guiafloripa.com.br>';
         $headers[] = 'Cc: cesar_floripa@hotmail.com';
-        $headers[] = 'Bcc: malacma@hotmail.com';
+        $headers[] = 'Bcc: malacma@gmail.com';
 // Mail it
         mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, "Negócio atualizado na base do Guiafloripa. Aguardando publicação....", implode("\r\n", $headers));
     }
@@ -135,6 +135,13 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, 'picCapaURL', $request['picCapaURL']);
             update_post_meta($post_id, 'neigh', $request['neigh']);
             update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']);
+            update_post_meta($post_id, 'chkSyncGuia', $request['chkSyncGuia']);
+            update_post_meta($post_id, 'chkSyncGuiaAPP', $request['chkSyncGuiaAPP']);
+            update_post_meta($post_id, 'chkGoogle', $request['chkGoogle']);
+            update_post_meta($post_id, '_google_token_', $request['google_token']);
+            update_post_meta($post_id, '_chkFace', $request['chkFace']);
+            update_post_meta($post_id, '_face_appid_', $request['face_appid']);
+            update_post_meta($post_id, '_face_appsecret_', $request['face_appsecret']);
 
 
 
