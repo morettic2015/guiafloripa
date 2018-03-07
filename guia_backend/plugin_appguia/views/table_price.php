@@ -39,7 +39,7 @@
             <div class="pricing-table-footer">
                 <h2><sup>$</sup>Free</h2>
                 <p>per month</p>
-                <!--<a href="#">Sign Up</a>-->
+                <a href="#">Sign Up</a>
             </div>
         </div>
 
@@ -151,8 +151,8 @@
         background: linear-gradient(to bottom,  #65707f 0%,#4a5564 100%); /* W3C */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#65707f', endColorstr='#4a5564',GradientType=0 ); /* IE6-9 */
         background-color: #586272;
-        -webkit-border-radius: 0px 0px 0px 0px;
-        -moz-border-radius: 0px 0px 0px 0px;
+        -webkit-border-radius: 5px 5px 0px 0px;
+        -moz-border-radius: 5px 5px 0px 0px;
         padding: 16px;
         text-align: center;	
     }
@@ -172,7 +172,7 @@
     }
 
     .pricing-table-content ul li {
-        border-bottom: 0px solid #efeff0;
+        border-bottom: 1px solid #efeff0;
         font-size: 14px;
         padding: 16px 56px;
     }
@@ -180,8 +180,8 @@
     .pricing-table-footer {
         background-color: #f5f7f8;
         -webkit-border-radius: 0px 0px 5px 5px;
-        -moz-border-radius: 0px 0px 0px 0px;
-        border-radius: 0px 0px 0px 0px;
+        -moz-border-radius: 0px 0px 5px 5px;
+        border-radius: 0px 0px 5px 5px;
         padding: 16px 0;
     }
 
@@ -205,10 +205,10 @@
         background: linear-gradient(to bottom,  #50b7e4 0%,#3098c4 100%); /* W3C */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#50b7e4', endColorstr='#3098c4',GradientType=0 ); /* IE6-9 */
         background-color: #3ea6d2;
-        border: 0px solid #1481b0;
-        -webkit-border-radius: 0px;
-        -moz-border-radius: 0px;
-        border-radius: 0px;
+        border: 1px solid #1481b0;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
         color: #fff;
         display: inline-block;
         font-weight: bold;
