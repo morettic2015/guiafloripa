@@ -183,4 +183,43 @@ class Csv {
         echo $string;
     }
 
+    public static final function createAttachment($filename) {
+
+        // Check the type of file. We'll use this as the 'post_mime_type'.
+        $filetype = wp_check_filetype(basename($filename), null);
+
+        // Get the path to the upload directory.
+        $wp_upload_dir = wp_upload_dir();
+
+        // Prepare an array of post data for the attachment.
+        $attachment = array(
+            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
+            'post_mime_type' => $filetype['type'],
+            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+            'post_content' => $filename,
+            'post_status' => 'inherit',
+            'post_author' => get_current_user_id()
+        );
+
+        //var_dump($attachment);
+// Insert the attachment.
+        $attach_id = wp_insert_attachment($attachment, $filename);
+
+// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+        require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+// Generate the metadata for the attachment, and update the database record.
+        $attach_data = wp_generate_attachment_metadata($attach_id, $filename);
+        wp_update_attachment_metadata($attach_id, $attach_data);
+
+        return $attach_id;
+    }
+
+    public static final function getColumnNames($file) {
+        $csv = file($file);
+        // var_dump($csv);
+        $columns = explode(",", $csv[0]);
+        return $columns;
+    }
+
 }

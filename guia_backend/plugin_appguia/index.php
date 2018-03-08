@@ -154,6 +154,18 @@ function extra_user_profile_fields($user) {
     <?php
 }
 
+function loadPermalink(){
+   // echo "SE FUDER";;;;
+     $wpdb = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+    //var_dump($_GET);
+     $id = $_GET['postID'];
+     
+     $post = get_post($id);     var_dump($post);
+     //echo $id;
+     //echo get_the_permalink($id);
+     exit;
+}
+
 /**
  * @ajax upload image
  * @PhpxmlRpc
@@ -468,7 +480,7 @@ function wpse_91693_register() {
             'app_guiafloripa_facebook', null, 4
     );
     add_submenu_page('app_guiafloripa_facebook', 'Criar post', 'Criar', 'read', 'app_guiafloripa_facebook_add', 'app_guiafloripa_facebook_add');
-   
+
     add_menu_page(
             'Minhas Campanhas', // page title
             'Campanhas', // menu title
@@ -549,6 +561,14 @@ function app_guiafloripa_push_add() {
 }
 
 function app_guiafloripa_leads_imp() {
+    define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('DROPZONEJS_PLUGIN_VERSION', '0.0.1');
+    wp_enqueue_script(
+            'dropzonejs', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js', array(), DROPZONEJS_PLUGIN_VERSION
+    );
+    wp_enqueue_style(
+            'dropzonecss', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css', array(), DROPZONEJS_PLUGIN_VERSION
+    );
     include PLUGIN_ROOT_DIR . 'views/contatos/page_imp.php';
 }
 
@@ -1120,4 +1140,43 @@ add_action('edit_user_profile_update', 'save_extra_user_profile_fields');
 add_shortcode('guia_app', 'guia_app_redirect');
 add_shortcode('guia_event', 'fguia_event');
 add_shortcode('guia_panel', 'fguia_panel');
+add_action('wp_ajax_submit_dropzonejs', 'dropzonejs_upload');
+add_action('wp_ajax_get_permalink', 'loadPermalink');
+
+/**
+ * dropzonejs_upload() handles the AJAX request, learn more about AJAX in Plugins at https://codex.wordpress.org/AJAX_in_Plugins
+ * @return [type] [description]
+ */
+function dropzonejs_upload() {
+
+    if (!empty($_FILES) && wp_verify_nonce($_REQUEST['my_nonce_field'], 'protect_content')) {
+
+        $uploaded_bits = wp_upload_bits(
+                $_FILES['file']['name'], null, //deprecated
+                file_get_contents($_FILES['file']['tmp_name'])
+        );
+
+        if (false !== $uploaded_bits['error']) {
+            $error = $uploaded_bits['error'];
+            return add_action('admin_notices', function() use ( $error ) {
+                $msg[] = '<div class="error"><p>';
+                $msg[] = '<strong>DropzoneJS & WordPress</strong>: ';
+                $msg[] = sprintf(__('wp_upload_bits failed,  error: "<strong>%s</strong>'), $error);
+                $msg[] = '</p></div>';
+                echo implode(PHP_EOL, $msg);
+            });
+        }
+        $uploaded_file = $uploaded_bits['file'];
+        $uploaded_url = $uploaded_bits['url'];
+        $uploaded_filetype = wp_check_filetype(basename($uploaded_bits['file']), null);
+
+        if (!session_id()) {
+            session_start();
+        }
+        $_SESSION['uploaded_file'] = $uploaded_file;
+        $_SESSION['uploaded_url'] = $uploaded_url;
+        $_SESSION['uploaded_filetype'] = $uploaded_filetype;
+    }
+    die();
+}
 ?>

@@ -17,7 +17,7 @@
 
 class PushController extends stdClass {
 
-    public static function sendBroadCastPush($message, $segment = "All") {
+    public static function sendBroadCastPush($message, $segment = "All",$url=NULL) {
         $content = array(
             "en" => $message,
         );
@@ -25,13 +25,17 @@ class PushController extends stdClass {
         $fields = array(
             'app_id' => "c452ff74-3bc4-44ca-a015-bfdaf0779354",
             'included_segments' => array($segment),
+            //'include_player_ids' => array('97923a7b-da93-43a0-9caf-0d7da34f3dae','93e2fd6a-8ac8-421d-8d0b-a169127f24a9'),
             'data' => array("app" => "GUIA"),
             'contents' => $content,
             "small_icon" => "https://app.guiafloripa.com.br/wp-content/uploads/2017/08/icone.png",
             "large_icon" => "https://app.guiafloripa.com.br/wp-content/uploads/2017/08/icone.png",
             "icon" => "https://app.guiafloripa.com.br/wp-content/uploads/2017/08/icone.png"
         );
-
+        if(!is_null($url)){
+            $fields['url'] = $url;
+        }
+//a9bc10f7-c8b0-416e-ad0a-342efb9a4adc
         $fields = json_encode($fields);
         // print("\nJSON sent:\n");
         // print($fields);
@@ -133,7 +137,7 @@ class PushController extends stdClass {
             $cines = CinemaController::countMovieTheaters();
             $total = $row['total_estreias'];
             $message = "Hoje tem $total estreias e $cines filmes em cartaz na região.";
-            return PushController::sendBroadCastPush($message, "Floripa");
+            return PushController::sendBroadCastPush($message, "Floripa","http://www.guiafloripa.com.br/cinema/cinema-todos");
 
             // echo $message; die;
         }
@@ -145,20 +149,23 @@ class PushController extends stdClass {
      */
     public static function randomEvents() {
         $dayOfWeek = date("D");
-        $query = "select deEvent from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d')>= (DATE_FORMAT((now()- INTERVAL  360 MINUTE),'%Y-%m-%d')) 
+        $query = "select deEvent,idEvent from viewEventPlaces where ((DATE_FORMAT(dtFrom ,'%Y-%m-%d')>= (DATE_FORMAT((now()- INTERVAL  360 MINUTE),'%Y-%m-%d')) 
 								and DATE_FORMAT(dtUntil,'%Y-%m-%d')<DATE_FORMAT(NOW() + INTERVAL 600 MINUTE,'%Y-%m-%d')))
                     union
-                    select deEvent from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
+                    select deEvent,idEvent from viewEventPlaces where (NOW() between dtFrom and dtUntil) 
                     and (deRecurring like '$dayOfWeek' or deRecurring like '[]') order by RAND() DESC limit 1";
         $eventos = DB::query($query); // mi
 
         if (count($eventos) > 0) {
             //var_dump($eventos);
             $event = $eventos[0]['deEvent'];
+            $idEvent = $eventos[0]['idEvent'];
             $std = new stdClass();
+            $std->idEvent = $idEvent;
+            $std->urlEvent = "http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=".$idEvent;
             $std->event = $event;
             $std->message = "Hoje $event";
-            $std->push = PushController::sendBroadCastPush($std->message, "Floripa");
+            $std->push = PushController::sendBroadCastPush($std->message, "Floripa",$std->urlEvent);
             return $std;
         } else {
             return new stdClass();

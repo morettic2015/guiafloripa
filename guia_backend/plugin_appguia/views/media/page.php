@@ -25,8 +25,10 @@
     $mc->removeMedia($_POST);
     $images = $mc->loadMedias();
     foreach ($images as $obj) {
-
+        //echo $obj;die;
         $attach_id = $mc->get_attachment_id($obj);
+        $type = explode(".", $obj);
+        $ext= $type[count($type)-1];
         //$path = str_replace("https://app.guiafloripa.com.br/wp-content/uploads/", "/var/www/app.guiafloripa.com.br/wp-content/uploads/", $obj);
         //wp_generate_attachment_metadata($attach_id, $path);
         ?>
@@ -34,7 +36,7 @@
             <div class="gallery">
                 <center>
                     <a href="<?php echo $obj; ?>" target="_BLANK">
-                        <img src="<?php echo $obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
+                        <img src="<?php echo $ext==="csv"?"https://app.guiafloripa.com.br/wp-content/uploads/2018/01/csv.png":$obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
                     </a>
                     <br>
                     <input type="checkbox" name="mediaId" value="<?php echo $obj; ?>"/>
@@ -143,7 +145,7 @@
 
         file_frame = wp.media.frames.file_frame = wp.media(
                 {
-                    title: 'Logotipo',
+                    title: 'Biblioteca de Midias',
                     button: {
                         text: jQuery(this).data('uploader_button_text')
                     },

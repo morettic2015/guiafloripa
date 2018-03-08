@@ -233,7 +233,7 @@ $lead = $ec->getLead($_GET);
                                     <?php
                                     $editor_id = 'txtBio';
 
-                                    wp_editor($lead->description, $editor_id, array('media_buttons' => false, 'quicktags' => false));
+                                    wp_editor($lead->description, $editor_id, array('media_buttons' => false, 'quicktags' => false, 'textarea_rows'=>3));
                                     ?>
                                 </td>
                             </tr>

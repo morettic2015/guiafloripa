@@ -150,7 +150,7 @@ if (isset($_POST['nmNegocio'])) {
                                 $content = isset($business->post) ? $business->post->post_content : "";
                                 $editor_id = 'txtDesc';
 
-                                wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false));
+                                wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false, 'textarea_rows'=>3));
                                 ?>
                             </td>
                         </tr>

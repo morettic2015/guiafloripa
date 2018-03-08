@@ -14,7 +14,7 @@
             include_once PLUGIN_ROOT_DIR . 'views/contatos/gmail_import.php';
         } else if ($_GET['source'] === "csv") {
             include_once PLUGIN_ROOT_DIR . 'views/contatos/Csv.php';
-            wp_die('CSV');
+            include_once PLUGIN_ROOT_DIR . 'views/contatos/page_csv.php';
         } else if ($_GET['source'] === "outlook") {
             include_once PLUGIN_ROOT_DIR . 'views/contatos/outlook.php';
             //wp_die();
