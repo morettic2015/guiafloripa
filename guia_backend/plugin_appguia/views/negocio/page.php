@@ -1,5 +1,8 @@
 <?php
 include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+$ec = new EventControl();
+$categories = $ec->loadCategories();
 $nc = new NegocioController();
 $rest = $nc->getMaxBusiness();
 if (isset($_POST['nmNegocio'])) {
@@ -9,9 +12,9 @@ if (isset($_POST['nmNegocio'])) {
 }
 
 /* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
-  echo "<pre>";*/
-  //var_dump($business);
- /* var_dump($_POST);
+  echo "<pre>"; */
+//var_dump($business);
+/* var_dump($_POST);
   echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -35,6 +38,7 @@ if (isset($_POST['nmNegocio'])) {
             <div id="tabs-2">
                 <p>
                     <b>Dados do meu negócio.</b>
+                    <br>
                 </p>
                 <p>
                 <table class="form-table editcomment" style="max-width: 600px">
@@ -69,7 +73,7 @@ if (isset($_POST['nmNegocio'])) {
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Categorias do Guia Floripa*</td>
+                            <td class="first" style="text-align: right;max-width: 300px">Categorias*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <select name="businessTypeGuia" id="businessTypeGuia">
                                     <?php
@@ -82,6 +86,20 @@ if (isset($_POST['nmNegocio'])) {
                                     ?>
 
                                 </select>
+                                <br>
+                                <span class="description">Selecione a categoria principal de atuação do seu negócio</span>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first" style="text-align: right;max-width: 300px">Sub Categoria</td>
+                            <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                <select name="businessTypeGuia1" id="businessTypeGuia1">
+
+                                </select>
+                                <br>
+                                <span class="description">Selecione a subcategoria principal de atuação do seu negócio</span>
+
                             </td>
                         </tr>
 
@@ -150,7 +168,7 @@ if (isset($_POST['nmNegocio'])) {
                                 $content = isset($business->post) ? $business->post->post_content : "";
                                 $editor_id = 'txtDesc';
 
-                                wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false, 'textarea_rows'=>3));
+                                wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false, 'textarea_rows' => 3));
                                 ?>
                             </td>
                         </tr>
@@ -217,11 +235,13 @@ if (isset($_POST['nmNegocio'])) {
                     <b>Localização do meu negócio.</b>
                 </p>
                 <p>
-                <table class="form-table editcomment" style="max-width: 400px">
+                <table class="form-table editcomment" style="max-width: 600px">
                     <tbody>
                         <tr>
                             <td class="first" style="text-align: right">Cep</td>
-                            <td><input type="number"  name="zip" id="zip" onblur="loadPlaces(this)" value="<?php echo isset($business->meta['zip']) ? $business->meta['zip'][0] : ""; ?>"/></td>
+                            <td><input type="number"  name="zip" id="zip" onblur="loadPlaces(this)" value="<?php echo isset($business->meta['zip']) ? $business->meta['zip'][0] : ""; ?>"/>
+                            <br><span class="description">Apenas números</span>
+                            </td>
                         </tr>
                         <tr>
                             <td class="first" style="text-align: right">Rua</td>
@@ -230,6 +250,31 @@ if (isset($_POST['nmNegocio'])) {
                         <tr>
                             <td class="first" style="text-align: right">Bairro</td>
                             <td><input type="text"  name="neigh" id="neigh" style="width: 100%" value="<?php echo isset($business->meta['neigh']) ? $business->meta['neigh'][0] : ""; ?>"/></td>
+                        </tr>
+                        <tr>
+                            <td class="first" style="text-align: right">Praia</td>
+                            <td>
+                                <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia do Evento" />
+                                <br><span class="description">Informe a praia proxima (se houver) e selecione o resultado</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="first" style="text-align: right">Região</td>
+                            <td>
+                                <div style="width: 100%">
+
+                                    <?php
+                                    $i = 1;
+                                    foreach ($categories->regions as $cat) {
+                                        //var_dump($cat);
+                                        ?>
+                                        <input class="singleOne" type="checkbox" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 15px;width: 20px"><?php echo $cat->meta_key; ?> 
+                                        <br>
+                                        <?php
+                                    }
+                                    ?>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td class="first" style="text-align: right">Cidade</td>
@@ -265,25 +310,74 @@ if (isset($_POST['nmNegocio'])) {
                         <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                         <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
-                    <table class="form-table editcomment" style="max-width: 400px">
+                    <table class="form-table editcomment" style="max-width: 600px">
                         <tbody>
+                            <tr style="visibility: hidden;display: none">
+                                <td class="first" style="text-align: right;max-width: 30%" id="44titPgFace">Logotipo ou foto 100x100 px</td>
+                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="44picLogo">
+                                    <div id="dropzone-wordpress2">
+                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropzone-wordpress-form">
+                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
+                                            <div class="dz-message needsclick">
+                                                Arraste sua logo aqui.<br>
+                                                <span class="note needsclick">Para fazer Upload</span>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <br>
+                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a class='page-title-action' href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                </td>
+                            </tr>
                             <tr>
-                                <td class="first" style="text-align: right" id="titPgFace">Logotipo</td>
+                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace">Logotipo ou foto 100x100 px</td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
-                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                    <div id="dropzone-wordpress2"  name="dropzoneLogo">
+                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneLogo">
+                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
+                                            <div class="dz-message needsclick">
+                                                Arraste seu logo de aqui.<br>
+                                                <span class="note needsclick">Para fazer Upload</span>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <br>
+                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right" id="titPgFace">Foto de capa</td>
+                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace">Imagens</td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
-                                    <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                    <div id="dropzone-wordpress2" name="dropzoneCapa">
+                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneCapa">
+                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
+                                            <div class="dz-message needsclick">
+                                                Imagens de seu negócio.<br>
+                                                <span class="note needsclick">Para fazer Upload</span>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <br>
+                                    <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                                 </td>
                             </tr>
-                            <tr>
+                          <!--  <tr>
                                 <td class="first" style="text-align: right" id="titPgFace">Galeria de imagens</td>
-                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px"><a href="#">Editar</a>
+                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
+                                    <div id="dropzone-wordpress3">
+                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropzone-wordpress-form">
+                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
+                                            <div class="dz-message needsclick">
+                                                Arraste seu arquivo CSV aqui.<br>
+                                                <span class="note needsclick">Para fazer Upload</span>
+                                            </div>
+
+                                        </form>
+                                    </div>
                                 </td>
-                            </tr>
+                            </tr> -->
 
                         </tbody>
                     </table>
@@ -301,7 +395,7 @@ if (isset($_POST['nmNegocio'])) {
                     <li>2) Copie e cole o token de autenticação de seu APP.</LI>
                 </ul>
                 <label><input type="checkbox" name="chkGoogle" id="chkGoogle" value="chk_app">Atualizar página do Google Business ao salvar</label><br>
-                <label>Chave do Google APP<br><input <?php echo !is_null($business->meta['chkGoogle'][0]) ? "checked=''" : ""; ?> type="text" id="google_token"  name="google_token" value="<?php echo isset($business->meta['_google_token_']) ? $business->meta['_google_token_'][0] : ""; ?>" style="width: 300px"></label><br>
+                <label>Chave do Google APP<br><input <?php echo!is_null($business->meta['chkGoogle'][0]) ? "checked=''" : ""; ?> type="text" id="google_token"  name="google_token" value="<?php echo isset($business->meta['_google_token_']) ? $business->meta['_google_token_'][0] : ""; ?>" style="width: 300px"></label><br>
                 <h2>Configurações do Facebook</h2>
                 <ul>
                     <li>1) No <a href="https://developers.facebook.com/" target="_blank">Facebook developers</a> crie um aplicativo</LI>
@@ -309,8 +403,8 @@ if (isset($_POST['nmNegocio'])) {
                     <li>3) <a href="#">Autorize seu APP</a> para gerenciar sua página do Facebook.</LI>
                 </ul>
                 <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
-                <label>Facebook APP ID<br><input <?php echo !is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
-                <label>Facebook APP SECRET<br><input <?php echo !is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
+                <label>Facebook APP ID<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
+                <label>Facebook APP SECRET<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
                 </p>
             </div>
             <input type="submit" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
@@ -606,8 +700,81 @@ if (isset($_POST['nmNegocio'])) {
 
     document.getElementById('businessType').value = '<?php echo isset($business->meta[BUSINESS_TYPE][0]) ? $business->meta[BUSINESS_TYPE][0] : ""; ?>';
     document.getElementById('businessTypeGuia').value = '<?php echo isset($business->meta['businessTypeGuia'][0]) ? $business->meta['businessTypeGuia'][0] : ""; ?>';
-    document.getElementById('chkSyncGuia').checked = <?php echo !is_null($business->meta['chkSyncGuia'][0]) ? "true" : "false"; ?>;
-    document.getElementById('chkSyncGuiaAPP').checked = <?php echo !is_null($business->meta['chkSyncGuiaAPP'][0]) ? "true" : "false"; ?>;
-    document.getElementById('chkGoogle').checked = <?php echo !is_null($business->meta['chkGoogle'][0]) ? "true" : "false"; ?>;
-    document.getElementById('chkFace').checked = <?php echo !is_null($business->meta['_chkFace'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkSyncGuia').checked = <?php echo!is_null($business->meta['chkSyncGuia'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkSyncGuiaAPP').checked = <?php echo!is_null($business->meta['chkSyncGuiaAPP'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkGoogle').checked = <?php echo!is_null($business->meta['chkGoogle'][0]) ? "true" : "false"; ?>;
+    document.getElementById('chkFace').checked = <?php echo!is_null($business->meta['_chkFace'][0]) ? "true" : "false"; ?>;
+
+
+    jQuery(function ($) {
+
+        Dropzone.options.dropZoneLogo = {
+            acceptedFiles: "image/*", // all image mime types
+            //acceptedFiles: ".csv", // only .jpg files
+            maxFiles: 1,
+            thumbnailWidth: 100,
+            thumbnailHeight: 100,
+            uploadMultiple: false,
+            maxFilesize: 2, // 5 MB
+            addRemoveLinks: true,
+            dictRemoveFile: 'X (Remover)',
+            init: function () {
+                this.on("sending", function (file, xhr, formData) {
+                    console.log(formData);
+                    console.log(file);
+                    console.log(xhr)
+                    formData.append("name", "value"); // Append all the additional input data of your form here!
+                    //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
+                    //alert('logo jjjjj');
+
+                });
+            },
+            success: function () {
+                createAttach("Logo");
+            }
+        };
+
+        function createAttach(source) {
+            localStorage.setItem("source", source);
+            jQuery.get(ajaxurl + "?action=createAttach", function (data, source) {
+                source = localStorage.getItem("source");
+                if (source === "Logo") {
+                    jQuery("#picLogoURL").val(data);
+                } else {
+                    jQuery("#picCapaURL").val(data);
+                }
+            });
+        }
+
+        Dropzone.options.dropZoneCapa = {
+            acceptedFiles: "image/*", // all image mime types
+            //acceptedFiles: ".csv", // only .jpg files
+            maxFiles: 10,
+            uploadMultiple: false,
+            maxFilesize: 2, // 5 MB
+            addRemoveLinks: true,
+            dictRemoveFile: 'X (Remover)',
+            init: function () {
+                this.on("sending", function (file, xhr, formData) {
+                    console.log(formData);
+                    console.log(file);
+                    console.log(xhr)
+                    formData.append("name", "value"); // Append all the additional input data of your form here!
+                    //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
+                    // alert('logo');
+
+                });
+            },
+            success: function () {
+                createAttach("Capa");
+            }
+        };
+        $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 400, minchars: 4});
+        $("#beach").change(function (e) {
+            bairroIsSelected = true;
+        });
+    })
+// dropzoneWordpressForm is the configuration for the element that has an id attribute
+// with the value dropzone-wordpress-form (or dropzoneWordpressForm)
+
 </script>

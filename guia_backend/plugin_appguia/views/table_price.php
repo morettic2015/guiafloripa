@@ -5,21 +5,21 @@
         <p><code>Planos</code> disponíveis.</p>
     </div>
     <!--<ul class="products">
-        <?php
-       /* $args = array(
-            'post_type' => 'product',
-            'posts_per_page' => 12
-        );
-        $loop = new WP_Query($args);
-        var_dump($loop);
-        if ($loop->have_posts()) {
-            while ($loop->have_posts()) : $loop->the_post();
-            endwhile;
-        } else {
-            echo __('No products found');
-        }
-        wp_reset_postdata();*/
-        ?>
+    <?php
+    /* $args = array(
+      'post_type' => 'product',
+      'posts_per_page' => 12
+      );
+      $loop = new WP_Query($args);
+      var_dump($loop);
+      if ($loop->have_posts()) {
+      while ($loop->have_posts()) : $loop->the_post();
+      endwhile;
+      } else {
+      echo __('No products found');
+      }
+      wp_reset_postdata(); */
+    ?>
     </ul>-->
     <div class="container">
         <div class="pricing-table">
@@ -29,17 +29,19 @@
 
             <div class="pricing-table-content">
                 <ul>
-                    <li><strong>10GB</strong> Disk Space</li>
-                    <li><strong>10</strong> Email Addresses</li>
-                    <li><strong>3</strong> Subdomains</li>
-                    <li><strong>1</strong> MySQL Databases</li>
+                    <li><span class="dashicons dashicons-nametag"></span>&nbsp;<strong>5 </strong>Eventos mensais cadastrados ou importados do Facebook</li>
+                    <li><span class="dashicons dashicons-image-filter"></span>&nbsp;<strong>1 </strong>Negócio cadastrado ou importado do Facebook sem destaque</li>
+                    <li><span class="dashicons dashicons-twitter"></span>&nbsp;<strong>600 </strong>Ações mensais automáticas no Twitter</li>
+                    <li><span class="dashicons dashicons-groups"></span>&nbsp;<strong>100 </strong>Contatos cadastrados ou importados do Facebook ou Google</li>
+                    <li><span class="dashicons dashicons-email"></span>&nbsp;<strong>100 </strong>Emails mensais enviados</li>
+                    <li><span class="dashicons dashicons-images-alt2"></span>&nbsp;<strong>5MB </strong>Arquivos nas nuvens (total)</li>
                 </ul>
             </div>
 
             <div class="pricing-table-footer">
                 <h2><sup>$</sup>Free</h2>
-                <p>per month</p>
-                <a href="#">Sign Up</a>
+                <p>por mes</p>
+             
             </div>
         </div>
 
@@ -51,17 +53,20 @@
 
             <div class="pricing-table-content">
                 <ul>
-                    <li><strong>50GB</strong> Disk Space</li>
-                    <li><strong>20</strong> Email Addresses</li>
-                    <li><strong>10</strong> Subdomains</li>
-                    <li><strong>30</strong> MySQL Databases</li>
+                    <li><span class="dashicons dashicons-nametag"></span>&nbsp;<strong>15 </strong>Eventos mensais destacados, cadastrados ou importados do Facebook</li>
+                    <li><span class="dashicons dashicons-image-filter"></span>&nbsp;<strong>5 </strong>Negócios cadastrados ou importados do Facebook (1 destaque)</li>
+                    <li><span class="dashicons dashicons-twitter"></span>&nbsp;<strong>3000 </strong>Ações mensais automáticas no Twitter</li>
+                    <li><span class="dashicons dashicons-groups"></span>&nbsp;<strong>1000 </strong>Contatos cadastrados ou importados do Facebook ou Google</li>
+                    <li><span class="dashicons dashicons-email"></span>&nbsp;<strong>1000 </strong>Emails mensais enviados</li>
+                    <li><span class="dashicons dashicons-images-alt2"></span>&nbsp;<strong>10MB </strong>Arquivos nas nuvens (total)</li>
+                    <li><span class="dashicons dashicons-megaphone"></span></span>&nbsp;<strong>150 </strong>Notificações web mensais</li>
                 </ul>
             </div>
 
             <div class="pricing-table-footer">
-                <h2><sup>$</sup>19.99</h2>
-                <p>per month</p>
-                <a href="#">Sign Up</a>
+                <h2><sup>R$</sup>49.99</h2>
+                <p>Por Mês</p>
+                <a href="#">Contratar</a>
             </div>
         </div>
         <div class="pricing-table">
@@ -71,20 +76,24 @@
 
             <div class="pricing-table-content">
                 <ul>
-                    <li><strong>75GB</strong> Disk Space</li>
-                    <li><strong>50</strong> Email Addresses</li>
-                    <li><strong>20</strong> Subdomains</li>
-                    <li><strong>50</strong> MySQL Databases</li>
+                     <li><span class="dashicons dashicons-nametag"></span>&nbsp;Eventos <strong>ilimitados</strong> destacados, cadastrados ou importados do Facebook</li>
+                    <li><span class="dashicons dashicons-image-filter"></span>&nbsp;<strong>20 </strong>Negócios cadastrados ou importados do Facebook (5 destaque)</li>
+                    <li><span class="dashicons dashicons-twitter"></span>&nbsp;<strong>9000 </strong>Ações mensais automáticas no Twitter</li>
+                    <li><span class="dashicons dashicons-groups"></span>&nbsp;<strong>2000 </strong>Contatos cadastrados ou importados do Facebook ou Google</li>
+                    <li><span class="dashicons dashicons-email"></span>&nbsp;<strong>5000 </strong>Emails mensais enviados</li>
+                    <li><span class="dashicons dashicons-images-alt2"></span>&nbsp;<strong>50MB </strong>Arquivos nas nuvens (total)</li>
+                    <li><span class="dashicons dashicons-megaphone"></span></span>&nbsp;<strong>300 </strong>Notificações web mensais</li>
+          
                 </ul>
             </div>
 
             <div class="pricing-table-footer">
-                <h2><sup>$</sup>29.99</h2>
-                <p>per month</p>
-                <a href="#">Sign Up</a>
+                <h2><sup>R$</sup>99.99</h2>
+               <p>Por Mês</p>
+                <a href="#">Contratar</a>
             </div>
         </div>
-        <div class="pricing-table">
+     <!--   <div class="pricing-table">
             <div class="pricing-table-header">
                 <h1>Tera</h1>
             </div>
@@ -104,7 +113,7 @@
                 <a href="#">Sign Up</a>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
 <style>
     * {
@@ -125,11 +134,13 @@
     }
 
     .pricing-table {
+        top: 0px;
         -webkit-box-shadow: 0px 0px 3px #26292e;
         box-shadow: 0px 0px 3px #26292e;
         display: inline-block;
-        margin: 10px 10px;
-        width: 22%;
+        margin: 8px 8px;
+        width: 31%;
+        vertical-align: top;
         min-width: 230px;
     }
 
@@ -174,7 +185,7 @@
     .pricing-table-content ul li {
         border-bottom: 1px solid #efeff0;
         font-size: 14px;
-        padding: 16px 56px;
+        padding: 10px 20px;
     }
 
     .pricing-table-footer {

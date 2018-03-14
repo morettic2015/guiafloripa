@@ -96,77 +96,15 @@
                                         <td class="first" colspan="2">
                                             <hr>
                                             <h3>
-                                                Passo 2: Importe a localização do seu evento (estabelecimento)
+                                                Passo 2: O estabelecimento nao foi localizado no Guia Floripa
                                             </h3>
+                                            <p>
+                                                Localize o estabelecimento ou cadastre
+                                                <input type="text" name="srcPlace" placeholder="Ex: Fields" style="max-width: 300px"/>
+                                            </p>
                                             <h4>
-                                                Importar Estabelecimento
+                                                <a href="admin.php?page=app_guiafloripa_negocio_add" class="page-title-action"/>Cadastre aqui</a>
                                             </h4>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Local do Evento</td>
-                                        <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                            <?php echo $facebook->place->name ?>
-                                            <input type="hidden" name="placeName" value="<?php echo $facebook->place->name; ?>"/>
-                                            <input type="hidden" name="lat" value="<?php echo $facebook->place->location->latitude; ?>"/>
-                                            <input type="hidden" name="lon" value="<?php echo $facebook->place->location->longitude; ?>"/>
-                                            <input type="hidden" name="facebook_place_id" value="<?php echo $facebook->place->id; ?>"/>
-                                            <input type="hidden" name="facebook_event_id" value="<?php echo $facebook->id; ?>"/>
-                                            <input type="hidden" name="street" value="<?php echo $facebook->place->location->street . ',' . $facebook->place->location->city . ',' . $facebook->place->location->country; ?>"/>
-                                            <input type="hidden" name="eventID" value="<?php echo $facebook->postID; ?>"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Endereço</td>
-                                        <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                            <?php echo $facebook->place->location->street . ',' . $facebook->place->location->city . ',' . $facebook->place->location->country; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Categorias *</td>
-                                        <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                            <?php
-                                            $categories = $ec->loadCategories();
-                                            foreach ($categories->list as $cat) {
-                                                //var_dump($cat);
-                                                ?>
-                                                <div style="width: 30%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                                    <input type="checkbox" id="categories" name="categories[]" value="<?php echo $cat->termID; ?>" style="height: 15px;width: 20px"><?php echo $cat->name; ?> 
-                                                </div>
-                                            <?php } ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Região da ilha *</td>
-                                        <td>
-
-
-                                            <?php
-                                            $i = 1;
-                                            foreach ($categories->regions as $cat) {
-                                                //var_dump($cat);
-                                                ?>
-                                                <div style="width: 30%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                                    <input class="singleOne" type="checkbox" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 15px;width: 20px"><?php echo $cat->meta_key; ?> 
-                                                </div>
-                                                <?php
-                                            }
-                                            ?>
-
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Bairro *</td>
-                                        <td>
-                                            <input type="text" id="neigh" name="neigh" style="width: 200px" placeholder="Bairro do Evento" />
-                                            <br><span class="description">Informe o bairro e selecione o resultado</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="first" style="text-align: right">Praia *</td>
-                                        <td>
-                                            <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia do Evento" />
-                                            <br><span class="description">Informe a praia proxima e selecione o resultado</span>
                                         </td>
                                     </tr>
                                     <?php
@@ -190,6 +128,7 @@
     <p id="dialog_content"></p>
 </div>
 <style>
+
     input[type="checkbox"]{
         appearance:none;
         width:20px;
@@ -259,7 +198,9 @@
             autoOpen: false,
             resizable: false,
             height: "auto",
-            position: 'center',
+            position: "center",
+            draggable: true,
+            //dialogClass: "alertDialog",
             width: 300,
             modal: true,
             buttons: {
@@ -302,16 +243,16 @@
         } else if (page === "local") {
             titulo = "Localização";
         }
-        var options = {
-            autoOpen: false,
-            draggable: false,
-            resizable: false,
-            dialogClass: "alert",
-            modal: true,
-            title: titulo,
-            position: 'center',
-            height: 480
-        };
-        mdialog.load("admin-ajax.php?action=load_event_edit&page=" + page + "&id=" + id).dialog(options).dialog('open');
+        /* var options = {
+         autoOpen: false,
+         draggable: false,
+         resizable: false,
+         //dialogClass: "alert",
+         modal: true,
+         title: titulo,
+         position: 'center',
+         height: 480
+         };*/
+        mdialog.load("admin-ajax.php?action=load_event_edit&page=" + page + "&id=" + id).dialog('open');
     }
 </script>

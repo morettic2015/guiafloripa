@@ -24,7 +24,7 @@ class BugTracker extends stdClass {
 
     public static function addIssueBugTracker($projectID, $category, $summary, $desc) {
 
-        $mantis = new MantisPhpClient(MANTIS_REST, MANTIS_USER, MANTIS_PASS, 'GuiaFloripaBugTracker');
+      /*  $mantis = new MantisPhpClient(MANTIS_REST, MANTIS_USER, MANTIS_PASS, 'GuiaFloripaBugTracker');
 
         //var_dump($mantis);
 
@@ -39,7 +39,7 @@ class BugTracker extends stdClass {
         );
         $return = $mantis->addIssue($issue);
 
-        return $return;
+        return $return;*/
     }
 
     /**

@@ -92,7 +92,7 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     //Response Busca Hoje
     return $newResponse->withJson($data, 201);
 });
-
+//LeadController::sendEmail($data->response['email']['id']);
 $app->get('/week_news/', function (Request $request, Response $response) use ($app) {
     //Content Type JSON Cross Domain JSON
     //Cache 24 hours

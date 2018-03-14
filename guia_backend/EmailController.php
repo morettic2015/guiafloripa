@@ -35,7 +35,7 @@ class EmailController {
             $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/agenda" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . '</a></li>';
         }
         $str .= "</ul>";
-      //  echo $str;
+        //  echo $str;
         // die;
         $template = new Template('./template/template1.html');
         $template->set('{subject}', "Agenda Guia Floripa");
@@ -49,15 +49,18 @@ class EmailController {
         $data->template = $template->render();
         //var_dump($data);die;
         $data->response = LeadController::createEmail(
-                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa", "Redação Guia Floripa", $data->template, "", ""
+                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa", "Redação Guia Floripa", $data->template, "", 23, ""
         );
-        var_dump($data->response);
+        //echo $data->response['email']['id'];die;
+        sleep(0.5);//Sleeps before
+        $data->sent = LeadController::sendEmail($data->response['email']['id']);
+        //var_dump($data->response);
         //$conn->closeConn();
 
 
 
 
-        return $str;
+        return $data;
     }
 
 }

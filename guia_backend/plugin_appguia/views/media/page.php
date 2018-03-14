@@ -4,7 +4,7 @@
         //var_dump($plano);
         echo esc_html(get_admin_page_title());
         if ($plano) {
-            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="#" class="page-title-action">Download</a><?php } ?></h1>
+            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="#" class="page-title-action">Download</a><a href="#" class="page-title-action">Excluir</a><?php } ?></h1>
 
 
 

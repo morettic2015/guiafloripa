@@ -226,7 +226,7 @@ class NegocioGrid extends WP_List_Table {
     protected function get_bulk_actions() {
         $actions = array(
             'delete' => _x('Remover', 'List table bulk action', 'wp-list-table-example'),
-                //'clone' => _x('Duplicar', 'List table bulk action', 'wp-list-table-example'),
+            'publish' => _x('Publicar', 'List table bulk action', 'wp-list-table-example'),
         );
 
 

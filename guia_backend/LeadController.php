@@ -33,7 +33,7 @@ class LeadController extends stdClass {
         return $response;
     }
 
-    public static function createEmail($titulo, $description, $subject, $fromName, $customHtml, $plainText, $id = NULL) {
+    public static function createEmail($titulo, $description, $subject, $fromName, $customHtml, $plainText, $list, $id = NULL) {
         $name = "Template_Guia_" . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10 / strlen($x)))), 1, 10);
         $data = array(
             'title' => $titulo,
@@ -43,7 +43,9 @@ class LeadController extends stdClass {
             'customHtml' => $customHtml,
             'description' => $description,
             'plainText' => $plainText,
-            'emailType' => 'template',
+            'emailType' => 'list',
+            'lists' => array($list),
+            'replyToAddress' => 'contato@guiafloripa.com.br',
             'isPublished' => 1
         );
         $con = LeadController::connectMautic();
@@ -54,6 +56,13 @@ class LeadController extends stdClass {
             $email = $emailApi->edit($id, $data, true);
         }
 
+        return $email;
+    }
+
+    public static function sendEmail($emailID) {
+        $con = LeadController::connectMautic();
+        $emailApi = $con->api->newApi("emails", $con->auth, MAUTIC_INSTANCE_API);
+        $email = $emailApi->send($emailID);
         return $email;
     }
 

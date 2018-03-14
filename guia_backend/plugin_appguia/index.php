@@ -154,16 +154,17 @@ function extra_user_profile_fields($user) {
     <?php
 }
 
-function loadPermalink(){
-   // echo "SE FUDER";;;;
-     $wpdb = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+function loadPermalink() {
+    // echo "SE FUDER";;;;
+    $wpdb = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
     //var_dump($_GET);
-     $id = $_GET['postID'];
-     
-     $post = get_post($id);     var_dump($post);
-     //echo $id;
-     //echo get_the_permalink($id);
-     exit;
+    $id = $_GET['postID'];
+
+    $post = get_post($id);
+    var_dump($post);
+    //echo $id;
+    //echo get_the_permalink($id);
+    exit;
 }
 
 /**
@@ -236,6 +237,21 @@ function findPlacesAjax() {
     }
     $app_db->close();
     //  }
+    die();
+}
+
+/**
+ * @Create Attach for Dropzone
+ */
+function createPostAttachment() {
+    include_once PLUGIN_ROOT_DIR . 'views/contatos/Csv.php';
+
+    if (!session_id()) {
+        session_start();
+    }
+
+    $id = Csv::createAttachment($_SESSION['uploaded_file']);
+    echo $_SESSION['uploaded_url'];
     die();
 }
 
@@ -472,15 +488,15 @@ function wpse_91693_register() {
     add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
     add_submenu_page('app_guiafloripa_twitter', 'Minhas Hashtags', ' Hashtags', 'read', 'app_guiafloripa_twitter', 'wpse_91693_twitter');
     add_submenu_page('app_guiafloripa_twitter', 'Meus Seguidores', 'Seguidores', 'read', 'app_guiafloripa_twitter_followers', 'app_guiafloripa_twitter_followers');
-    add_menu_page(
-            'Facebook posts', // page title
-            'Facebook', // menu title
-            'read', // capability
-            'app_guiafloripa_facebook', // menu slug
-            'app_guiafloripa_facebook', null, 4
-    );
-    add_submenu_page('app_guiafloripa_facebook', 'Criar post', 'Criar', 'read', 'app_guiafloripa_facebook_add', 'app_guiafloripa_facebook_add');
-
+    /*  add_menu_page(
+      'Facebook posts', // page title
+      'Facebook', // menu title
+      'read', // capability
+      'app_guiafloripa_facebook', // menu slug
+      'app_guiafloripa_facebook', null, 4
+      );
+      add_submenu_page('app_guiafloripa_facebook', 'Criar post', 'Criar', 'read', 'app_guiafloripa_facebook_add', 'app_guiafloripa_facebook_add');
+     */
     add_menu_page(
             'Minhas Campanhas', // page title
             'Campanhas', // menu title
@@ -488,6 +504,7 @@ function wpse_91693_register() {
             'app_guiafloripa_campaigns', // menu slug
             'wpse_91693_campaign', null, 6
     );
+    add_submenu_page('app_guiafloripa_campaigns', 'Minhas campanhas', 'Campanhas', 'read', 'app_guiafloripa_campaigns', 'wpse_91693_campaign');
     //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
     add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_campaigns_add');
 
@@ -502,6 +519,14 @@ function app_guiafloripa_negocio() {
 }
 
 function app_guiafloripa_negocio_add() {
+    define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('DROPZONEJS_PLUGIN_VERSION', '0.0.1');
+    wp_enqueue_script(
+            'dropzonejs', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js', array(), DROPZONEJS_PLUGIN_VERSION
+    );
+    wp_enqueue_style(
+            'dropzonecss', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css', array(), DROPZONEJS_PLUGIN_VERSION
+    );
     include_once PLUGIN_ROOT_DIR . 'views/negocio/page.php';
 }
 
@@ -731,6 +756,18 @@ function add_email_dashboard_widgets() {
             'Meus Eventos', // Title.
             'events_dashboard_widget_content' // Display function.
     );
+}
+
+function tips_dashboard_widget_content() {
+    global $wpdb; //This is used only if making any database queries
+
+    $helpMe = $wpdb->get_results("SELECT * FROM wp_posts where post_type = 'ajuda_faq' and post_status = 'publish';");
+    //var_dump($helpMe);
+    echo "<ul>";
+    foreach($helpMe as $help1){
+        echo "<li><a href='#'>".$help1->post_title."</a></li>";
+    }
+    echo "</ul>";
 }
 
 function cota_dashboard_widget_content() {
@@ -1131,6 +1168,7 @@ add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_updateGroupsBatch', 'updateGroupsBatch');
 add_action('wp_ajax_findNickName', 'findNickName');
 add_action('wp_ajax_importGmail', 'importGmail');
+add_action('wp_ajax_createAttach', 'createPostAttachment');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('show_user_profile', 'extra_user_profile_fields');
@@ -1179,4 +1217,25 @@ function dropzonejs_upload() {
     }
     die();
 }
+
+// Our custom post type function
+function create_posttype_ajuda() {
+
+    register_post_type('ajuda_faq',
+            // CPT Options
+            array(
+        'labels' => array(
+            'name' => __('Ajuda'),
+            'singular_name' => __('Ajuda')
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'publicly_queryable' => true,
+        'rewrite' => array('slug' => 'help'),
+            )
+    );
+}
+
+// Hooking up our function to theme setup
+add_action('init', 'create_posttype_ajuda');
 ?>

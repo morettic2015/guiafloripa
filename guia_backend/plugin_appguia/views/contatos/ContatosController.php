@@ -118,6 +118,7 @@ class ContatosController {
                     'first_name' => is_null($leadOutlookImport->givenName) ? "" : $leadOutlookImport->givenName,
                     'nickname' => is_null($leadOutlookImport->displayName) ? "" : sanitize_title($leadOutlookImport->displayName),
                     'last_name' => is_null($leadOutlookImport->surname) ? "" : $leadOutlookImport->surname,
+                    'role' => 'contato_lead',
                     'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
                 );
                 $user_id = wp_insert_user($userdata);
@@ -189,6 +190,7 @@ class ContatosController {
                     'first_name' => count($leadName) > 0 ? $leadName[0] : "",
                     'nickname' => sanitize_title($gContacts[$id - 1]->name),
                     'last_name' => count($leadName) > 1 ? $leadName[1] : "",
+                    'role' => 'contato_lead',
                     'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
                 );
                 $user_id = wp_insert_user($userdata);
@@ -317,6 +319,7 @@ class ContatosController {
             'first_name' => $request['firstName'],
             'nickname' => sanitize_title($request['nick']),
             'last_name' => $request['lastName'],
+            'role' => 'contato_lead',
             'user_pass' => wp_generate_password()  // When creating an user, `user_pass` is expected.
         );
         $user = get_user_by('email', $request['email']);
