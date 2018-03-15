@@ -22,7 +22,7 @@
     </div>
     <div id="message-term"></div>
     <hr/>
-    <form id="events_crud" name="terms" action="admin.php?page=app_guiafloripa_eventos_imp" method="post" >
+    <form id="events_crud1" name="terms1" action="admin.php?page=app_guiafloripa_eventos_imp" method="post" >
         <div id="namediv" class="stuffbox"><div id="message-term"></div>
             <div class="inside">
                 <fieldset>
@@ -96,21 +96,30 @@
                                         <td class="first" colspan="2">
                                             <hr>
                                             <h3>
-                                                Passo 2: O estabelecimento nao foi localizado no Guia Floripa
+                                                Passo 2: Informe o estabelecimento de realização do evento
                                             </h3>
                                             <p>
-                                                Localize o estabelecimento ou cadastre
-                                                <input type="text" name="srcPlace" placeholder="Ex: Fields" style="max-width: 300px"/>
+                                                Localize o estabelecimento e associe com o evento
+                                                <input type="text" id="srcPlace" name="srcPlace" placeholder="Ex: Fields" style="max-width: 300px"/>
+                                                <input style="max-width: 90px" onclick="associatePlaceEvent('admin-ajax.php?action=save_event_place&eventID=<?php echo $facebook->postID; ?>&eventName=')" type="button" name="slv" value="Associar" class="page-title-action"/>
                                             </p>
-                                            <h4>
-                                                <a href="admin.php?page=app_guiafloripa_negocio_add" class="page-title-action"/>Cadastre aqui</a>
-                                            </h4>
+                                            <p>
+                                                Caso o estabelecimento não seja localizado cadastre <a href="admin.php?page=app_guiafloripa_negocio_add&source=event&eventID=<?php echo $facebook->postID; ?>" class="page-title-action"/>Cadastre aqui</a>
+                                            </p>
                                         </td>
                                     </tr>
-                                    <?php
-                                }
+                                <script>
+                                    jQuery(function ($) {
+                                        $("#srcPlace").suggest(ajaxurl + "?action=wpwines-dist-regions", {delay: 400, minchars: 4});
+                                        $("#srcPlace").change(function (e) {
+                                            placeIsSelected = true;
+                                        });
+                                    })
+                                </script>
+                                <?php
                             }
-                            ?>
+                        }
+                        ?>
                         </tbody>
                     </table>
                     <?php if (!count($facebook->placeGuia) > 0) { ?>
@@ -254,5 +263,50 @@
          height: 480
          };*/
         mdialog.load("admin-ajax.php?action=load_event_edit&page=" + page + "&id=" + id).dialog('open');
+    }
+
+    function associatePlaceEvent(url) {
+        url += jQuery("#srcPlace").val();
+        //alert(url);
+        jQuery.get(url, function (data) {
+            console.log(data);
+            if (data.error === undefined) {
+                alert('Localização do evento salva com sucesso!')
+                window.location.href = "admin.php?page=app_guiafloripa_eventos";
+            } else {
+                alert(data.error);
+            }
+        });
+    }
+      function upload_new_img(obj)
+    {
+        var file_frame;
+        var img_name = jQuery(obj).closest('p').find('.upload_image');
+        if (file_frame) {
+            file_frame.open();
+            return;
+        }
+
+        file_frame = wp.media.frames.file_frame = wp.media(
+                {
+                    title: 'Imagens dos seus Eventos',
+                    button: {
+                        text: jQuery(this).data('uploader_button_text')
+                    },
+                    multiple: false
+                }
+        );
+        file_frame.on('select', function () {
+            attachment = file_frame.state().get('selection').first().toJSON();
+            document.getElementById('content_url').value = attachment.url;
+            document.getElementById("imgPreview").innerHTML = '<br><img style="max-width:200px;border:1px" src="' + attachment.url + '"/>'
+            file_frame.close();
+        });
+        file_frame.open();
+    }
+
+    function remove_image(obj) {
+        document.getElementById("imgPreview").innerHTML = "";
+        document.getElementById('content_url').value = "";
     }
 </script>

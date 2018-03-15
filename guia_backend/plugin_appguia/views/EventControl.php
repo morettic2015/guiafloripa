@@ -192,6 +192,7 @@ class EventControl extends stdClass {
                 where 
                     id in ($myEvents)";
             //echo $myEvents;
+            echo $query;
             $events = $app_db->get_results($query);
             wp_cache_set('my_events', $data);
             $app_db->close();
@@ -278,7 +279,7 @@ class EventControl extends stdClass {
                     //echo $query;
                     $eventFace->placeGuia = $result;
                     //insert post evento
-
+                    $current_user = wp_get_current_user();
                     $r1 = array(
                         "txtDesc" => $eventFace->description,
                         "titEvent" => $eventFace->name,
@@ -298,6 +299,7 @@ class EventControl extends stdClass {
                     $this->updateImageFromFace($app_db, $eventFace->cover->source, $postID);
                     //set dates
                     $faceDates = $this->splitFacebookDates($eventFace);
+                    //var_dump($faceDates);
                     $this->insertDates($app_db, $faceDates->dInit, $faceDates->hInit, $faceDates->dFinish, $faceDates->hFinish, $postID);
                     //Set event email
                     $current_user = wp_get_current_user();
@@ -335,7 +337,7 @@ class EventControl extends stdClass {
     }
 
     private function splitFacebookDates($eventFace) {
-
+        var_dump($eventFace);
         $dtInit = $eventFace->start_time;
         $dtFinish = $eventFace->end_time;
 
@@ -349,7 +351,7 @@ class EventControl extends stdClass {
 
         $dt->dFinish = $tmp[0];
         $dt->hFinish = substr($tmp[1], 0, 5);
-        //var_dump($dt);
+        var_dump($dt);
         return $dt;
     }
 
@@ -418,6 +420,7 @@ class EventControl extends stdClass {
 
     public function createInsert($request) {
         $status = isset($request['published']) ? "publish" : "draft";
+        $current_user = wp_get_current_user();
         $query = "INSERT INTO `guiafloripa`.`wp_posts`  (
           `post_author`,
           `post_date`,
@@ -444,7 +447,7 @@ class EventControl extends stdClass {
           57,
           NOW() + INTERVAL 5 HOUR,
           NOW() + INTERVAL 5 HOUR,
-          '" . $request['txtDesc'] . "',
+          '" . $request['txtDesc'] ."<br><b>Autor:".$current_user->user_firstname."</b>',
           '" . $request['titEvent'] . "',
           '" . $request['titEvent'] . "',
           '$status',
@@ -465,13 +468,39 @@ class EventControl extends stdClass {
         return $query;
     }
 
+    public function savePlaceImport($eventID, $eventName) {
+        @session_start();
+        $ne = json_decode($_SESSION['place']);
+        //var_dump($ne);
+        $place = new stdClass();
+        foreach ($ne as $n) {
+            //var_dump($n);
+            //echo $eventName === $n->placeName;
+           // echo $n->placeName;
+            if ($n->placeName === $eventName) {
+                $place->id = $n->placeID;
+                $place->name = $eventName;
+                break;
+            }
+        }
+        if (isset($place->id)) {
+            //var_dump($ne);
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            $place->ret = $app_db->get_results($this->insertMeta($eventID, _LOCATION, $place->id));
+        }else{
+            $place->error = "Não foi possível associar o evento com o negócio indicado. Tente outra vez.";
+        }
+        //var_dump($place);
+        echo json_encode($place);
+    }
+
     public function loadComplement($request) {
         
     }
 
     public function insertEvent($request) {
         //var_dump($_SESSION);
-        // var_dump($request);die;
+        var_dump($request);
 
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         //insert post evento
@@ -529,6 +558,7 @@ class EventControl extends stdClass {
             $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $request['email']));
         }
         //Dates
+       // var_dump($request);
         $this->insertDates($app_db, $request['dtStart'], $request['hrStart'], $request['dtEnd'], $request['hrEnd'], $postID);
 
         //Close connection
@@ -671,6 +701,7 @@ class EventControl extends stdClass {
 
     public function updateEventInfo($request) {
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        //var_dump($request);die;
         if ($request[_SECTION] === "place") {
             if (!empty($request['pResult'])) {
                 $request['update2'] = $this->insertOrUpdateMeta($app_db, $request['eventID'], _LOCATION, $request['pResult']);

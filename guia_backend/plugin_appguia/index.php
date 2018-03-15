@@ -309,6 +309,11 @@ function findBeachsAjax() {
  * @Update
  */
 function app_guiafloripa_eventos_imp() {
+    wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
+    wp_enqueue_style('thickbox');
     include_once PLUGIN_ROOT_DIR . 'views/events_import.php';
 }
 
@@ -764,8 +769,8 @@ function tips_dashboard_widget_content() {
     $helpMe = $wpdb->get_results("SELECT * FROM wp_posts where post_type = 'ajuda_faq' and post_status = 'publish';");
     //var_dump($helpMe);
     echo "<ul>";
-    foreach($helpMe as $help1){
-        echo "<li><a href='#'>".$help1->post_title."</a></li>";
+    foreach ($helpMe as $help1) {
+        echo "<li><a href='#'>" . $help1->post_title . "</a></li>";
     }
     echo "</ul>";
 }
@@ -1117,6 +1122,18 @@ function places_route(WP_REST_Request $request) {
 }
 
 /**
+ * Associa o Estabelecimento com o Evento
+ */
+function saveEventPlace() {
+    header("Content-type:application/json");
+    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+    $ec = new EventControl();
+    $ec->savePlaceImport($_GET['eventID'], $_GET['eventName']);
+    //echo $data;
+    die;
+}
+
+/**
  * Generate results for the /wp-json/event_type/v1/eid route.
  *
  * @param WP_REST_Request $request Full details about the request.
@@ -1171,6 +1188,7 @@ add_action('wp_ajax_importGmail', 'importGmail');
 add_action('wp_ajax_createAttach', 'createPostAttachment');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
+add_action('wp_ajax_save_event_place', 'saveEventPlace');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');
 add_action('personal_options_update', 'save_extra_user_profile_fields');

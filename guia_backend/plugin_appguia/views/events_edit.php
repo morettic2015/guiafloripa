@@ -110,7 +110,7 @@ $ec = new EventControl();
                     <center>
                         <?php
                         if (!empty($imge[0]->img)) {
-                            echo "<image src='" . $imge[0]->img . "'/>";
+                            echo "<image style=\"width: 150px;margin-bottom: 10px\" src='" . $imge[0]->img . "'/>";
                         }
                         ?>
                     </center>
@@ -160,7 +160,7 @@ $ec = new EventControl();
         ?>
 
     </select>
-    <span class="description">Selecione um                                            a praia proxima</span>
+    <span class="description">Selecione uma praia proxima</span>
     </p>
     <script>
         jQuery(function ($) {

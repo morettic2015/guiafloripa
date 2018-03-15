@@ -10,6 +10,11 @@ if (isset($_POST['nmNegocio'])) {
 } else {
     $business = $nc->findNegocioById($_GET['id']);
 }
+if (isset($_GET['eventID'])) {
+    echo ' <div class="notice notice-warning" > 
+            <p><span class="dashicons dashicons-warning"></span>&nbsp;Após cadastrar o negócio lembre-se de associar com o evento!</p>
+        </div>';
+}
 
 /* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
   echo "<pre>"; */
@@ -240,7 +245,7 @@ if (isset($_POST['nmNegocio'])) {
                         <tr>
                             <td class="first" style="text-align: right">Cep</td>
                             <td><input type="number"  name="zip" id="zip" onblur="loadPlaces(this)" value="<?php echo isset($business->meta['zip']) ? $business->meta['zip'][0] : ""; ?>"/>
-                            <br><span class="description">Apenas números</span>
+                                <br><span class="description">Apenas números</span>
                             </td>
                         </tr>
                         <tr>
