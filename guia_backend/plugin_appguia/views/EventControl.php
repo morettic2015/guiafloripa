@@ -42,22 +42,26 @@ class EventControl extends stdClass {
 
     public function updateDates($request) {
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-        $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
-        $qtfim = $this->getTimeFromString($request['dtEnd'], $request['hrEnd']);
-        //Query timestamp from database
-        $dtinit = $app_db->get_results($qtinit);
-        $dtfim = $app_db->get_results($qtfim);
-        //Insert new dates
-        $request['dtinit'] = $dtinit;
-        $request['dtfim'] = $dtfim;
+        /* $qtinit = $this->getTimeFromString($request['dtStart'], $request['hrStart']);
+          $qtfim = $this->getTimeFromString($request['dtEnd'], $request['hrEnd']);
+          //Query timestamp from database
+          $dtinit = $app_db->get_results($qtinit);
+          $dtfim = $app_db->get_results($qtfim);
+          //Insert new dates
+          $request['dtinit'] = $dtinit;
+          $request['dtfim'] = $dtfim; */
+
+        $dateI = new DateTime($request['dtStart'] . ' ' . $request['hrStart']);
+        $dateF = new DateTime($request['dtEnd'] . ' ' . $request['hrEnd']);
+
         //update init date
-        $query = "update wp_postmeta set meta_value = '" . $dtinit[0]->DT . "' where meta_key = 'vevent_dtstart' and post_id = " . $request['eventID'];
+        $query = "update wp_postmeta set meta_value = '" . (int) ($dateI->getTimestamp() + 10800) . "' where meta_key = 'vevent_dtstart' and post_id = " . $request['eventID'];
         $app_db->get_results($query);
         //Update finish date
-        $query = "update wp_postmeta set meta_value = '" . $dtfim[0]->DT . "' where meta_key = 'vevent_dtend' and post_id = " . $request['eventID'];
+        $query = "update wp_postmeta set meta_value = '" . (int) ($dateF->getTimestamp() + 10800) . "' where meta_key = 'vevent_dtend' and post_id = " . $request['eventID'];
         $app_db->get_results($query);
         //Insert event duration variable
-        $timeAmnt = (double) ($dtfim[0]->DT + (3600 * 6)) - (double) $dtinit[0]->DT;
+        $timeAmnt = (double) ($dateI->getTimestamp() + (3600 * 6)) - (double) $dateF->getTimestamp();
         $app_db->get_results($this->insertMeta($request['eventID'], _DURACAO, $timeAmnt));
         $query = "delete from wp_postmeta where meta_value = 'on' and post_id = " . $request['eventID'];
         $app_db->get_results($query); //Remove days of week
@@ -86,7 +90,7 @@ class EventControl extends stdClass {
                     <p><strong>Status dos eventos alterados para:<code>' . $status . '</code></strong></p>
                  </div>';
         echo '<a href="admin.php?page=app_guiafloripa_eventos" class="page-title-action">Voltar</a></h1>';
-        wp_die('Sucesso!');
+        //wp_die('Sucesso!');
     }
 
     public function loadMyDates() {
@@ -186,13 +190,13 @@ class EventControl extends stdClass {
             $query = "
                 SELECT 
                     a.*,DATE_FORMAT(a.post_modified, '%d/%m/%Y %H:%m:%s') as dt_formated,  
-                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtstart') - (2*3600) as dtStart,
-                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtend') - (2*3600) as dtEnd
+                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtstart') - (3*3600) as dtStart,
+                    (select meta_value from wp_postmeta where post_id = a.id and meta_key = 'vevent_dtend') - (3*3600) as dtEnd
                 FROM wp_posts as a 
                 where 
                     id in ($myEvents)";
             //echo $myEvents;
-            echo $query;
+            //echo $query;
             $events = $app_db->get_results($query);
             wp_cache_set('my_events', $data);
             $app_db->close();
@@ -211,11 +215,11 @@ class EventControl extends stdClass {
         foreach ($events as $e1) {
             $sts = "";
             if ($e1->post_status == "draft") {
-                $sts = "<center><img src='../wp-content/uploads/2017/12/d1.png'><br>Rascunho</center>";
+                $sts = "<center><span class=\"dashicons dashicons-minus\"></span> <br><small>Rascunho</small></center>";
             } else if ($e1->post_status == "trash") {
-                $sts = "<center><img src='../wp-content/uploads/2017/12/t1.png'><br>Excluido</center>";
+                $sts = "<center><span class=\"dashicons dashicons-no\"></span> <br><small>Excluido</small></center>";
             } else {
-                $sts = "<center><img src='../wp-content/uploads/2017/12/p1.png'><br>Publicado</center>";
+                $sts = "<center><span class=\"dashicons dashicons-yes\"></span> <br><small>Publicado</small></center>";
             }
             $vet[] = array(
                 'ID' => $e1->ID,
@@ -337,7 +341,7 @@ class EventControl extends stdClass {
     }
 
     private function splitFacebookDates($eventFace) {
-        var_dump($eventFace);
+        //var_dump($eventFace);
         $dtInit = $eventFace->start_time;
         $dtFinish = $eventFace->end_time;
 
@@ -351,7 +355,7 @@ class EventControl extends stdClass {
 
         $dt->dFinish = $tmp[0];
         $dt->hFinish = substr($tmp[1], 0, 5);
-        var_dump($dt);
+        // var_dump($dt);
         return $dt;
     }
 
@@ -447,7 +451,7 @@ class EventControl extends stdClass {
           57,
           NOW() + INTERVAL 5 HOUR,
           NOW() + INTERVAL 5 HOUR,
-          '" . $request['txtDesc'] ."<br><b>Autor:".$current_user->user_firstname."</b>',
+          '" . $request['txtDesc'] . "<br><b>Autor:" . $current_user->user_firstname . "</b>',
           '" . $request['titEvent'] . "',
           '" . $request['titEvent'] . "',
           '$status',
@@ -476,7 +480,7 @@ class EventControl extends stdClass {
         foreach ($ne as $n) {
             //var_dump($n);
             //echo $eventName === $n->placeName;
-           // echo $n->placeName;
+            // echo $n->placeName;
             if ($n->placeName === $eventName) {
                 $place->id = $n->placeID;
                 $place->name = $eventName;
@@ -487,7 +491,7 @@ class EventControl extends stdClass {
             //var_dump($ne);
             $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
             $place->ret = $app_db->get_results($this->insertMeta($eventID, _LOCATION, $place->id));
-        }else{
+        } else {
             $place->error = "Não foi possível associar o evento com o negócio indicado. Tente outra vez.";
         }
         //var_dump($place);
@@ -558,7 +562,7 @@ class EventControl extends stdClass {
             $app_db->get_results($this->insertMeta($postID, _EVENTMAIL, $request['email']));
         }
         //Dates
-       // var_dump($request);
+        // var_dump($request);
         $this->insertDates($app_db, $request['dtStart'], $request['hrStart'], $request['dtEnd'], $request['hrEnd'], $postID);
 
         //Close connection
@@ -585,17 +589,30 @@ class EventControl extends stdClass {
     }
 
     private function insertDates(&$app_db, $dtStart, $hrStart, $dtEnd, $hrEnd, $postID) {
-        $qtinit = $this->getTimeFromString($dtStart, $hrStart);
-        $qtfim = $this->getTimeFromString($dtEnd, $hrEnd);
-        //Query timestamp from database
-        $dtinit = $app_db->get_results($qtinit);
-        $dtfim = $app_db->get_results($qtfim);
+
+        // echo "<pre>$dtStart $hrStart $dtEnd $hrEnd";
+        /*  $qtinit = $this->getTimeFromString($dtStart, $hrStart);
+          $qtfim = $this->getTimeFromString($dtEnd, $hrEnd);
+          //Query timestamp from database
+          $dtinit = $app_db->get_results($qtinit); */
+
+        $dateI = new DateTime("$dtStart $hrStart");
+        $dateF = new DateTime("$dtEnd $hrEnd");
+// "-2209078800"
+        //echo $dateI->getTimestamp();
+// false
+        // echo $dateF->getTimestamp();
+        //var_dump($dtinit);
+        /*  echo $q1;
+          $dtfim = $app_db->get_results($qtfim); */
+        //var_dump($dtfim);
         //Insert new dates
-        $app_db->get_results($this->insertMeta($postID, 'vevent_dtstart', $dtinit[0]->DT));
-        $app_db->get_results($this->insertMeta($postID, 'vevent_dtend', $dtfim[0]->DT));
+        $app_db->get_results($this->insertMeta($postID, 'vevent_dtstart', $dateI->getTimestamp() + 10800));
+        $app_db->get_results($this->insertMeta($postID, 'vevent_dtend', $dateF->getTimestamp() + 10800));
         //Insert event duration variable
-        $timeAmnt = (double) ($dtfim[0]->DT + (3600 * 6)) - (double) $dtinit[0]->DT;
+        $timeAmnt = (double) ($dateF->getTimestamp() + (3600 * 6)) - (double) $dateI->getTimestamp();
         $app_db->get_results($this->insertMeta($postID, _DURACAO, $timeAmnt));
+        // echo "</pre>";
     }
 
     private function updateUserEvents($postID) {
@@ -827,10 +844,10 @@ class EventControl extends stdClass {
                 . " (select meta_value from wp_postmeta where meta_key = 'Fri' and post_id = $postID) as Fri, "
                 . " (select meta_value from wp_postmeta where meta_key = 'Sat' and post_id = $postID) as Sat, "
                 . " (select meta_value from wp_postmeta where meta_key = 'Sun' and post_id = $postID) as Sun, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3*3600) ), '%Y-%m-%d')as dtStart, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3*3600) ), '%Y-%m-%d')as dtEnd, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3*3600) ), '%H:%i')as hrStart, "
-                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3*3600) ), '%H:%i')as hrEnd "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3600) ), '%Y-%m-%d')as dtStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3600) ), '%Y-%m-%d')as dtEnd, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtstart' and post_id = $postID)+(3600) ), '%H:%i')as hrStart, "
+                . " DATE_FORMAT(FROM_UNIXTIME((select meta_value from wp_postmeta where meta_key = 'vevent_dtend' and post_id = $postID)+(3600) ), '%H:%i')as hrEnd "
                 . " from dual;";
         $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
         //insert post evento

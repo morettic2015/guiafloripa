@@ -5,7 +5,7 @@
     $current_user = wp_get_current_user();
     $ec = new EventControl();
     if (isset($_POST['facebook_place_id'])) {//Import place
-        var_dump($_POST);
+        //var_dump($_POST);
         wp_die();
     } else if (isset($_POST['facebook_event_ids'])) {//Import event
         $facebook = $ec->importEvents($_POST);

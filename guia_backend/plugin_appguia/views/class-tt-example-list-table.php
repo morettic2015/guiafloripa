@@ -196,7 +196,7 @@ class TT_Example_List_Table extends WP_List_Table {
             $actions['pic'] = '<a href="javascript:showPop(\'image\',' . $item['ID'] . ')">' . _x('Imagem') . '</a>';
         }
         $actions['comp'] = '<a href="javascript:showPop(\'comp\',' . $item['ID'] . ')">' . _x('Complemento') . '</a>';
-        
+
         // Return the title contents.
         return sprintf('%1$s <span style="color:silver;">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
@@ -253,14 +253,39 @@ class TT_Example_List_Table extends WP_List_Table {
             include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
             $ec = new EventControl();
             $ec->updatePostStatus($_GET, 'trash');
+            $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
+
+            $a = unserialize($lEvents);
+            $b = $_GET['evento'];
+            $c = array_diff($a, $b);
+            $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+            foreach ($b as $i) {
+                $query = $ec->insertMeta($i, "_post_owner", get_current_user_id());
+                //echo $query;
+                $ret = $app_db->get_results($query);
+                //var_dump($ret);
+            }
+
+
+            /* echo "<pre>";
+              var_dump($a);
+              var_dump($b);
+              var_dump($c); */
+            update_user_option(get_current_user_id(), _MY_EVENTS, serialize($c));
+
+            /* echo "</pre>"; */
+            //  var_dump($_GET);
+            wp_die();
         } else if ('publish' === $this->current_action()) {
             include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
             $ec = new EventControl();
             $ec->updatePostStatus($_GET, 'publish');
+            wp_die();
         } else if ('revision' === $this->current_action()) {
             include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
             $ec = new EventControl();
             $ec->updatePostStatus($_GET, 'draft');
+            wp_die();
         }
     }
 
