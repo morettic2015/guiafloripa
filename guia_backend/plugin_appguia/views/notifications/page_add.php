@@ -20,21 +20,22 @@ $notification = $ec->updateNotification($_POST);
                     <table class="form-table editcomment">
                         <tbody>
                             <tr>
-                                <td class="first" style="text-align: right"><label for="name">Título</label></td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-sticky"></span> <label for="name">Título</label></td>
                                 <td>
                                     <input type="hidden" name="id" id="id" value="<?php echo empty($notification) ? "" : $notification->post->ID; ?>">
                                     <input type="text" value="<?php echo $notification->post->post_title; ?>" name="subject" id="subject" spellcheck="true"  size="30" maxlength="50"  placeholder="Título da Notificação">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Mensagem</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-admin-comments"></span>  Mensagem<br></td>
                                 <td>
                                     <textarea name="description" id="description" style="width: 100%;height: 60px" maxlength="100"><?php echo $notification->post->post_content; ?></textarea>
+                                    <span class="description">Conteúdo do seu push. O texto deve ser objetivo e curto para aparecer corretamente nos dispositivos móveis</span
                                 </td>
 
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Link</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-admin-links"></span>  Link</td>
                                 <td><input type="text" name="link" onblur="isValidURL(this)" id="link" value="<?php echo $notification->url; ?>"  spellcheck="true"  size="30"  placeholder="http://"></td>
                             </tr>                            
                         </tbody>

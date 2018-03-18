@@ -2,9 +2,9 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?><a href="admin.php?page=app_guiafloripa_leads_add" class="page-title-action">Adicionar</a><a href="admin.php?page=app_guiafloripa_leads_imp" class="page-title-action">Importar</a></h1>
     <form id="movies-filter" method="post" action="admin.php?page=app_guiafloripa_leads">
         <p class="search-box">
-            <label class="screen-reader-text" for="search_id-search-input">
-                Buscar contatos:</label> 
-            <input id="search_id-search-input" type="text" name="s" value="<?php echo $_POST['s']; ?>" /> 
+    
+            <span class="dashicons dashicons-search"></span>Buscar contatos<br>
+            <input id="search_id-search-input" type="text" name="s" value="<?php echo $_POST['s']; ?>"  placeholder="nome ou email@mail.com"/> 
             <input id="search-submit" class="button" type="submit" name="" value="Buscar" />
         </p>
         <div class="notice notice-info"> 

@@ -58,7 +58,7 @@ $categories = $ec->loadCategories();
                         <table class="form-table editcomment">
                             <tbody>
                                 <tr>
-                                    <td class="first" style="text-align: right">Estabelecimento</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-image-filter"></span> Estabelecimento</td>
                                     <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input type="text" name="placeName" id="placeName" style="width: 40%"  placeholder="Digite o nome do estabelecimento" onblur="validateOnBlur(jQuery('#placeName'))">
                                         <!--<a href="javascript:addPlace()" class="button button-primary">Adicionar</a><br>-->
@@ -96,7 +96,7 @@ $categories = $ec->loadCategories();
                                     ?>
                                     <tr>
                                         <td class="first" style="text-align: right"> 
-                                            Foto destaque
+                                            <span class="dashicons dashicons-images-alt2"></span> Foto destaque
                                         </td>
                                         <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                             <input id="content_url" name="content_url" type="hidden" readonly="readonly"/>
@@ -108,7 +108,7 @@ $categories = $ec->loadCategories();
                                 <?php }
                                 ?>
                                 <tr>
-                                    <td class="first" style="text-align: right">Data e hora (inicio e fim)</td>
+                                    <td class="first" style="text-align: right"> <span class="dashicons dashicons-calendar-alt"></span> Data e hora (inicio e fim)</td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input type="date" name="dtStart" id="dtStart" style="width:25%"   onblur="validateOnBlur(jQuery('#dtStart'))"/>
                                         <input type="time" name="hrStart" id="hrStart" style="width:10%"   onblur="validateOnBlur(jQuery('#hrStart'))"/>
@@ -165,7 +165,7 @@ $categories = $ec->loadCategories();
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Região da ilha</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-location"></span> Região da ilha</td>
                                     <td>
                                         <div style="width: 100%">
 
@@ -205,21 +205,21 @@ $categories = $ec->loadCategories();
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Email de contato</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-email"></span> Email de contato</td>
                                     <td>
                                         <input style="width: 50%" type="email" id="email" name="email" placeholder="meuemail@guiafloripa.com.br" value="<?php echo $current_user->user_email; ?>"  onblur="validateOnBlur(jQuery('#email'))"/><br>
                                         <span class="description">Email para receber mensagens dos clientes</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Whatsapp</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-smartphone"></span> Whatsapp</td>
                                     <td>
                                         <input type="text"  style="width: 50%" id="whats" name="whats" value="<?php echo get_user_meta(get_current_user_id(), "_whatsapp", true); ?>" placeholder="Telefone para contato"/><br>
                                         <span class="description">Prencha no seu <a href="profile.php#m_phones" target="_blank">perfil</a> para carregar automaticamente</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Website ou link evento</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-admin-links"></span> Website ou link evento</td>
                                     <td>
                                         <input type="text" id="ingresso" name="ingresso"  placeholder="http://"/>
                                         <span class="description">URL do link para o ingresso ou site do evento</span>
@@ -227,14 +227,14 @@ $categories = $ec->loadCategories();
                                 </tr>
 
                                 <tr>
-                                    <td class="first" style="text-align: right">Youtube / Vimeo</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-video-alt3"></span> Youtube / Vimeo</td>
                                     <td>
                                         <input type="text" name="youtube" id="youtube" placeholder="Vídeo promocional"/>
                                         <span class="description">Endereço do video começando com http...</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="first" style="text-align: right">Facebook</td>
+                                    <td class="first" style="text-align: right"><span class="dashicons dashicons-facebook-alt"></span> Facebook</td>
                                     <td>
                                         <input type="text" id="linkFace" name="linkFace"  placeholder="Endereço do Evento no Facebook"/>
                                         <span class="description">Endereço no face começando com http...</span>

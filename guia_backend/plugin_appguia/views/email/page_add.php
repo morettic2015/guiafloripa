@@ -14,7 +14,7 @@ if ($_GET['pid'] !== "") {
 }
 ?>
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?><?php echo (empty($pId) ? "" : '<a target="_target" href="admin-ajax.php?action=email_template&pid='.$pId.'" class="page-title-action">Visualizar</a>'); ?></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?><?php echo (empty($pId) ? "" : '<a target="_target" href="admin-ajax.php?action=email_template&pid=' . $pId . '" class="page-title-action">Visualizar</a>'); ?></h1>
     <div class="notice notice-info"> 
         <p>Crie seu email marketing para enviar em sua campanha</p>
     </div>
@@ -28,26 +28,28 @@ if ($_GET['pid'] !== "") {
                     <table class="form-table editcomment">
                         <tbody>
                             <tr>
-                                <td class="first" style="text-align: right"><label for="name">Assunto</label></td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-sticky"></span> <label for="name"> Assunto</label></td>
                                 <td>
                                     <input type="hidden" name="id" id="id" value="<?php echo empty($post) ? "" : $post->post->ID; ?>">
                                     <input type="text" value="<?php echo $post->post->post_title; ?>" name="subject" id="subject" spellcheck="true"  size="30"  placeholder="Assunto da mensagem">
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Mensagem</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-admin-comments"></span> Mensagem<br><span class="description">Conteúdo do seu email</span></td>
                                 <td>
                                     <?php
                                     $content = $post->post->post_content;
                                     $editor_id = 'txtDesc';
 
-                                    wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false));
+                                    wp_editor($content, $editor_id, array('media_buttons' => false, 'quicktags' => false, 'textarea_rows' => 3));
                                     ?>
+                                    
+
                                 </td>
 
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Link</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-admin-links"></span> Link</td>
                                 <td><input type="text" name="link" id="link" value="<?php echo $post->meta[M_LINK][0]; ?>"  spellcheck="true"  size="30"  placeholder="http://"></td>
 
                             </tr>
@@ -57,16 +59,16 @@ if ($_GET['pid'] !== "") {
 
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Cor do tema</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-editor-textcolor"></span> Cor do tema</td>
                                 <td><input type="text" name="colorpicker" id="colorpicker" value="<?php echo $post->meta[COLOR_PICKER][0]; ?>" spellcheck="true"  size="30"  placeholder="Compre seu ticket!"></td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Link Facebook</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-facebook-alt"></span> Link Facebook</td>
                                 <td><input type="text" name="linkFacebook" value="<?php echo $post->meta[FACE][0]; ?>" value="" spellcheck="true"  size="30"  placeholder="https://facebook.com/minhapagina"></td>
 
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right">Link Twitter</td>
+                                <td class="first" style="text-align: right"><span class="dashicons dashicons-twitter"></span> Link Twitter</td>
                                 <td><input type="text" name="linkTwitter" id="linkTwitter" value="<?php echo $post->meta[TWITTER][0]; ?>" spellcheck="true"  size="30"  placeholder="@meuperfil"></td>
 
                             </tr>
@@ -75,7 +77,7 @@ if ($_GET['pid'] !== "") {
                                 ?>
                                 <tr>
                                     <td class="first" style="text-align: right"> 
-                                        Logotipo
+                                        <span class="dashicons dashicons-format-image"></span> Logotipo
                                     </td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input id="content_url" value="<?php echo $post->meta[LOGO_URL][0]; ?>" name="content_url" type="hidden" readonly="readonly"/>
@@ -86,7 +88,7 @@ if ($_GET['pid'] !== "") {
                                 </tr>
                                 <tr>
                                     <td class="first" style="text-align: right"> 
-                                        Imagem publicitária
+                                        <span class="dashicons dashicons-images-alt"></span> Imagem publicitária
                                     </td>
                                     <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                         <input id="content_url1" value="<?php echo $post->meta[LOGO_URL1][0]; ?>" name="content_url1" type="hidden" readonly="readonly"/>

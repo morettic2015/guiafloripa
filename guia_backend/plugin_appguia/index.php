@@ -519,6 +519,17 @@ function wpse_91693_register() {
     add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');
 }
 
+function loadSubCategoryGuiaApp() {
+   header("Content-type:application/json");
+    //echo "1";
+  include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+    $nc = new NegocioController();
+    $cat = $nc->getCategoriasGuia($_GET['id']);
+    echo json_encode($cat);
+    wp_die();
+    die();
+}
+
 function app_guiafloripa_negocio() {
     include_once PLUGIN_ROOT_DIR . 'views/negocio/negocio.php';
 }
@@ -1189,6 +1200,7 @@ add_action('wp_ajax_createAttach', 'createPostAttachment');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('wp_ajax_save_event_place', 'saveEventPlace');
+add_action('wp_ajax_sub_cat_guia', 'loadSubCategoryGuiaApp');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');
 add_action('personal_options_update', 'save_extra_user_profile_fields');

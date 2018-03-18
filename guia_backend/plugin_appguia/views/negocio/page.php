@@ -17,10 +17,10 @@ if (isset($_GET['eventID'])) {
 }
 
 /* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
-  echo "<pre>"; */
-//var_dump($business);
+  *//*echo "<pre>"; 
+var_dump($business);
 /* var_dump($_POST);
-  echo "</pre>"; */
+ */ /*echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -42,24 +42,24 @@ if (isset($_GET['eventID'])) {
             </ul>
             <div id="tabs-2">
                 <p>
-                    <b>Dados do meu negócio.</b>
+                    <span class="dashicons dashicons-feedback"></span> <b>Dados do meu negócio.</b>
                     <br>
                 </p>
                 <p>
-                <table class="form-table editcomment" style="max-width: 600px">
+                <table class="form-table editcomment" style="max-width: 800px">
                     <tbody>
                         <tr>
                             <td class="first" style="text-align: right;;max-width: 300px" id="titPgFace"></td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="facePages"></td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Nome da Empresa*</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-sticky"></span> Nome do negócio*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="text" name="nmNegocio" id="nmNegocio" placeholder="Nome do meu negócio" style="width: 100%" value="<?php echo isset($business->post) ? $business->post->post_title : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Categorias do Facebook</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-category"></span> Categorias do Facebook</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <?php
                                 $terms = get_terms(array('taxonomy' => 'business_type', 'hide_empty' => false));
@@ -78,9 +78,9 @@ if (isset($_GET['eventID'])) {
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Categorias*</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-category"></span> Categoria*</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                <select name="businessTypeGuia" id="businessTypeGuia">
+                                <select name="businessTypeGuia" id="businessTypeGuia" onchange="loadSubCategory(this)">
                                     <?php
                                     $mc = $nc->getCategoriasGuia(NULL);
                                     echo '<optgroup label="Categorias do Guiafloripa">';
@@ -92,61 +92,65 @@ if (isset($_GET['eventID'])) {
 
                                 </select>
                                 <br>
-                                <span class="description">Selecione a categoria principal de atuação do seu negócio</span>
+                                <span class="description">Selecione a categoria de atuação do seu negócio</span>
 
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Sub Categoria</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-category"></span> Sub Categoria</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <select name="businessTypeGuia1" id="businessTypeGuia1">
-
+                                    <?php 
+                                        if(isset($business->sub[0])){
+                                            echo "<option value='".$business->sub[0]->term_id."' selected>".$business->sub[0]->name."</option>";
+                                        }
+                                    ?>
                                 </select>
                                 <br>
-                                <span class="description">Selecione a subcategoria principal de atuação do seu negócio</span>
+                                <span class="description">Selecione a subcategoria de atuação do seu negócio</span>
 
                             </td>
                         </tr>
 
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Cnpj</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-id"></span> CPF / CNPJ</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="text" name="cnpjNegocio" placeholder="19.611.312/00001-18" value="<?php echo isset($business->meta['cnpjNegocio']) ? $business->meta['cnpjNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Email</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-email"></span> Email</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="email" name="emailNegocio" id="emailNegocio" placeholder="Email de contato do negócio" value="<?php echo isset($business->meta['emailNegocio']) ? $business->meta['emailNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Webite</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-admin-links"></span> Webite</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" name="urlNegocio" id="urlNegocio" placeholder="http"  style="width: 100%" value="<?php echo isset($business->meta['urlNegocio']) ? $business->meta['urlNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Whatsapp</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-phone"></span> Whatsapp</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="tel" name="whatsNegocio" placeholder="+55 48 996004929" value="<?php echo isset($business->meta['whatsNegocio']) ? $business->meta['whatsNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Fone Comercial*</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-phone"></span> Fone Comercial*</td>
                             <td  style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="tel" name="foneNegocio" id="foneNegocio" placeholder="+5548 32220617" value="<?php echo isset($business->meta['foneNegocio']) ? $business->meta['foneNegocio'][0] : ""; ?>"/>
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Página do Facebook</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-facebook-alt"></span> Página do Facebook</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" name="faceNegocio" id="faceNegocio" placeholder="http" style="width: 100%"  value="<?php echo isset($business->meta['faceNegocio']) ? $business->meta['faceNegocio'][0] : ""; ?>"/>
                             </td>
 
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Google Business</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-googleplus"></span> Google Business</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="url" id="googleNegocio" name="googleNegocio" placeholder="http" style="width: 100%" value="<?php echo isset($business->meta['googleNegocio']) ? $business->meta['googleNegocio'][0] : ""; ?>"/>
                             </td>
@@ -155,7 +159,7 @@ if (isset($_GET['eventID'])) {
                             </td>
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Cartões de crédito</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-money"></span> Cartões de crédito</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <input type="checkbox" name="american" value="american" <?php echo empty($business->meta['american'][0]) ? "  " : "  checked  "; ?>/>American
                                 <input type="checkbox" name="amex" value="amex" <?php echo empty($business->meta['amex'][0]) ? "  " : "  checked  "; ?>/>Amex
@@ -167,7 +171,7 @@ if (isset($_GET['eventID'])) {
 
                         </tr>
                         <tr>
-                            <td class="first" style="text-align: right;max-width: 300px">Descrição do negócio</td>
+                            <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-info"></span> Descrição do negócio</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <?php
                                 $content = isset($business->post) ? $business->post->post_content : "";
@@ -184,7 +188,7 @@ if (isset($_GET['eventID'])) {
             </div>
             <div id="tabs-3">
                 <p>
-                    <b>Selecione o horário de funcionamento de seu negócio.</b>
+                    <span class="dashicons dashicons-calendar-alt"></span> <b>Selecione o horário de funcionamento de seu negócio.</b>
                 </p>
                 <p>
                 <table class="form-table editcomment" style="max-width: 400px">
@@ -237,7 +241,7 @@ if (isset($_GET['eventID'])) {
             </div>
             <div id="tabs-4">
                 <p>
-                    <b>Localização do meu negócio.</b>
+                    <span class="dashicons dashicons-location"></span> <b>Localização do meu negócio.</b>
                 </p>
                 <p>
                 <table class="form-table editcomment" style="max-width: 600px">
@@ -273,7 +277,7 @@ if (isset($_GET['eventID'])) {
                                     foreach ($categories->regions as $cat) {
                                         //var_dump($cat);
                                         ?>
-                                        <input class="singleOne" type="checkbox" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 15px;width: 20px"><?php echo $cat->meta_key; ?> 
+                                    <input class="singleOne" type="radio" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 10px;width: 10px"><?php echo $cat->meta_key; ?> 
                                         <br>
                                         <?php
                                     }
@@ -308,17 +312,17 @@ if (isset($_GET['eventID'])) {
             <?php if (!empty(get_user_meta(get_current_user_id(), "_plano_type", true))) { ?>
                 <div id="tabs-5">
                     <p>
-                        <b>Fotos do meu negócio.</b>
+                        <span class="dashicons dashicons-format-gallery"></span> <b>Fotos do meu negócio.</b>
                     </p>
                     <p>
                         <input type="hidden" name="idNegocio" id="facePage1" value="<?php echo isset($business->id) ? $business->id : (isset($_GET['id']) ? $_GET['id'] : ""); ?>"/>
                         <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                         <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
-                    <table class="form-table editcomment" style="max-width: 600px">
+                    <table class="form-table editcomment" style="max-width: 800px">
                         <tbody>
                             <tr style="visibility: hidden;display: none">
-                                <td class="first" style="text-align: right;max-width: 30%" id="44titPgFace">Logotipo ou foto 100x100 px</td>
+                                <td class="first" style="text-align: right;max-width: 30%" id="44titPgFace"><span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px</td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="44picLogo">
                                     <div id="dropzone-wordpress2">
                                         <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropzone-wordpress-form">
@@ -335,7 +339,7 @@ if (isset($_GET['eventID'])) {
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace">Logotipo ou foto 100x100 px</td>
+                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace"><span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px</td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
                                     <div id="dropzone-wordpress2"  name="dropzoneLogo">
                                         <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneLogo">
@@ -352,11 +356,12 @@ if (isset($_GET['eventID'])) {
                                 </td>
                             </tr>
                             <tr>
-                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace">Imagens</td>
+                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace"><span class="dashicons dashicons-images-alt2"></span> Imagens <br><span class="description">Total de até 10 imagens podem ser anexadas na galeria</span></td>
                                 <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
                                     <div id="dropzone-wordpress2" name="dropzoneCapa">
                                         <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneCapa">
                                             <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
+
                                             <div class="dz-message needsclick">
                                                 Imagens de seu negócio.<br>
                                                 <span class="note needsclick">Para fazer Upload</span>
@@ -364,6 +369,8 @@ if (isset($_GET['eventID'])) {
 
                                         </form>
                                     </div>
+                                   
+                                    <br>
                                     <br>
                                     <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                                 </td>
@@ -390,7 +397,10 @@ if (isset($_GET['eventID'])) {
                 </div>
             <?php } ?>
             <div id="tabs-6">
-                <p>
+
+
+                <p> 
+                    <span class="dashicons dashicons-admin-generic"></span><b>Preferências</b>
                 <h2>Configurações do Guia Floripa</h2>
                 <label><input type="checkbox" name="chkSyncGuia" id="chkSyncGuia" value="chk_guia">Enviar para publicação no Guia Floripa ao salvar</label><br>
                 <label><input type="checkbox" name="chkSyncGuiaAPP" id="chkSyncGuiaAPP" value="chk_app">Enviar para publicação no App Guia Floripa</label><br>
@@ -479,6 +489,23 @@ if (isset($_GET['eventID'])) {
     }
 </style>
 <script>
+    function loadSubCategory(element) {
+        jQuery.ajax({
+            type: "GET",
+            url: "admin-ajax.php?action=sub_cat_guia&id=" + element.value,
+            success: function (data)
+            {
+                $('#businessTypeGuia1').empty()
+                for (i = 0; i < data.length; i++) {
+                    $('#businessTypeGuia1').append($('<option>',
+                            {
+                                value: data[i].term_id,
+                                text: data[i].name
+                            }));
+                }
+            }
+        });
+    }
     jQuery(function ($) {
         $("#tabs").tabs();
         $('#chkFace').click(function () {

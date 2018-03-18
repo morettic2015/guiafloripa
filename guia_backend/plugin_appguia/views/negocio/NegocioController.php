@@ -134,7 +134,7 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, 'picLogoURL', $request['picLogoURL']);
             update_post_meta($post_id, 'picCapaURL', $request['picCapaURL']);
             update_post_meta($post_id, 'neigh', $request['neigh']);
-            update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']);
+            update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']);//Guia category
             update_post_meta($post_id, 'chkSyncGuia', $request['chkSyncGuia']);
             update_post_meta($post_id, 'chkSyncGuiaAPP', $request['chkSyncGuiaAPP']);
             update_post_meta($post_id, 'chkGoogle', $request['chkGoogle']);
@@ -142,38 +142,23 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, '_chkFace', $request['chkFace']);
             update_post_meta($post_id, '_face_appid_', $request['face_appid']);
             update_post_meta($post_id, '_face_appsecret_', $request['face_appsecret']);
-
-
+            update_post_meta($post_id, '_sub_category_', $request['businessTypeGuia1']);//Sub category
+            update_post_meta($post_id, '_region_coor_', $request['region']);//City region
 
             $this->updateTerms($request, $post_id);
-
-            $std = new stdClass();
-            $std->id = $post_id;
-            $std->post = get_post($post_id);
-            $std->meta = get_post_meta($post_id);
-
-            //$wpdb->close();
-            //$this->updateTerms($request, $post_id);
 
             echo '<div class="notice notice-success"> 
                     <p><strong>Negócio atualizado com sucesso</strong></p>
                  </div>';
             //$std->terms = wp_get_object_terms($post_id, BUSINESS_TYPE);
-            return $std;
+            return $this->findNegocioById($post_id);
         } else {
             $query = "select ID from wp_posts where post_author = " . get_current_user_id() . " and post_type = 'business'";
             //echo $query;
             $business = $wpdb->get_results($query);
             //var_dump($business);
             if (!empty($business)) {
-                $std = new stdClass();
-                $std->id = $business[0]->ID;
-                $std->post = get_post($business[0]->ID);
-                $std->meta = get_post_meta($business[0]->ID);
-                //$std->terms = wp_get_object_terms($business[0]->ID, BUSINESS_TYPE);
-                // $wpdb->close();
-
-                return $std;
+                return $this->findNegocioById($business[0]->ID);
             }
             return null;
         }
@@ -190,6 +175,14 @@ class NegocioController extends stdClass {
             $std->id = $business[0]->ID;
             $std->post = get_post($business[0]->ID);
             $std->meta = get_post_meta($business[0]->ID);
+
+            if (isset($std->meta['_sub_category_'][0])) {
+                $query = "select term_id,name from wp_terms where term_id =".$std->meta['_sub_category_'][0];
+                //echo $query;
+                $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+                $std->sub= $app_db->get_results($query);
+                
+            }
             //$std->terms = wp_get_object_terms($business[0]->ID, BUSINESS_TYPE);
             // $wpdb->close();
 
