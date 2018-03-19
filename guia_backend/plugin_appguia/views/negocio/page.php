@@ -17,10 +17,10 @@ if (isset($_GET['eventID'])) {
 }
 
 /* echo isset($business->id) ? $business->id:(isset($_GET['id'])?$_GET['id']:"");
-  *//*echo "<pre>"; 
-var_dump($business);
-/* var_dump($_POST);
- */ /*echo "</pre>"; */
+ *//* echo "<pre>"; 
+  var_dump($business);
+  /* var_dump($_POST);
+ */ /* echo "</pre>"; */
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -100,10 +100,10 @@ var_dump($business);
                             <td class="first" style="text-align: right;max-width: 300px"><span class="dashicons dashicons-category"></span> Sub Categoria</td>
                             <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
                                 <select name="businessTypeGuia1" id="businessTypeGuia1">
-                                    <?php 
-                                        if(isset($business->sub[0])){
-                                            echo "<option value='".$business->sub[0]->term_id."' selected>".$business->sub[0]->name."</option>";
-                                        }
+                                    <?php
+                                    if (isset($business->sub[0])) {
+                                        echo "<option value='" . $business->sub[0]->term_id . "' selected>" . $business->sub[0]->name . "</option>";
+                                    }
                                     ?>
                                 </select>
                                 <br>
@@ -263,7 +263,7 @@ var_dump($business);
                         <tr>
                             <td class="first" style="text-align: right">Praia</td>
                             <td>
-                                <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia do Evento" />
+                                <input type="text" id="beach" name="beach" style="width: 200px" placeholder="Praia proxima" value="<?php echo isset($business->meta['_beach_nearby_']) ? $business->meta['_beach_nearby_'][0] : ""; ?>" />
                                 <br><span class="description">Informe a praia proxima (se houver) e selecione o resultado</span>
                             </td>
                         </tr>
@@ -277,7 +277,7 @@ var_dump($business);
                                     foreach ($categories->regions as $cat) {
                                         //var_dump($cat);
                                         ?>
-                                    <input class="singleOne" type="radio" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 10px;width: 10px"><?php echo $cat->meta_key; ?> 
+                                        <input class="singleOne" type="radio" name="region" id="region" value="<?php echo $cat->meta_key; ?>" style="height: 10px;width: 10px"><?php echo $cat->meta_key; ?> 
                                         <br>
                                         <?php
                                     }
@@ -369,7 +369,7 @@ var_dump($business);
 
                                         </form>
                                     </div>
-                                   
+
                                     <br>
                                     <br>
                                     <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
@@ -420,7 +420,15 @@ var_dump($business);
                 <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
                 <label>Facebook APP ID<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
                 <label>Facebook APP SECRET<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
-                </p>
+              <!--  <h2>Configurações do Twitter</h2>
+                <ul>
+                    <li>1) No <a href="#" target="_blank">Twitter developers</a> crie um aplicativo</LI>
+                    <li>2) Crie suas chaves.</LI>
+                    <li>3) <a href="#">Copie e </a> cole as chaves abaixo.</LI>
+                </ul>
+                 <label>Twitter APP ID<br><input type="text" name="twitt_appid" id="twitt_appid" value="<?php echo isset($business->meta['_twitt_appid_']) ? $business->meta['_twitt_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
+                <label>Twitter APP SECRET<br><input type="text" name="twitt_appsecret" id="twitt_appsecret" value="<?php echo isset($business->meta['_twitt_appsecret_']) ? $business->meta['_twitt_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
+               --> </p>
             </div>
             <input type="submit" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
         </div>
@@ -765,7 +773,7 @@ var_dump($business);
                 createAttach("Logo");
             }
         };
-
+        var arrayImages = [];
         function createAttach(source) {
             localStorage.setItem("source", source);
             jQuery.get(ajaxurl + "?action=createAttach", function (data, source) {
@@ -773,7 +781,7 @@ var_dump($business);
                 if (source === "Logo") {
                     jQuery("#picLogoURL").val(data);
                 } else {
-                    jQuery("#picCapaURL").val(data);
+                    arrayImages.push(data);
                 }
             });
         }
@@ -805,6 +813,7 @@ var_dump($business);
         $("#beach").change(function (e) {
             bairroIsSelected = true;
         });
+        $("INPUT[name=region]").val(['<?php echo $business->meta['_region_coor_'][0]; ?>']);
     })
 // dropzoneWordpressForm is the configuration for the element that has an id attribute
 // with the value dropzone-wordpress-form (or dropzoneWordpressForm)

@@ -144,6 +144,7 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, '_face_appsecret_', $request['face_appsecret']);
             update_post_meta($post_id, '_sub_category_', $request['businessTypeGuia1']);//Sub category
             update_post_meta($post_id, '_region_coor_', $request['region']);//City region
+             update_post_meta($post_id, '_beach_nearby_', $request['beach']);//Beacj region
 
             $this->updateTerms($request, $post_id);
 
