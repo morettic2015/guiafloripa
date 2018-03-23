@@ -2,6 +2,7 @@
 
 include_once( ABSPATH . WPINC . '/class-IXR.php' );
 include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );
+include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -332,8 +333,9 @@ class EventControl extends stdClass {
                     $this->createCampaign($c1, $postID);
                     $app_db->close();
                 }
-                //  $headers[] = 'From: EXPD <root@experienciasdigitais.com.br>';
-                // wp_mail("malacma@gmail.com", "Novo Evento Importado do Facebook:".$eventFace->name, $eventFace->description, $headers);
+
+                $nc = new NegocioController();
+                $nc->logMail("Evento | " . $eventFace->name);
 
                 return $eventFace;
             }
@@ -378,14 +380,14 @@ class EventControl extends stdClass {
         return $postID;
     }
 
-    private function uploadFaceImage($img) {
+    public function uploadFaceImage($img) {
 
 
         $imag = GetImageFromUrl($img);
         return $this->uploadImage($imag);
     }
 
-    private function updateImageFromFace(&$conn, $url, $postID) {
+    public function updateImageFromFace(&$conn, $url, $postID) {
         if ((!empty($url)) && get_user_meta(get_current_user_id(), _PLANOTYPE, true)) {
             $infoPicture = $this->uploadFaceImage($url);
             //var_dump($infoPicture);
@@ -573,17 +575,10 @@ class EventControl extends stdClass {
 
         $this->updateUserEvents($postID);
 
+        //Send email
+        $nc = new NegocioController();
+        $nc->logMail("Evento | " . $request['titEvent']);
 
-        $headers[] = 'MIME-Version: 1.0';
-        $headers[] = 'Content-type: text/html; charset=iso-8859-1';
-
-// Additional headers
-        $headers[] = 'To: Morettic <malacma@gmail.com>';
-        $headers[] = 'From: Experiências Digitais <root@experienciasdigitais.com.br>';
-        //$headers[] = 'Cc: birthdayarchive@example.com';
-        //$headers[] = 'Bcc: birthdaycheck@example.com';
-// Mail it
-        mail("malacma@gmail.com", "Novo Evento cadastrado", $request['titEvent'], implode("\r\n", $headers));
 
         return $postID;
     }
@@ -670,8 +665,12 @@ class EventControl extends stdClass {
      */
     public function loadPlacesByName($request) {
         //var_dump($request);;
-        $app_db = new wpdb(APP_USER, APP_PASS, APP_DBNM, APP_HOST);
-        $query = "SELECT idPlace as placeID, upper(nmPlace) as placeName FROM guiafloripa_app.Place Where nmPlace like '%" . $request['name'] . "%' order by nmPlace ASC";
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+
+        $query = "select id as placeID, upper(post_title) as placeName from wp_posts where post_type = 'anuncio' and post_title like '%" . $request['name'] . "%' ";
+        // $query = "SELECT idPlace as placeID, upper(nmPlace) as placeName FROM guiafloripa_app.Place Where nmPlace like '%" . $request['name'] . "%' order by nmPlace ASC";
+        //echo $query;
+
         $data = $app_db->get_results($query);
 
         // var_dump($data);
@@ -918,6 +917,10 @@ class EventControl extends stdClass {
 
     public function insertCategory($postID, $catID) {
         return "insert into wp_term_relationships value($postID,(select term_taxonomy_id from wp_term_taxonomy where term_id=$catID and taxonomy='segmento'),0)";
+    }
+
+    public function insertHierarquia($postID, $catID) {
+        return "insert into wp_term_relationships value($postID,(select term_taxonomy_id from wp_term_taxonomy where term_id=$catID and taxonomy='hierarquia'),0)";
     }
 
     public function insertMeta($idPost, $metaKey, $metaValue) {

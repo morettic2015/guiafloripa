@@ -2,6 +2,10 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     <form id="movies-filter" method="post">
         <p class="search-box">
+            <span class="dashicons dashicons-search"></span>Buscar seguidores<br>
+           <!-- <select id="business_id-search-input" name="f_business">
+                <option>Filtrar por negócio</option>
+            </select>-->
             <label class="screen-reader-text" for="f_group">Filtrar por grupos</label> 
             <select id="search_id-search-input" name="f_group">
                 <option value="">Filtrar por grupo</option>

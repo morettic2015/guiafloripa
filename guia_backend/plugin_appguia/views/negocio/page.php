@@ -24,7 +24,7 @@ if (isset($_GET['eventID'])) {
 ?>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<form name="frm_negocio" method="post">
+<form name="frm_negocio" method="post" onsubmit="setImages()">
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?><a href="javascript:loadFacebook()" class="page-title-action">Importar página do Facebook</a></h1>
         <div class="notice notice-info" id="msg"> 
@@ -319,6 +319,7 @@ if (isset($_GET['eventID'])) {
                         <input type="hidden" name="facePage1" id="facePage1" value="<?php echo isset($business->meta['facePage']) ? $business->meta['facePage'][0] : ""; ?>"/>
                         <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
+                        <input type="hidden" name="picDropzone" id="picCapaURL" value="<?php echo isset($business->meta['picDropzone']) ? $business->meta['picDropzone'][0] : ""; ?>"/>
                     <table class="form-table editcomment" style="max-width: 800px">
                         <tbody>
                             <tr style="visibility: hidden;display: none">
@@ -351,8 +352,6 @@ if (isset($_GET['eventID'])) {
 
                                         </form>
                                     </div>
-                                    <br>
-                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                                 </td>
                             </tr>
                             <tr>
@@ -372,7 +371,7 @@ if (isset($_GET['eventID'])) {
 
                                     <br>
                                     <br>
-                                    <?php echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
+                                    <?php //echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
                                 </td>
                             </tr>
                           <!--  <tr>
@@ -420,17 +419,17 @@ if (isset($_GET['eventID'])) {
                 <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
                 <label>Facebook APP ID<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
                 <label>Facebook APP SECRET<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
-              <!--  <h2>Configurações do Twitter</h2>
-                <ul>
-                    <li>1) No <a href="#" target="_blank">Twitter developers</a> crie um aplicativo</LI>
-                    <li>2) Crie suas chaves.</LI>
-                    <li>3) <a href="#">Copie e </a> cole as chaves abaixo.</LI>
-                </ul>
-                 <label>Twitter APP ID<br><input type="text" name="twitt_appid" id="twitt_appid" value="<?php echo isset($business->meta['_twitt_appid_']) ? $business->meta['_twitt_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
-                <label>Twitter APP SECRET<br><input type="text" name="twitt_appsecret" id="twitt_appsecret" value="<?php echo isset($business->meta['_twitt_appsecret_']) ? $business->meta['_twitt_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
-               --> </p>
+                <!--  <h2>Configurações do Twitter</h2>
+                  <ul>
+                      <li>1) No <a href="#" target="_blank">Twitter developers</a> crie um aplicativo</LI>
+                      <li>2) Crie suas chaves.</LI>
+                      <li>3) <a href="#">Copie e </a> cole as chaves abaixo.</LI>
+                  </ul>
+                   <label>Twitter APP ID<br><input type="text" name="twitt_appid" id="twitt_appid" value="<?php echo isset($business->meta['_twitt_appid_']) ? $business->meta['_twitt_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
+                  <label>Twitter APP SECRET<br><input type="text" name="twitt_appsecret" id="twitt_appsecret" value="<?php echo isset($business->meta['_twitt_appsecret_']) ? $business->meta['_twitt_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
+                --> </p>
             </div>
-            <input type="submit" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
+            <input type="button" onclick="submitNegocio()" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
         </div>
         <hr/>
     </div>
@@ -495,8 +494,27 @@ if (isset($_GET['eventID'])) {
         right: 0 !important;
         height: auto !important;
     }
+    .dz-image img{width: 100%;height: 100%;}
 </style>
+<?php
+$str1 = substr($business->meta['picCapaURL'][0], 0, 1);
+$str1 = $str1 === "[" ? $business->meta['picCapaURL'][0] : "[]";
+?>
 <script>
+    var arrayImages;
+    try {
+        arrayImages = <?php echo $str1; ?>;
+    } catch (e) {
+        arrayImages = [];
+        console.log(e);
+    }
+    function setImages() {
+        var myImages = JSON.stringify(arrayImages);
+        alert(myImages);
+        jQuery("#picCapaURL").val(myImages);
+    }
+
+
     function loadSubCategory(element) {
         jQuery.ajax({
             type: "GET",
@@ -759,6 +777,16 @@ if (isset($_GET['eventID'])) {
             addRemoveLinks: true,
             dictRemoveFile: 'X (Remover)',
             init: function () {
+<?php
+if (isset($business->meta['picLogoURL'][0])) {
+    echo 'var mock = {name: "' . $business->meta['picLogoURL'][0] . '", size: 12345};';
+    echo 'this.options.addedfile.call(this, mock);';
+    echo 'this.options.maxFiles = 0;';
+    echo 'this.emit("complete", mock);';
+    echo 'this.emit("thumbnail", mock, "' . $business->meta['picLogoURL'][0] . '");';
+}
+?>
+
                 this.on("sending", function (file, xhr, formData) {
                     console.log(formData);
                     console.log(file);
@@ -768,12 +796,18 @@ if (isset($_GET['eventID'])) {
                     //alert('logo jjjjj');
 
                 });
+                this.on('removedfile', function (file) {
+                    file.previewElement.remove();
+                    this.options.maxFiles = 1;
+                });
+
+
             },
             success: function () {
                 createAttach("Logo");
             }
         };
-        var arrayImages = [];
+
         function createAttach(source) {
             localStorage.setItem("source", source);
             jQuery.get(ajaxurl + "?action=createAttach", function (data, source) {
@@ -787,6 +821,7 @@ if (isset($_GET['eventID'])) {
         }
 
         Dropzone.options.dropZoneCapa = {
+
             acceptedFiles: "image/*", // all image mime types
             //acceptedFiles: ".csv", // only .jpg files
             maxFiles: 10,
@@ -795,6 +830,28 @@ if (isset($_GET['eventID'])) {
             addRemoveLinks: true,
             dictRemoveFile: 'X (Remover)',
             init: function () {
+
+                for (i = 0; i < arrayImages.length; i++) {
+                    if (arrayImages[i] === null)
+                        continue;
+
+                    var mock = {name: arrayImages[i], size: 12345};
+                    this.options.addedfile.call(this, mock);
+                    this.options.maxFiles = 0;
+                    this.emit("complete", mock);
+                    this.emit("thumbnail", mock, arrayImages[i]);
+                    this.maxFiles--;
+                }
+                this.on("drop", function (e) {
+                    var cpArrayImg = [];
+                    for(i=0;i<arrayImages.length;i++){
+                        if(arrayImages[i]!==null&&arrayImages[i]!==undefined){
+                            cpArrayImg.push(arrayImages[i]);
+                        }
+                    }
+                    this.options.maxFiles = 10-cpArrayImg.length;
+                });
+
                 this.on("sending", function (file, xhr, formData) {
                     console.log(formData);
                     console.log(file);
@@ -802,11 +859,39 @@ if (isset($_GET['eventID'])) {
                     formData.append("name", "value"); // Append all the additional input data of your form here!
                     //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
                     // alert('logo');
+                    // console.log(this.files);
 
+
+                });
+                this.on('removedfile', function (file) {
+                    file.previewElement.remove();
+                    for (i = 0; i < arrayImages.length; i++) {
+                        if (file.name === arrayImages[i]) {
+                            delete arrayImages[i];
+                        }
+                    }
+                    this.options.maxFiles++;
+                });
+                this.on("completemultiple", function () {
+                    alert(JSON.stringify(this.files));
+                    jQuery("#picDropzone").val(JSON.stringify(this.files));
+                    if (this.getQueuedFiles().length == 0 &&
+                            this.getUploadingFiles().length == 0) {
+                        process_responses(this.getAcceptedFiles());
+                        console.log(this.files);
+
+                    }
                 });
             },
             success: function () {
                 createAttach("Capa");
+
+                /*   var fNames = "";
+                 for (i = 0; i < this.files.length; i++) {
+                 fNames += this.files[i].name;
+                 }
+                 // alert(JSON.stringify(this.files));
+                 jQuery("#picDropzone").val(fNames);*/
             }
         };
         $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 400, minchars: 4});
@@ -815,6 +900,19 @@ if (isset($_GET['eventID'])) {
         });
         $("INPUT[name=region]").val(['<?php echo $business->meta['_region_coor_'][0]; ?>']);
     })
+
+
+    function submitNegocio() {
+        finalArray = [];
+        for(i=0;i<arrayImages.length;i++){
+            if(arrayImages[i]!==null){
+                finalArray.push(arrayImages[i]);
+            }
+        }
+        
+        jQuery("#picCapaURL").val(JSON.stringify(finalArray));
+        document.frm_negocio.submit();
+    }
 // dropzoneWordpressForm is the configuration for the element that has an id attribute
 // with the value dropzone-wordpress-form (or dropzoneWordpressForm)
 

@@ -1,5 +1,6 @@
 <?php
 
+require_once( ABSPATH . 'wp-admin/includes/file.php' );
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -77,7 +78,9 @@ class NegocioController extends stdClass {
     //put your code here
     public function insertUpdateNegocio($request) {
         global $wpdb;
-
+        /* echo "<pre>";
+          var_dump($request);
+          echo "</pre>"; */
         if (count($request) > 0) {
             //echo "<pre>";
 
@@ -134,7 +137,7 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, 'picLogoURL', $request['picLogoURL']);
             update_post_meta($post_id, 'picCapaURL', $request['picCapaURL']);
             update_post_meta($post_id, 'neigh', $request['neigh']);
-            update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']);//Guia category
+            update_post_meta($post_id, 'businessTypeGuia', $request['businessTypeGuia']); //Guia category
             update_post_meta($post_id, 'chkSyncGuia', $request['chkSyncGuia']);
             update_post_meta($post_id, 'chkSyncGuiaAPP', $request['chkSyncGuiaAPP']);
             update_post_meta($post_id, 'chkGoogle', $request['chkGoogle']);
@@ -142,9 +145,9 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, '_chkFace', $request['chkFace']);
             update_post_meta($post_id, '_face_appid_', $request['face_appid']);
             update_post_meta($post_id, '_face_appsecret_', $request['face_appsecret']);
-            update_post_meta($post_id, '_sub_category_', $request['businessTypeGuia1']);//Sub category
-            update_post_meta($post_id, '_region_coor_', $request['region']);//City region
-             update_post_meta($post_id, '_beach_nearby_', $request['beach']);//Beacj region
+            update_post_meta($post_id, '_sub_category_', $request['businessTypeGuia1']); //Sub category
+            update_post_meta($post_id, '_region_coor_', $request['region']); //City region
+            update_post_meta($post_id, '_beach_nearby_', $request['beach']); //Beacj region
 
             $this->updateTerms($request, $post_id);
 
@@ -178,11 +181,10 @@ class NegocioController extends stdClass {
             $std->meta = get_post_meta($business[0]->ID);
 
             if (isset($std->meta['_sub_category_'][0])) {
-                $query = "select term_id,name from wp_terms where term_id =".$std->meta['_sub_category_'][0];
+                $query = "select term_id,name from wp_terms where term_id =" . $std->meta['_sub_category_'][0];
                 //echo $query;
                 $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
-                $std->sub= $app_db->get_results($query);
-                
+                $std->sub = $app_db->get_results($query);
             }
             //$std->terms = wp_get_object_terms($business[0]->ID, BUSINESS_TYPE);
             // $wpdb->close();
@@ -207,6 +209,161 @@ class NegocioController extends stdClass {
         } else {
             update_post_meta($post_id, BUSINESS_TYPE, $request['businessType']);
         }
+    }
+
+    public function insertOrUpdate($id) {
+        @session_start();
+        include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+
+        // echo $id;
+        $postID = null;
+        $negocio = $this->findNegocioById($id);
+        /* echo "<pre>";
+          var_dump($negocio);
+          echo "</pre>"; */
+        if (empty($negocio->meta['_id_app_guia_'][0])) {
+            //  echo "nobo";
+            $query = $this->insertNegocioGuia($negocio);
+
+            $result = $app_db->get_results($query);
+
+            $query = "select ID from wp_posts where post_title = '" . $negocio->post->post_title . "' order by id DESC limit 1";
+            $result = $app_db->get_results($query);
+            $postID = $result[0]->ID;
+
+            update_post_meta($id, "_id_app_guia_", $postID);
+        } else {
+            $postID = $negocio->meta['_id_app_guia_'][0];
+            $query = "update wp_posts set post_excerpt='" . strip_tags(substr($negocio->post->post_content, 0, 449)) . "', post_title = '" . $negocio->post->post_title . "',post_content='" . $negocio->post->post_content . "' where id = " . $postID;
+            // echo $query;
+            $vet[] = $app_db->get_results($query);
+        }
+        $plano = empty(get_user_meta(get_current_user_id(), "_plano_type", true)) ? "1" : "0";
+
+        $ec = new EventControl();
+
+        $vet = array();
+
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "_category_permalink", $negocio->meta['_sub_category_'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "vcard_address", $negocio->meta['street'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "vcard_locality", $negocio->meta['city'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "vcard_region", $negocio->meta['state'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "vcard_tel", $negocio->meta['foneNegocio'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "vcard_email", $negocio->meta['emailNegocio'][0]));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, "tipo_anuncio", $plano));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, $negocio->meta['_region_coor_'][0], '1'));
+        $query = "select id as postID,post_title as title from wp_posts where post_parent = 2191 and post_title like '%" . $negocio->meta['neigh'][0] . "%' and post_title <> '' order by post_title asc;";
+        $bairro = $app_db->get_results($query);
+        $query = "select id,post_title from wp_posts where post_parent = 2311 and post_title like '%" . $negocio->meta['_beach_nearby_'][0] . "%';";
+        $beach = $app_db->get_results($query);
+        // var_dump($bairro);
+        //  var_dump($beach);
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, _BAIRROS, $bairro[0]->postID));
+        $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, _PRAIAS, $beach[0]->id));
+        $vet[] = $app_db->get_results($ec->insertHierarquia($postID, $negocio->meta['_sub_category_'][0]));
+        $vet[] = $app_db->get_results($ec->insertHierarquia($postID, $negocio->meta['businessTypeGuia'][0]));
+
+        $logo = $negocio->meta['picLogoURL'][0];
+        // echo $logo;
+        $posStrFace = strpos($logo, "scontent.xx.fbcdn.net");
+        //  echo "......................." . $posStrFace . "-----------------";
+
+        if ($posStrFace > 0) {//imagem vem do facebook
+            $urlImageNew = $this->copyImageFromFace($app_db, $logo, $postID);
+            echo $urlImageNew;
+            $infoPicture = $ec->uploadImage($urlImageNew);
+            $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, _THUMB, $infoPicture['id']));
+        } else {
+            $infoPicture = $ec->uploadImage($logo);
+            $vet[] = ($ec->insertOrUpdateMeta($app_db, $postID, _THUMB, $infoPicture['id']));
+        }
+        return $vet;
+    }
+
+    private function copyImageFromFace(&$app_db, $url, $postID) {
+
+
+// URL to the WordPress logo
+
+        $vet = explode("/", $url);
+        $pos = count($vet) - 1;
+        //echo $vet[$pos]."-------------";
+        //var_dump($vet);die;
+        $name = explode("?", $vet[$pos]);
+        $dir = wp_upload_dir();
+        // var_dump($dir);die;
+
+        $img = $dir['path'] . "/" . date('d-m-y') . $name[0];
+
+        echo "...." . $img;
+
+        file_put_contents($img, file_get_contents($url));
+        // $filename = $results['file']; // Full path to the file
+        // $local_url = $results['url'];  // URL to the file in the uploads dir
+        //$type = $results['type']; // MIME type of the file
+        // Perform any actions here based in the above results
+        $attachment = array(
+            'post_mime_type' => filetype($img),
+            'post_title' => $img,
+            'post_content' => 'Anexo',
+            'post_author' => get_current_user_id(),
+            'post_status' => 'inherit'
+        );
+
+        $attach_id = wp_insert_attachment($attachment, $img);
+
+
+        return str_replace("/var/www/app.guiafloripa.com.br", "https://app.guiafloripa.com.br", $img);
+    }
+
+    public function insertNegocioGuia($obj) {
+        $current_user = wp_get_current_user();
+        $query = "INSERT INTO `guiafloripa`.`wp_posts`  (
+          `post_author`,
+          `post_date`,
+          `post_date_gmt`,
+          `post_content`,
+          `post_title`,
+          `post_excerpt`,
+          `post_status`,
+          `comment_status`,
+          `ping_status`,
+          `post_name`,
+          `to_ping`,
+          `pinged`,
+          `post_modified`,
+          `post_modified_gmt`,
+          `post_content_filtered`,
+          `post_parent`,
+          `guid`,
+          `menu_order`,
+          `post_type`,
+          `post_mime_type`,
+          `comment_count`)
+          VALUES(
+          57,
+          NOW() + INTERVAL 5 HOUR,
+          NOW() + INTERVAL 5 HOUR,
+          '" . $obj->post->post_content . "<br><b>Autor:" . $current_user->user_firstname . "</b>',
+          '" . $obj->post->post_title . "',
+          '" . strip_tags($obj->post->post_content) . "',
+          'draft',
+          'closed',
+          'closed',
+          '" . $obj->post->post_title . "',
+          0,
+          0,
+          NOW() + INTERVAL 5 HOUR,
+          NOW() + INTERVAL 5 HOUR,
+          '" . $obj->post->post_title . "',
+          '',
+          '" . sanitize_title($obj->post->post_title) . "',
+          0,
+          'anuncio',
+          'post',
+          0);";
+        return $query;
     }
 
 }

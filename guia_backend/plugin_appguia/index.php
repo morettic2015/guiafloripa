@@ -752,21 +752,21 @@ function add_email_dashboard_widgets() {
             'Seu Plano', // Title.
             'plano_dashboard_widget_content' // Display function.
     );
-    wp_add_dashboard_widget(
+  /*  wp_add_dashboard_widget(
             'wptwitter_dashboard_widget', // Widget slug.
             'Twitter', // Title.
             'twitter_dashboard_widget_content' // Display function.
-    );
+    );*/
     wp_add_dashboard_widget(
             'wptips_dashboard_widget', // Widget slug.
             'Dicas e tutorias', // Title.
             'tips_dashboard_widget_content' // Display function.
-    );
+    );/*
     wp_add_dashboard_widget(
             'wpleads_dashboard_widget', // Widget slug.
             'Contatos', // Title.
             'leads_dashboard_widget_content' // Display function.
-    );
+    );*/
     wp_add_dashboard_widget(
             'wpeventos_dashboard_widget', // Widget slug.
             'Meus Eventos', // Title.

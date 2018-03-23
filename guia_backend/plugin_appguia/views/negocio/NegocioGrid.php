@@ -110,8 +110,8 @@ class NegocioGrid extends WP_List_Table {
     protected function get_sortable_columns() {
         $sortable_columns = array(
             'title' => array('title', false),
-           // 'rating' => array('rating', false),
-           // 'director' => array('director', false),
+                // 'rating' => array('rating', false),
+                // 'director' => array('director', false),
         );
 
         return $sortable_columns;
@@ -256,20 +256,21 @@ class NegocioGrid extends WP_List_Table {
             $query = "delete FROM wp_postmeta where post_id in ($campaign)";
             $cp = $wpdb->get_results($query);
             echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong>Sucesso. Os negócios selecionadas foram excluidas.</strong></p>
+                    <p><strong>Sucesso. O(s) negócio(s) selecionado(s) foram excluida(s).</strong></p>
                  </div>';
-        } /* else if ('clone' === $this->current_action()) {
-          include_once PLUGIN_ROOT_DIR . 'views/email/EmailController.php';
-          $ec = new EmailController();
-          $t = 0;
-          foreach ($_GET['campaign'] as $r1) {
-          $ec->duplicatePost($r1);
-          $t++;
-          }
-          echo '<div class="notice notice-success is-dismissible">
-          <p><strong><code>'.$t.' Emails marketing</code> duplicados</strong></p>
-          </div>';
-          } */
+        } else if ('publish' === $this->current_action()) {
+            include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+            $nc = new NegocioController();
+            foreach ($_GET['campaign'] as $r1) {
+                //echo "<pre>".$r1;
+                $nc->insertOrUpdate($r1);
+                //$nc->exportGuia($negocio);
+                //echo "</pre>";
+                echo '<div class="notice notice-success is-dismissible"> 
+                    <p><strong>Sucesso. O(s) negócio(s) selecionado(s) foram publicado(s).</strong></p>
+                 </div>';
+            }
+        }
     }
 
     /**
@@ -359,7 +360,7 @@ class NegocioGrid extends WP_List_Table {
                 'ID' => $t->ID,
                 'title' => $t->post_title,
                 'rating' => $term->name,
-                'director' => "<img src='".$meta['picLogoURL'][0]."' width='25'/>",
+                'director' => "<img src='" . $meta['picLogoURL'][0] . "' width='25'/>",
                 'quote' => $quo,
                 'follow' => $fol,
                 'ignore' => $ign,
