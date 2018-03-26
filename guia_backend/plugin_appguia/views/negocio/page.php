@@ -320,78 +320,13 @@ if (isset($_GET['eventID'])) {
                         <input type="hidden" name="picLogoURL" id="picLogoURL" value="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picCapaURL" id="picCapaURL" value="<?php echo isset($business->meta['picCapaURL']) ? $business->meta['picCapaURL'][0] : ""; ?>"/>
                         <input type="hidden" name="picDropzone" id="picCapaURL" value="<?php echo isset($business->meta['picDropzone']) ? $business->meta['picDropzone'][0] : ""; ?>"/>
-                    <table class="form-table editcomment" style="max-width: 800px">
-                        <tbody>
-                            <tr style="visibility: hidden;display: none">
-                                <td class="first" style="text-align: right;max-width: 30%" id="44titPgFace"><span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px</td>
-                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="44picLogo">
-                                    <div id="dropzone-wordpress2">
-                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropzone-wordpress-form">
-                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
-                                            <div class="dz-message needsclick">
-                                                Arraste sua logo aqui.<br>
-                                                <span class="note needsclick">Para fazer Upload</span>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <br>
-                                    <?php echo!empty($business->meta['picLogoURL'][0]) ? "<a class='page-title-action' href='" . $business->meta['picLogoURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace"><span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px</td>
-                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picLogo">
-                                    <div id="dropzone-wordpress2"  name="dropzoneLogo">
-                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneLogo">
-                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
-                                            <div class="dz-message needsclick">
-                                                Arraste seu logo de aqui.<br>
-                                                <span class="note needsclick">Para fazer Upload</span>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="first" style="text-align: right;max-width: 200px" id="titPgFace"><span class="dashicons dashicons-images-alt2"></span> Imagens <br><span class="description">Total de até 10 imagens podem ser anexadas na galeria</span></td>
-                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px" id="picCapa">
-                                    <div id="dropzone-wordpress2" name="dropzoneCapa">
-                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropZoneCapa">
-                                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
-
-                                            <div class="dz-message needsclick">
-                                                Imagens de seu negócio.<br>
-                                                <span class="note needsclick">Para fazer Upload</span>
-                                            </div>
-
-                                        </form>
-                                    </div>
-
-                                    <br>
-                                    <br>
-                                    <?php //echo!empty($business->meta['picCapaURL'][0]) ? "<a class='page-title-action'  href='" . $business->meta['picCapaURL'][0] . "' target=_blank>Visualizar</a>" : ""; ?>
-                                </td>
-                            </tr>
-                          <!--  <tr>
-                                <td class="first" style="text-align: right" id="titPgFace">Galeria de imagens</td>
-                                <td style="width: 100%; float: left; display: inline-block;font-size: 12px;margin: 2px">
-                                    <div id="dropzone-wordpress3">
-                                        <form action="admin-ajax.php?action=submit_dropzonejs" class="dropzone needsclick dz-clickable page-title-action" id="dropzone-wordpress-form">
-                            <?php echo wp_nonce_field('protect_content', 'my_nonce_field'); ?>
-                                            <div class="dz-message needsclick">
-                                                Arraste seu arquivo CSV aqui.<br>
-                                                <span class="note needsclick">Para fazer Upload</span>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr> -->
-
-                        </tbody>
-                    </table>
+                        <span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px<br>
+                        <a href="javascript:upload_new_img(this,'single')" class="button button-primary" style="margin: 15px">Anexar</a><br>
+                    <div id="logoPreview" name="logoPreview"><img style="max-width: 100px" src="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"></div>
+                    <span class="dashicons dashicons-images-alt2"></span> Galeria <br><br>
+                    <a href="javascript:upload_new_img(this,'multiple')" class="button button-primary" style="margin: 15px">Anexar</a>
+                  <!--  <span class="description">Total de até 10 imagens podem ser anexadas na galeria</span> -->
+                    <div id="gallPreview" name="gallPreview"></div>
                     </p>
                 </div>
             <?php } ?>
@@ -419,15 +354,26 @@ if (isset($_GET['eventID'])) {
                 <label><input type="checkbox" name="chkFace" id="chkFace" value="chk_app_face">Atualizar página do Facebook ao salvar</label><br>
                 <label>Facebook APP ID<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appid" id="face_appid" value="<?php echo isset($business->meta['_face_appid_']) ? $business->meta['_face_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
                 <label>Facebook APP SECRET<br><input <?php echo!is_null($business->meta['chkFace'][0]) ? "checked=''" : ""; ?> type="text" name="face_appsecret" id="face_appsecret" value="<?php echo isset($business->meta['_face_appsecret_']) ? $business->meta['_face_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
-                <!--  <h2>Configurações do Twitter</h2>
-                  <ul>
-                      <li>1) No <a href="#" target="_blank">Twitter developers</a> crie um aplicativo</LI>
-                      <li>2) Crie suas chaves.</LI>
-                      <li>3) <a href="#">Copie e </a> cole as chaves abaixo.</LI>
-                  </ul>
-                   <label>Twitter APP ID<br><input type="text" name="twitt_appid" id="twitt_appid" value="<?php echo isset($business->meta['_twitt_appid_']) ? $business->meta['_twitt_appid_'][0] : ""; ?>"  style="width: 300px"></label><br>
-                  <label>Twitter APP SECRET<br><input type="text" name="twitt_appsecret" id="twitt_appsecret" value="<?php echo isset($business->meta['_twitt_appsecret_']) ? $business->meta['_twitt_appsecret_'][0] : ""; ?>" style="width: 300px"></label><br>
-                --> </p>
+                <h2>Configurações do Twitter</h2>
+                <ul>
+                    <li>1) No <a href="https://apps.twitter.com/" target="_blank">Gerenciador de aplicativos do Twitter</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
+                    <li>2) Na guia 'Permissões', selecione 'Ler, Escrever e acessar mensagens diretas' na área 'Acesso' e clique em 'Configurações de atualização'.</LI>
+                    <li>3) Na guia 'Chave e toques de acesso', clique no botão 'Criar meu token de acesso'.</LI>
+                    <li>4) Digite o nome de usuário do botão no respectivo campo abaixo.</LI>
+                    <li>5) Na guia 'Chave e Acesso Tokens', copie a Chave do Consumidor, o Segredo do Consumidor, o Token de Acesso e o Token de Acesso segure e cole nos respectivos campos abaixo.</LI>
+                </ul>
+                <label for="_ck"><?php _e("Twitter API KEY"); ?></label><br>
+                <input type="text" value="<?php echo isset($business->meta['_ck']) ? $business->meta['_ck'][0] : ""; ?>" name="_ck" id="_ck" value="<?php echo esc_attr(get_the_author_meta('_ck', $user->ID)); ?>" class="regular-text" /><br />
+                <label for="_cs"><?php _e("Twitter API Secret"); ?></label>
+                <br>
+                <input value="<?php echo isset($business->meta['_cs']) ? $business->meta['_cs'][0] : ""; ?>" placeholder="" type="text" name="_cs" id="_cs" value="<?php echo esc_attr(get_the_author_meta('_cs', $user->ID)); ?>" class="regular-text" /><br />
+                <label for="_at"><?php _e("Access Token"); ?></label>
+                <br>
+                <input value="<?php echo isset($business->meta['_at']) ? $business->meta['_at'][0] : ""; ?>" type="text" name="_at" id="_at" value="<?php echo esc_attr(get_the_author_meta('_at', $user->ID)); ?>" class="regular-text" /><br />
+                <label for="_ac"><?php _e("Access Token Secret"); ?></label>
+                <br>
+                <input value="<?php echo isset($business->meta['_ac']) ? $business->meta['_ac'][0] : ""; ?>" type="text" name="_ac" id="_ac" value="<?php echo esc_attr(get_the_author_meta('_ac', $user->ID)); ?>" class="regular-text" /><br />
+                </p>
             </div>
             <input type="button" onclick="submitNegocio()" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>
         </div>
@@ -501,6 +447,47 @@ $str1 = substr($business->meta['picCapaURL'][0], 0, 1);
 $str1 = $str1 === "[" ? $business->meta['picCapaURL'][0] : "[]";
 ?>
 <script>
+
+    function upload_new_img(obj, origem)
+    {
+        var file_frame;
+        var img_name = jQuery(obj).closest('p').find('.upload_image');
+        if (file_frame) {
+            file_frame.open();
+            return;
+        }
+        isMulti = origem === "single" ? false : true;
+        file_frame = wp.media.frames.file_frame = wp.media(
+                {
+                    title: 'Biblioteca de Midias',
+                    button: {
+                        text: jQuery(this).data('uploader_button_text')
+                    },
+                    multiple: isMulti
+                }
+        );
+        file_frame.on('select', function () {
+            if (origem === "single") {
+                attachment = file_frame.state().get('selection').first().toJSON();
+                $("#picLogoURL").val(attachment.url);
+                file_frame.close();
+                document.getElementById('logoPreview').innerHTML = "<img src='" + attachment.url + "' style='max-width:100px'>";
+            } else {
+                document.getElementById('gallPreview').innerHTML = "";
+                arrayImages = [];
+                var selection = file_frame.state().get('selection');
+                selection.map(function (attachment) {
+                    attachment.toJSON();
+
+                    arrayImages.push(attachment.attributes.url);
+                    document.getElementById('gallPreview').innerHTML += "<img src='" + attachment.attributes.url + "' style='max-width:100px'>";
+
+                });
+            }
+        });
+        file_frame.open();
+    }
+
     var arrayImages;
     try {
         arrayImages = <?php echo $str1; ?>;
@@ -550,6 +537,9 @@ $str1 = $str1 === "[" ? $business->meta['picCapaURL'][0] : "[]";
                 $("#google_token").prop("disabled", "disabled");
             }
         });
+        for (i = 0; i < arrayImages.length; i++) {
+            document.getElementById('gallPreview').innerHTML += "<img src='" + arrayImages[i] + "' style='max-width:100px'>";
+        }
     });
     function loadPlaces(element) {
         var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + element.value + "&key=AIzaSyDI-SU8nROAogbZWGveHUm3bT4FA5_Aujo"
@@ -766,17 +756,17 @@ $str1 = $str1 === "[" ? $business->meta['picCapaURL'][0] : "[]";
 
     jQuery(function ($) {
 
-        Dropzone.options.dropZoneLogo = {
-            acceptedFiles: "image/*", // all image mime types
-            //acceptedFiles: ".csv", // only .jpg files
-            maxFiles: 1,
-            thumbnailWidth: 100,
-            thumbnailHeight: 100,
-            uploadMultiple: false,
-            maxFilesize: 2, // 5 MB
-            addRemoveLinks: true,
-            dictRemoveFile: 'X (Remover)',
-            init: function () {
+        /*  Dropzone.options.dropZoneLogo = {
+         acceptedFiles: "image/*", // all image mime types
+         //acceptedFiles: ".csv", // only .jpg files
+         maxFiles: 1,
+         thumbnailWidth: 100,
+         thumbnailHeight: 100,
+         uploadMultiple: false,
+         maxFilesize: 2, // 5 MB
+         addRemoveLinks: true,
+         dictRemoveFile: 'X (Remover)',
+         init: function () {
 <?php
 if (isset($business->meta['picLogoURL'][0])) {
     echo 'var mock = {name: "' . $business->meta['picLogoURL'][0] . '", size: 12345};';
@@ -786,114 +776,114 @@ if (isset($business->meta['picLogoURL'][0])) {
     echo 'this.emit("thumbnail", mock, "' . $business->meta['picLogoURL'][0] . '");';
 }
 ?>
-
-                this.on("sending", function (file, xhr, formData) {
-                    console.log(formData);
-                    console.log(file);
-                    console.log(xhr)
-                    formData.append("name", "value"); // Append all the additional input data of your form here!
-                    //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
-                    //alert('logo jjjjj');
-
-                });
-                this.on('removedfile', function (file) {
-                    file.previewElement.remove();
-                    this.options.maxFiles = 1;
-                });
-
-
-            },
-            success: function () {
-                createAttach("Logo");
-            }
-        };
-
-        function createAttach(source) {
-            localStorage.setItem("source", source);
-            jQuery.get(ajaxurl + "?action=createAttach", function (data, source) {
-                source = localStorage.getItem("source");
-                if (source === "Logo") {
-                    jQuery("#picLogoURL").val(data);
-                } else {
-                    arrayImages.push(data);
-                }
-            });
-        }
-
-        Dropzone.options.dropZoneCapa = {
-
-            acceptedFiles: "image/*", // all image mime types
-            //acceptedFiles: ".csv", // only .jpg files
-            maxFiles: 10,
-            uploadMultiple: false,
-            maxFilesize: 2, // 5 MB
-            addRemoveLinks: true,
-            dictRemoveFile: 'X (Remover)',
-            init: function () {
-
-                for (i = 0; i < arrayImages.length; i++) {
-                    if (arrayImages[i] === null)
-                        continue;
-
-                    var mock = {name: arrayImages[i], size: 12345};
-                    this.options.addedfile.call(this, mock);
-                    this.options.maxFiles = 0;
-                    this.emit("complete", mock);
-                    this.emit("thumbnail", mock, arrayImages[i]);
-                    this.maxFiles--;
-                }
-                this.on("drop", function (e) {
-                    var cpArrayImg = [];
-                    for(i=0;i<arrayImages.length;i++){
-                        if(arrayImages[i]!==null&&arrayImages[i]!==undefined){
-                            cpArrayImg.push(arrayImages[i]);
-                        }
-                    }
-                    this.options.maxFiles = 10-cpArrayImg.length;
-                });
-
-                this.on("sending", function (file, xhr, formData) {
-                    console.log(formData);
-                    console.log(file);
-                    console.log(xhr)
-                    formData.append("name", "value"); // Append all the additional input data of your form here!
-                    //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
-                    // alert('logo');
-                    // console.log(this.files);
-
-
-                });
-                this.on('removedfile', function (file) {
-                    file.previewElement.remove();
-                    for (i = 0; i < arrayImages.length; i++) {
-                        if (file.name === arrayImages[i]) {
-                            delete arrayImages[i];
-                        }
-                    }
-                    this.options.maxFiles++;
-                });
-                this.on("completemultiple", function () {
-                    alert(JSON.stringify(this.files));
-                    jQuery("#picDropzone").val(JSON.stringify(this.files));
-                    if (this.getQueuedFiles().length == 0 &&
-                            this.getUploadingFiles().length == 0) {
-                        process_responses(this.getAcceptedFiles());
-                        console.log(this.files);
-
-                    }
-                });
-            },
-            success: function () {
-                createAttach("Capa");
-
-                /*   var fNames = "";
-                 for (i = 0; i < this.files.length; i++) {
-                 fNames += this.files[i].name;
-                 }
-                 // alert(JSON.stringify(this.files));
-                 jQuery("#picDropzone").val(fNames);*/
-            }
-        };
+         
+         this.on("sending", function (file, xhr, formData) {
+         console.log(formData);
+         console.log(file);
+         console.log(xhr)
+         formData.append("name", "value"); // Append all the additional input data of your form here!
+         //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
+         //alert('logo jjjjj');
+         
+         });
+         this.on('removedfile', function (file) {
+         file.previewElement.remove();
+         this.options.maxFiles = 1;
+         });
+         
+         
+         },
+         success: function () {
+         createAttach("Logo");
+         }
+         };
+         
+         function createAttach(source) {
+         localStorage.setItem("source", source);
+         jQuery.get(ajaxurl + "?action=createAttach", function (data, source) {
+         source = localStorage.getItem("source");
+         if (source === "Logo") {
+         jQuery("#picLogoURL").val(data);
+         } else {
+         arrayImages.push(data);
+         }
+         });
+         }
+         
+         /*   Dropzone.options.dropZoneCapa = {
+         
+         acceptedFiles: "image/*", // all image mime types
+         //acceptedFiles: ".csv", // only .jpg files
+         maxFiles: 10,
+         uploadMultiple: false,
+         maxFilesize: 2, // 5 MB
+         addRemoveLinks: true,
+         dictRemoveFile: 'X (Remover)',
+         init: function () {
+         
+         for (i = 0; i < arrayImages.length; i++) {
+         if (arrayImages[i] === null)
+         continue;
+         
+         var mock = {name: arrayImages[i], size: 12345};
+         this.options.addedfile.call(this, mock);
+         this.options.maxFiles = 0;
+         this.emit("complete", mock);
+         this.emit("thumbnail", mock, arrayImages[i]);
+         this.maxFiles--;
+         }
+         this.on("drop", function (e) {
+         var cpArrayImg = [];
+         for (i = 0; i < arrayImages.length; i++) {
+         if (arrayImages[i] !== null && arrayImages[i] !== undefined) {
+         cpArrayImg.push(arrayImages[i]);
+         }
+         }
+         this.options.maxFiles = 10 - cpArrayImg.length;
+         });
+         
+         this.on("sending", function (file, xhr, formData) {
+         console.log(formData);
+         console.log(file);
+         console.log(xhr)
+         formData.append("name", "value"); // Append all the additional input data of your form here!
+         //window.location.href = "admin.php?page=app_guiafloripa_leads_imp&source=csv";
+         // alert('logo');
+         // console.log(this.files);
+         
+         
+         });
+         this.on('removedfile', function (file) {
+         file.previewElement.remove();
+         for (i = 0; i < arrayImages.length; i++) {
+         if (file.name === arrayImages[i]) {
+         delete arrayImages[i];
+         }
+         }
+         this.options.maxFiles++;
+         });
+         this.on("completemultiple", function () {
+         alert(JSON.stringify(this.files));
+         jQuery("#picDropzone").val(JSON.stringify(this.files));
+         if (this.getQueuedFiles().length == 0 &&
+         this.getUploadingFiles().length == 0) {
+         process_responses(this.getAcceptedFiles());
+         console.log(this.files);
+         
+         }
+         });
+         },
+         success: function () {
+         createAttach("Capa");
+         
+         /*   var fNames = "";
+         for (i = 0; i < this.files.length; i++) {
+         fNames += this.files[i].name;
+         }
+         // alert(JSON.stringify(this.files));
+         jQuery("#picDropzone").val(fNames);*/
+        /*  }
+         };*/
         $("#beach").suggest(ajaxurl + "?action=findBeachsAjax", {delay: 400, minchars: 4});
         $("#beach").change(function (e) {
             bairroIsSelected = true;
@@ -904,12 +894,12 @@ if (isset($business->meta['picLogoURL'][0])) {
 
     function submitNegocio() {
         finalArray = [];
-        for(i=0;i<arrayImages.length;i++){
-            if(arrayImages[i]!==null){
+        for (i = 0; i < arrayImages.length; i++) {
+            if (arrayImages[i] !== null) {
                 finalArray.push(arrayImages[i]);
             }
         }
-        
+
         jQuery("#picCapaURL").val(JSON.stringify(finalArray));
         document.frm_negocio.submit();
     }

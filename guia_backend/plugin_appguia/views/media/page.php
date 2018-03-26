@@ -4,11 +4,28 @@
         //var_dump($plano);
         echo esc_html(get_admin_page_title());
         if ($plano) {
-            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="#" class="page-title-action">Download</a><a href="#" class="page-title-action">Excluir</a><?php } ?></h1>
+            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="javascript:downloadFiles()" title="Habilite os pop ups para fazer o download de imagens. Máximo 10 imagens por download" class="page-title-action">Download</a><a href="#" class="page-title-action">Excluir</a><?php } ?></h1>
 
 
 
     <?php
+    if (isset($_POST['selMedias'])) {
+        if ($_POST['selMediasAct'] === "download") {
+            $filesDownload = explode(",", $_POST['selMedias']);
+            //var_dump($filesDownload);
+            echo "<script>";
+            foreach ($filesDownload as $d) {
+                $path = str_replace("https://app.guiafloripa.com.br/wp-content/uploads", "https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=downloadFileFromUrl&file=", $d);
+                if ($path === "") {
+                    continue;
+                }
+                echo "window.open('" . $path . "','_blank');\n";
+            }
+            echo "</script>";
+            //https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=downloadFileFromUrl&file=/2018/03/23-03-1815285020_207642943017773_4750800478043254071_n.png
+        }
+    }
+
     if (empty($plano)) {
         echo ' <div class="notice notice-warning"> 
         <p>Seu plano nao permite anexar imagens. Faça upgrade de seu <a href="admin.php?page=app_guiafloripa_money">plano</a></p>
@@ -28,7 +45,7 @@
         //echo $obj;die;
         $attach_id = $mc->get_attachment_id($obj);
         $type = explode(".", $obj);
-        $ext= $type[count($type)-1];
+        $ext = $type[count($type) - 1];
         //$path = str_replace("https://app.guiafloripa.com.br/wp-content/uploads/", "/var/www/app.guiafloripa.com.br/wp-content/uploads/", $obj);
         //wp_generate_attachment_metadata($attach_id, $path);
         ?>
@@ -36,10 +53,10 @@
             <div class="gallery">
                 <center>
                     <a href="<?php echo $obj; ?>" target="_BLANK">
-                        <img src="<?php echo $ext==="csv"?"https://app.guiafloripa.com.br/wp-content/uploads/2018/01/csv.png":$obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
+                        <img src="<?php echo $ext === "csv" ? "https://app.guiafloripa.com.br/wp-content/uploads/2018/01/csv.png" : $obj; ?>" alt="<?php echo $obj; ?>" width="300" height="200">
                     </a>
                     <br>
-                    <input type="checkbox" name="mediaId" value="<?php echo $obj; ?>"/>
+                    <input type="checkbox" name="mediaId" class="theclass" value="<?php echo $obj; ?>"/>
                     <a class="button button-primary button_size" href="<?php echo $obj; ?>" target="_BLANK">Visualizar</a> 
                     <input type="hidden" name="mediaName" value="<?php echo $obj; ?>"/>
                     <input type="hidden" name="mediaId" value="<?php echo $attach_id; ?>"/>
@@ -48,9 +65,14 @@
                 </center>
             </div>
         </form>
+
         <?php
     }
     ?>
+    <form method="post" name="act" action="admin.php?page=app_guiafloripa_midia">
+        <input type="hidden" name="selMedias" id="selMedias"/>
+        <input type="hidden" name="selMediasAct" id="selMediasAct"/>
+    </form>
 </div>
 <style>
     .button_size{
@@ -131,6 +153,26 @@
     }
 </style>
 <script>
+    /**
+     * @Download images from URL
+     * */
+    function downloadFiles() {
+        var total = 0;
+        $('input.theclass[type=checkbox]').each(function () {
+            var sThisVal = jQuery("#selMedias").val();
+            if (this.checked) {
+                sThisVal += "," + $(this).val();
+                total++;
+                jQuery("#selMedias").val(sThisVal);
+                if (total > 9) {
+                    jQuery("#selMediasAct").val("download");
+                    document.act.submit();
+                }
+            }
+        });
+        jQuery("#selMediasAct").val("download");
+        document.act.submit();
+    }
     jQuery("#checkAll").click(function () {
         jQuery('input:checkbox').prop('checked', this.checked);
     });

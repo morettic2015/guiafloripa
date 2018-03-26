@@ -23,6 +23,26 @@ const GUIA_host = "guiafloripa.com.br"; // Nome ou IP do Servidor
 const GUIA_user = "appguia"; // Usuário do Servidor MySQL
 const GUIA_senha = "#4ppgu14Fl0r1p4!"; // Senha do Usuário MySQL
 const GUIA_dbase = "guiafloripa"; // Nome do seu Banco de Dados
+/**
+ * downloadFiles
+ */
+function downloadFileFromUrl(){
+    $filepath = "/var/www/app.guiafloripa.com.br/wp-content/uploads/" . $_GET['file'];
+    
+    // Process download
+    if(file_exists($filepath)) {
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="'.basename($filepath).'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filepath));
+        flush(); // Flush system output buffer
+        readfile($filepath);
+        exit;
+    }
+}
 
 /**
  * @Redirect URL using Javascript Script
@@ -520,9 +540,9 @@ function wpse_91693_register() {
 }
 
 function loadSubCategoryGuiaApp() {
-   header("Content-type:application/json");
+    header("Content-type:application/json");
     //echo "1";
-  include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
     $nc = new NegocioController();
     $cat = $nc->getCategoriasGuia($_GET['id']);
     echo json_encode($cat);
@@ -535,14 +555,19 @@ function app_guiafloripa_negocio() {
 }
 
 function app_guiafloripa_negocio_add() {
-    define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
+   /* define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
     define('DROPZONEJS_PLUGIN_VERSION', '0.0.1');
     wp_enqueue_script(
             'dropzonejs', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js', array(), DROPZONEJS_PLUGIN_VERSION
     );
     wp_enqueue_style(
             'dropzonecss', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css', array(), DROPZONEJS_PLUGIN_VERSION
-    );
+    );*/
+     wp_enqueue_media('media-upload');
+    wp_enqueue_media('thickbox');
+    wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
+    wp_enqueue_media('my-upload');
+    wp_enqueue_style('thickbox');
     include_once PLUGIN_ROOT_DIR . 'views/negocio/page.php';
 }
 
@@ -752,26 +777,31 @@ function add_email_dashboard_widgets() {
             'Seu Plano', // Title.
             'plano_dashboard_widget_content' // Display function.
     );
-  /*  wp_add_dashboard_widget(
-            'wptwitter_dashboard_widget', // Widget slug.
-            'Twitter', // Title.
-            'twitter_dashboard_widget_content' // Display function.
-    );*/
+    /*  wp_add_dashboard_widget(
+      'wptwitter_dashboard_widget', // Widget slug.
+      'Twitter', // Title.
+      'twitter_dashboard_widget_content' // Display function.
+      ); */
     wp_add_dashboard_widget(
             'wptips_dashboard_widget', // Widget slug.
             'Dicas e tutorias', // Title.
             'tips_dashboard_widget_content' // Display function.
-    );/*
-    wp_add_dashboard_widget(
-            'wpleads_dashboard_widget', // Widget slug.
-            'Contatos', // Title.
-            'leads_dashboard_widget_content' // Display function.
-    );*/
+    ); /*
+      wp_add_dashboard_widget(
+      'wpleads_dashboard_widget', // Widget slug.
+      'Contatos', // Title.
+      'leads_dashboard_widget_content' // Display function.
+      ); */
     wp_add_dashboard_widget(
             'wpeventos_dashboard_widget', // Widget slug.
             'Meus Eventos', // Title.
             'events_dashboard_widget_content' // Display function.
     );
+}
+
+function plano_dashboard_widget_content(){
+    $plano = get_user_meta(get_current_user_id(), "_plano_type", true);
+    echo $plano;
 }
 
 function tips_dashboard_widget_content() {
@@ -787,24 +817,31 @@ function tips_dashboard_widget_content() {
 }
 
 function cota_dashboard_widget_content() {
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+    $ec = new NegocioController();
+    $stats = $ec->loadStats();
+   // echo"<pre>";
+   // var_dump($stats);
+   // echo"</pre>";
     ?>
     <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.load("current", {packages: ["bar"]});
         google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ["Recurso", "total", {role: "style"}],
-                ["Eventos cadastrados", 80, "#880e4f"],
-                ["Email criados", 894, "#d500f9"],
-                ["Email enviados", 894, "#311b92"],
-                ["Push criadas", 1049, "#f4ff81"],
-                ["Push enviadas", 1049, "#ff5722"],
-                ["Twitter", 1930, "#263238"],
-                ["Midias", 300, "#80deea"],
-                ["Uso de disco", 300, "#e91e63"],
-                ["Contatos", 2145, "#00e676"]
+                ["Negócios", <?php echo $stats->business[0]->total; ?>, "#448AFF"],
+                ["Eventos", <?php echo $stats->events[0]->total; ?>, "#C2185B"],
+                // ["Email criados", 894, "#d500f9"],
+                // ["Email enviados", 894, "#311b92"],
+                // ["Push criadas", 1049, "#f4ff81"],
+                // ["Push enviadas", 1049, "#ff5722"],
+                //   ["Twitter", 1930, "#263238"],
+                ["Midias", <?php echo $stats->totalMedia; ?>, "#0097A7"],
+                ["Disco(MB)", <?php echo $stats->usage; ?>, "#E040FB"],
+                        //   ["Contatos", 2145, "#00e676"]
             ]);
 
             var view = new google.visualization.DataView(data);
@@ -816,8 +853,8 @@ function cota_dashboard_widget_content() {
                 2]);
 
             var options = {
-                title: "Estatísticas de uso do serviço",
-                bar: {groupWidth: "25%"},
+                title: "Recursos em uso no sistema",
+                bar: {groupWidth: "30%"},
                 legend: {position: "none"},
             };
             var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
@@ -1196,7 +1233,8 @@ add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_updateGroupsBatch', 'updateGroupsBatch');
 add_action('wp_ajax_findNickName', 'findNickName');
 add_action('wp_ajax_importGmail', 'importGmail');
-add_action('wp_ajax_createAttach', 'createPostAttachment');
+add_action("wp_ajax_createAttach ","createPostAttachment");
+add_action('wp_ajax_downloadFileFromUrl', 'downloadFileFromUrl');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('wp_ajax_save_event_place', 'saveEventPlace');

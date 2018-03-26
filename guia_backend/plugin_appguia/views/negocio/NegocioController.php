@@ -148,6 +148,10 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, '_sub_category_', $request['businessTypeGuia1']); //Sub category
             update_post_meta($post_id, '_region_coor_', $request['region']); //City region
             update_post_meta($post_id, '_beach_nearby_', $request['beach']); //Beacj region
+            update_post_meta($post_id, '_ac', $request['_ac']); //Beacj region
+            update_post_meta($post_id, '_at', $request['_at']); //Beacj region
+            update_post_meta($post_id, '_cs', $request['_cs']); //Beacj region
+            update_post_meta($post_id, '_ck', $request['_ck']); //Beacj region
 
             $this->updateTerms($request, $post_id);
 
@@ -364,6 +368,67 @@ class NegocioController extends stdClass {
           'post',
           0);";
         return $query;
+    }
+
+    public function loadStats() {
+        global $wpdb;
+        $std = new stdClass();
+        $lEvents = get_user_option(_MY_EVENTS, get_current_user_id());
+        if (empty($lEvents)) {
+            $lEvents = [];
+        } else {
+            $lEvents = unserialize($lEvents);
+        }
+        $myEvents = "";
+        foreach ($lEvents as $e) {
+            if (empty($e))
+                continue;
+            $myEvents .= $e . ",";
+        }
+        $myEvents .= "-1";
+
+        $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
+        $query = "
+                SELECT count(*) as total
+                FROM wp_posts as a 
+                where 
+                    id in ($myEvents)";
+        //echo $myEvents;
+        //echo $query;
+        $std->events = $app_db->get_results($query);
+
+        // $std->totalEvents = count($lEvents);
+        $query = "select count(ID) as total from wp_posts where post_author = " . get_current_user_id() . " and post_type = 'business'";
+        $std->business = $wpdb->get_results($query);
+
+        //var_dump($_POST);
+        $image_ids = get_posts(
+                array(
+                    'post_type' => 'attachment',
+                    //'post_mime_type' => 'image',
+                    'post_author' => get_current_user_id(),
+                    //'post_status' => 'inherit',
+                    'posts_per_page' => - 1,
+                    'fields' => 'ids',
+        ));
+
+        // var_dump($image_ids);
+
+        $diskQuote = 0;
+        foreach ($image_ids as $i) {
+            // echo $i;
+            //$attachment_meta = wp_get_attachment_metadata($i);
+            // echo $attachment_meta['filesizeHumanReadable'];
+            $diskQuote += filesize(get_attached_file($i));
+
+            // $metadata = wp_get_attachment_metadata($attachment_id);
+            //  echo $metadata['filesize'];
+        }
+        $std->totalMedia = count($image_ids);
+        $std->usage = round($diskQuote / 1000000, 2);
+        //   $std->quote = get_user_meta(get_current_user_id(), DISK_QUOTE);
+
+        return $std;
     }
 
 }
