@@ -26,14 +26,15 @@ const GUIA_dbase = "guiafloripa"; // Nome do seu Banco de Dados
 /**
  * downloadFiles
  */
-function downloadFileFromUrl(){
+
+function downloadFileFromUrl() {
     $filepath = "/var/www/app.guiafloripa.com.br/wp-content/uploads/" . $_GET['file'];
-    
+
     // Process download
-    if(file_exists($filepath)) {
+    if (file_exists($filepath)) {
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="'.basename($filepath).'"');
+        header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
@@ -555,15 +556,15 @@ function app_guiafloripa_negocio() {
 }
 
 function app_guiafloripa_negocio_add() {
-   /* define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
-    define('DROPZONEJS_PLUGIN_VERSION', '0.0.1');
-    wp_enqueue_script(
-            'dropzonejs', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js', array(), DROPZONEJS_PLUGIN_VERSION
-    );
-    wp_enqueue_style(
-            'dropzonecss', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css', array(), DROPZONEJS_PLUGIN_VERSION
-    );*/
-     wp_enqueue_media('media-upload');
+    /* define('DROPZONEJS_PLUGIN_URL', plugin_dir_url(__FILE__));
+      define('DROPZONEJS_PLUGIN_VERSION', '0.0.1');
+      wp_enqueue_script(
+      'dropzonejs', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js', array(), DROPZONEJS_PLUGIN_VERSION
+      );
+      wp_enqueue_style(
+      'dropzonecss', 'https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css', array(), DROPZONEJS_PLUGIN_VERSION
+      ); */
+    wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');
     wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
     wp_enqueue_media('my-upload');
@@ -799,9 +800,28 @@ function add_email_dashboard_widgets() {
     );
 }
 
-function plano_dashboard_widget_content(){
-    $plano = get_user_meta(get_current_user_id(), "_plano_type", true);
-    echo $plano;
+function plano_dashboard_widget_content() {
+    ?>
+    <center>
+        <div style="width: 95%;" class="page-title-action">
+
+            <?php
+            $plano = get_user_meta(get_current_user_id(), "_plano_type", true);
+            if ($plano === "1") {
+                echo "<br><span>Seu plano</span><br>MEGA<br><br>";
+            } else if ($plano === "2") {
+                echo "<br><span>Seu plano</span><br>GIGA<br><br>";
+            } else {
+                echo "<br><span>Seu plano</span><br>BYTE<br><br>";
+            }
+            //echo $plano;
+            ?>
+
+
+        </div>
+        Vencimento do plano em 17/04/2018      <input type="button" name="btMeuSaldo" value="Adicionar saldo" class="page-title-action"/>
+    </center>
+    <?php
 }
 
 function tips_dashboard_widget_content() {
@@ -820,9 +840,9 @@ function cota_dashboard_widget_content() {
     include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
     $ec = new NegocioController();
     $stats = $ec->loadStats();
-   // echo"<pre>";
-   // var_dump($stats);
-   // echo"</pre>";
+    // echo"<pre>";
+    // var_dump($stats);
+    // echo"</pre>";
     ?>
     <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -1233,7 +1253,7 @@ add_action('wp_ajax_findBeachsAjax', 'findBeachsAjax');
 add_action('wp_ajax_updateGroupsBatch', 'updateGroupsBatch');
 add_action('wp_ajax_findNickName', 'findNickName');
 add_action('wp_ajax_importGmail', 'importGmail');
-add_action("wp_ajax_createAttach ","createPostAttachment");
+add_action("wp_ajax_createAttach ", "createPostAttachment");
 add_action('wp_ajax_downloadFileFromUrl', 'downloadFileFromUrl');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');

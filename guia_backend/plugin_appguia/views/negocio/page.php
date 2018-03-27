@@ -322,18 +322,20 @@ if (isset($_GET['eventID'])) {
                         <input type="hidden" name="picDropzone" id="picCapaURL" value="<?php echo isset($business->meta['picDropzone']) ? $business->meta['picDropzone'][0] : ""; ?>"/>
                         <span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px<br>
                         <a href="javascript:upload_new_img(this,'single')" class="button button-primary" style="margin: 15px">Anexar</a><br>
-                    <div id="logoPreview" name="logoPreview"><img style="max-width: 100px" src="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"></div>
+                    <div id="logoPreview" onclick="upload_new_img(this,'single')" name="logoPreview" class="gallery page-title-action"><img style="max-width: 100px" src="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"></div>
                     <span class="dashicons dashicons-images-alt2"></span> Galeria <br><br>
                     <a href="javascript:upload_new_img(this,'multiple')" class="button button-primary" style="margin: 15px">Anexar</a>
                   <!--  <span class="description">Total de até 10 imagens podem ser anexadas na galeria</span> -->
-                    <div id="gallPreview" name="gallPreview"></div>
+
+                    <div id="gallPreview" onclick="upload_new_img(this,'multiple')" name="gallPreview" class="gallery page-title-action" ></div>
+
                     </p>
                 </div>
             <?php } ?>
             <div id="tabs-6">
 
 
-                <p> 
+                <p style="height: auto"> 
                     <span class="dashicons dashicons-admin-generic"></span><b>Preferências</b>
                 <h2>Configurações do Guia Floripa</h2>
                 <label><input type="checkbox" name="chkSyncGuia" id="chkSyncGuia" value="chk_guia">Enviar para publicação no Guia Floripa ao salvar</label><br>
@@ -441,6 +443,30 @@ if (isset($_GET['eventID'])) {
         height: auto !important;
     }
     .dz-image img{width: 100%;height: 100%;}
+    div.gallery {
+        margin: 8px;
+        border: 1px dotted #ccc;
+        float: left;
+        width: 100%;
+        min-height: 120px;
+        max-height: 600px;
+
+    }
+
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+
+    div.gallery img {
+        width: auto;
+        max-width: 60px;
+        height: 60px;
+    }
+
+    div.desc {
+        padding: 15px;
+        text-align: center;
+    }
 </style>
 <?php
 $str1 = substr($business->meta['picCapaURL'][0], 0, 1);
