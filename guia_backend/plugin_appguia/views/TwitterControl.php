@@ -27,10 +27,8 @@ const IC = "_ic_twitter";
 
 class TwitterControl {
 
-    public function getNotificationStatus() {
-        $OneSignalWPSetting = get_option('OneSignalWPSetting');
-        $OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
-        $OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
+    public function getNotificationStatus($OneSignalWPSetting_app_id,$OneSignalWPSetting_rest_api_key) {
+        
         $total_notification_stats = 0;
         $decimal_delivered = 0;
         $decimal_failed = 0;
@@ -45,29 +43,16 @@ class TwitterControl {
         );
         $url = ONESIGNAL . "notifications?app_id=" . $OneSignalWPSetting_app_id . "&limit=500&offset=0";
         $response = wp_remote_get($url, $args);
+        
+        //echo var_dump($response);die;
 
         $response_to_arrays = json_decode(wp_remote_retrieve_body($response), true);
-
-        $user_custom_api_key = get_user_meta(get_current_user_id(), ONE_SIGNAL_REST_API, true);
-        $user_custom_app_id = get_user_meta(get_current_user_id(), ONE_SIGNAL_APP_ID, true);
-        //Custom API
-        if ($user_custom_api_key !== "") {
-            $args = array(
-                'headers' => array(
-                    'Authorization' => 'Basic ' . $user_custom_api_key
-                )
-            );
-            $url = ONESIGNAL . "notifications?app_id=" . $user_custom_app_id . "&limit=500&offset=0";
-            $response = wp_remote_get($url, $args);
-
-            $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response), true);
-            $response_to_arrays['notifications'] = array_merge($response_to_arrays['notifications'], $response_to_arrays1['notifications']);
-        }
-
+       
         if ($response_to_arrays['notifications']) {
             foreach ($response_to_arrays['notifications'] as $response_array) {
                 $now_time = time();
                 $notification_send_after = $response_array['send_after'];
+              //  var_dump($notification_send_after);
                 //$response_counter++;
                 if ($now_time > $notification_send_after && is_numeric($response_array['remaining']) && is_numeric($response_array['converted']) && is_numeric($response_array['successful']) && is_numeric($response_array['failed'])) {
                     $response_counter++;
@@ -87,60 +72,18 @@ class TwitterControl {
                         continue;
                     }
 
-
-                    $decimal_delivered += ($notification_delivered / $total_notification_stats) * 100;
-                    $decimal_failed += ($notification_failed / $total_notification_stats) * 100;
-                    $decimal_pending += ($notification_pending / $total_notification_stats) * 100;
-                    $decimal_converted += ($notification_converted / $total_notification_stats) * 100;
-                    /* echo "<br>$decimal_converted";
-                      echo "<br>$notification_converted";
-                      echo "<br>$notification_delivered";
-                      echo "<br>$notification_failed";
-                      echo "<br>$notification_pending"; */
+                    $board = new stdClass();
+                    $board->response_counter = $response_counter;
+                    $board->decimal_delivered += ($notification_delivered / $total_notification_stats) * 100;
+                    $board->decimal_failed += ($notification_failed / $total_notification_stats) * 100;
+                    $board->decimal_pending += ($notification_pending / $total_notification_stats) * 100;
+                    $board->decimal_converted += ($notification_converted / $total_notification_stats) * 100;
+                    return $board;
                 }
             }
-            ?>
-            <script>
-                Morris.Donut({
-                    element: 'graph1',
-                    data: [
-                        {value: <?php echo 100 - ($decimal_converted / $response_counter); ?>, label: 'Não clicados'},
-                        {value: <?php echo $decimal_converted / $response_counter ?>, label: 'Clicados'},
-                    ],
-                    backgroundColor: '#ccc',
-                    labelColor: '#f79129',
-                    colors: [
-                        '#2499c8',
-                        '#f79129',
-                        '#a4ce3f',
-                        '#c0358a',
-                    ],
-                    formatter: function (x) {
-                        return x + "%"
-                    }
-                });
-                Morris.Donut({
-                    element: 'graph',
-                    data: [
-                        {value: <?php echo $decimal_delivered / $response_counter; ?>, label: 'Entregues'},
-                        {value: <?php echo $decimal_failed / $response_counter; ?>, label: 'Não entregues'},
-                    ],
-                    backgroundColor: '#ccc',
-                    labelColor: '#f79129',
-                    colors: [
-                        '#a4ce3f',
-                        '#c0358a',
-                        '#67C69D',
-                        '#95D7BB'
-                    ],
-                    formatter: function (x) {
-                        return x + "%"
-                    }
-                });
-                document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
-            </script>
-            <?php
+            return [];
         }
+        return [];
     }
 
     public function getActionsForBot() {

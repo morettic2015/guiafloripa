@@ -65,7 +65,7 @@ class NotificationsGrid extends WP_List_Table {
      */
     public function get_columns() {
         $columns = array(
-           // 'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
+            // 'cb' => '<input type="checkbox" />', // Render a checkbox instead of text.
             'title' => _x('Dispositivo', 'Hashtag de busca', 'wp-list-table-example'),
             'follow' => _x('Primeira sessão', 'Seguir autor', 'wp-list-table-example'),
             'rating' => _x('Última sessão', 'Adicionar aos favoritos', 'wp-list-table-example'),
@@ -199,9 +199,9 @@ class NotificationsGrid extends WP_List_Table {
             'push' => $item['ID'],
         );
 
-     /*   $actions['segment'] = sprintf(
-                '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Agrupar', 'List table row action', 'wp-list-table-example')
-        );*/
+        /*   $actions['segment'] = sprintf(
+          '<a href="%1$s">%2$s</a>', esc_url(wp_nonce_url(add_query_arg($delete_query_args, 'admin.php'), 'send_segment' . $item['ID'])), _x('Agrupar', 'List table row action', 'wp-list-table-example')
+          ); */
 
         // Return the title contents.
         return sprintf('%1$s <br><span style="color:silver;font-size:10px">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
@@ -227,8 +227,8 @@ class NotificationsGrid extends WP_List_Table {
      */
     protected function get_bulk_actions() {
         $actions = array(
-          //  'segment' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
-          //  'export' => _x('Enviar Mensagem', 'List table bulk action', 'wp-list-table-example'),
+                //  'segment' => _x('Agrupar', 'List table bulk action', 'wp-list-table-example'),
+                //  'export' => _x('Enviar Mensagem', 'List table bulk action', 'wp-list-table-example'),
         );
 
         return $actions;
@@ -300,113 +300,16 @@ class NotificationsGrid extends WP_List_Table {
 
 
 
-        $OneSignalWPSetting = get_option('OneSignalWPSetting');
-//var_dump($OneSignalWPSetting);
-        $OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
-        $OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
-        $pluginList = get_option('active_plugins');
-        $plugin = 'onesignal-free-web-push-notifications/onesignal.php';
-        if (in_array($plugin, $pluginList) && $OneSignalWPSetting_app_id && $OneSignalWPSetting_rest_api_key) {
-            //$onesignal_extra_info = get_option('oss_settings_page');
-            $args = array(
-                'headers' => array(
-                    'Authorization' => 'Basic ' . $OneSignalWPSetting_rest_api_key,
-                    'Cache-Control' => 'max-age=31536000'
-                )
-            );
-            $url = ONESIGNAL . "players?app_id=" . $OneSignalWPSetting_app_id . "&limit=500&offset=0";
-            $response = wp_remote_get($url, $args);
-            $response_to_arrays = json_decode(wp_remote_retrieve_body($response), true);
-            //var_dump($response_to_arrays);
-            //Verify if has keys
-            $user_custom_api_key = get_user_meta(get_current_user_id(), ONE_SIGNAL_REST_API, true);
-            
-            //var_dump($user_custom_api_key);die;
-            $user_custom_app_id = get_user_meta(get_current_user_id(), ONE_SIGNAL_APP_ID, true);
-            if (!empty($user_custom_api_key) && !empty($user_custom_api_key)) {
-                $args = array(
-                    'headers' => array(
-                        'Authorization' => 'Basic ' . $user_custom_api_key,
-                        'Cache-Control' => 'max-age=31536000'
-                    )
-                );
-               // echo "Não tem a porra da chave..... mane";
-                $url = ONESIGNAL . "players?app_id=" . $user_custom_app_id . "&limit=500&offset=0";
-                $response1 = wp_remote_get($url, $args);
-                $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response1), true);
-                //echo "<pre>";
-                //var_dump($response_to_arrays1);
-                //die;
-                $total = array_merge($response_to_arrays['players'], $response_to_arrays1['players']);
-                // echo(count($response_to_arrays1));
-                // var_dump($response_to_arrays1);die;
-                $response_to_arrays = $total;
-                
-               // var_dump($response_to_arrays);die;
-                //echo(count($response_to_arrays));die;
-            }else{
-                $response_to_arrays = $response_to_arrays['players'];
-            }
-            //echo $user_custom_api_key;die;
-            //ar_dump($user_custom_api_key);die;
-            $response_counter = 0;
-            $vet = [];
-            foreach (array_reverse($response_to_arrays) as $response_array) {
-
-                //  echo "<pre>";
-                //   var_dump($response_array);die;
-                $ip = $response_array['ip'];
-                $user_sessions = $response_array['session_count'];
-                $user_language = $response_array['language'];
-                $user_device = $response_array['device_model'];
-                $user_status = $response_array['invalid_identifier'];
-                $final_readable_last_active = date('d/m/y h:i:s', $response_array['last_active']);
-                $final_readable_first_session = date('d/m/y h:i:s', $response_array['created_at']);
-                $did = $response_array['id'];
-                $geo = get_option($ip);
-
-                if ($geo === false) {
-                    $urlFreeGeoIp = FREEGEOIP . $ip;
-                    $args = array('headers' => array(
-                            'If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT',
-                            'Cache-Control: max-age=31536000',
-                        ),
-                    );
-                    $r1 = wp_remote_get($urlFreeGeoIp, $args);
-                    $jsGeo = json_decode(wp_remote_retrieve_body($r1), true);
-                    //Save IP to Wp_options //lesss io resource...faster from database
-                    add_option($ip, json_encode($jsGeo), '', false);
-                    //var_dump($jsGeo);
-                } else {
-                    $jsGeo = get_object_vars(json_decode($geo));
-                }
-
-                $obj = json_decode($t->meta_value);
-                //var_dump($obj);
-
-
-                $vet[] = array(
-                    'ID' => $did,
-                    'title' => $user_device,
-                    'rating' => $final_readable_last_active,
-                    'director' => $user_sessions,
-                    'quote' => $user_language,
-                    'follow' => $final_readable_first_session,
-                    'ignore' => $ign,
-                    'ip' => $ip,
-                    'city' => $jsGeo['city'],
-                    'uf' => $jsGeo['region_name'],
-                    'pais' => $jsGeo['country_code'],
-                );
-            }
-        }
 
 
         //  foreach ($twitterMeta as $t) {
         //var_dump($t);
         //   }
-
-        $data = $vet;
+        $OneSignalWPSetting = get_option('OneSignalWPSetting');
+        //var_dump($OneSignalWPSetting);
+        $OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
+        $OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
+        $data = loadOneSignalPushs($OneSignalWPSetting_app_id, $OneSignalWPSetting_rest_api_key);
         /*
          * This checks for sorting input and sorts the data in our array of dummy
          * data accordingly (using a custom usort_reorder() function). It's for 
@@ -481,4 +384,104 @@ class NotificationsGrid extends WP_List_Table {
 
 function isSerialized($str) {
     return ($str == serialize(false) || @unserialize($str) !== false);
+}
+
+function loadOneSignalPushs($OneSignalWPSetting_app_id, $OneSignalWPSetting_rest_api_key) {
+    //echo "meto";
+    $pluginList = get_option('active_plugins');
+    $plugin = 'onesignal-free-web-push-notifications/onesignal.php';
+    if (in_array($plugin, $pluginList) && $OneSignalWPSetting_app_id && $OneSignalWPSetting_rest_api_key) {
+        //$onesignal_extra_info = get_option('oss_settings_page');
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . $OneSignalWPSetting_rest_api_key,
+                'Cache-Control' => 'max-age=31536000'
+            )
+        );
+        $url = ONESIGNAL . "players?app_id=" . $OneSignalWPSetting_app_id . "&limit=500&offset=0";
+        $response = wp_remote_get($url, $args);
+        $response_to_arrays = json_decode(wp_remote_retrieve_body($response), true);
+        //var_dump($response_to_arrays);
+        //Verify if has keys
+        $user_custom_api_key = get_user_meta(get_current_user_id(), ONE_SIGNAL_REST_API, true);
+
+        //var_dump($user_custom_api_key);die;
+        $user_custom_app_id = get_user_meta(get_current_user_id(), ONE_SIGNAL_APP_ID, true);
+        if (!empty($user_custom_api_key) && !empty($user_custom_api_key)) {
+            $args = array(
+                'headers' => array(
+                    'Authorization' => 'Basic ' . $user_custom_api_key,
+                    'Cache-Control' => 'max-age=31536000'
+                )
+            );
+            // echo "Não tem a porra da chave..... mane";
+            $url = ONESIGNAL . "players?app_id=" . $user_custom_app_id . "&limit=500&offset=0";
+            $response1 = wp_remote_get($url, $args);
+            $response_to_arrays1 = json_decode(wp_remote_retrieve_body($response1), true);
+            //echo "<pre>";
+            //var_dump($response_to_arrays1);
+            //die;
+            $total = array_merge($response_to_arrays['players'], $response_to_arrays1['players']);
+            // echo(count($response_to_arrays1));
+            // var_dump($response_to_arrays1);die;
+            $response_to_arrays = $total;
+
+            // var_dump($response_to_arrays);die;
+            //echo(count($response_to_arrays));die;
+        } else {
+            $response_to_arrays = $response_to_arrays['players'];
+        }
+
+        $vet = [];
+        foreach (array_reverse($response_to_arrays) as $response_array) {
+
+            //  echo "<pre>";
+            //   var_dump($response_array);die;
+            $ip = $response_array['ip'];
+            $user_sessions = $response_array['session_count'];
+            $user_language = $response_array['language'];
+            $user_device = $response_array['device_model'];
+            // $user_status = $response_array['invalid_identifier'];
+            $final_readable_last_active = date('d/m/y h:i:s', $response_array['last_active']);
+            $final_readable_first_session = date('d/m/y h:i:s', $response_array['created_at']);
+            $did = $response_array['id'];
+            $geo = get_option($ip);
+
+            if ($geo === false) {
+                $urlFreeGeoIp = FREEGEOIP . $ip;
+                $args = array('headers' => array(
+                        'If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT',
+                        'Cache-Control: max-age=31536000',
+                    ),
+                );
+                $r1 = wp_remote_get($urlFreeGeoIp, $args);
+                $jsGeo = json_decode(wp_remote_retrieve_body($r1), true);
+                //Save IP to Wp_options //lesss io resource...faster from database
+                add_option($ip, json_encode($jsGeo), '', false);
+                //var_dump($jsGeo);
+            } else {
+                $jsGeo = get_object_vars(json_decode($geo));
+            }
+
+            $obj = json_decode($t->meta_value);
+            //var_dump($obj);
+
+
+            $vet[] = array(
+                'ID' => $did,
+                'title' => $user_device,
+                'rating' => $final_readable_last_active,
+                'director' => $user_sessions,
+                'quote' => $user_language,
+                'follow' => $final_readable_first_session,
+                'ignore' => $ign,
+                'ip' => $ip,
+                'city' => $jsGeo['city'],
+                'uf' => $jsGeo['region_name'],
+                'pais' => $jsGeo['country_code'],
+            );
+        }
+        return $vet;
+    }
+    return [];
 }

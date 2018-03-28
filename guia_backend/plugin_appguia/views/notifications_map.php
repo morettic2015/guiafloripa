@@ -11,7 +11,11 @@
 include_once PLUGIN_ROOT_DIR . 'views/TwitterControl.php';
 $tc = new TwitterControl();
 $ret = $tc->getNotificationsPoints();
-;
+$OneSignalWPSetting = get_option('OneSignalWPSetting');
+$OneSignalWPSetting_app_id = $OneSignalWPSetting['app_id'];
+$OneSignalWPSetting_rest_api_key = $OneSignalWPSetting['app_rest_api_key'];
+$board = $tc->getNotificationStatus($OneSignalWPSetting_app_id, $OneSignalWPSetting_rest_api_key);
+//var_dump($board);
 ?>
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?> </h1>
@@ -59,4 +63,45 @@ $ret = $tc->getNotificationsPoints();
 
 <?php echo $ret->script; ?>
 </script>
-<?php $tc->getNotificationStatus(); ?>
+<?php
+
+?>
+<script>
+    Morris.Donut({
+        element: 'graph1',
+        data: [
+            {value: <?php echo 100 - ($board->decimal_converted / $board->response_counter); ?>, label: 'Não clicados'},
+            {value: <?php echo $board->decimal_converted / $board->response_counter ?>, label: 'Clicados'},
+        ],
+        backgroundColor: '#ccc',
+        labelColor: '#f79129',
+        colors: [
+            '#2499c8',
+            '#f79129',
+            '#a4ce3f',
+            '#c0358a',
+        ],
+        formatter: function (x) {
+            return x + "%"
+        }
+    });
+    Morris.Donut({
+        element: 'graph',
+        data: [
+            {value: <?php echo $board->decimal_delivered / $board->response_counter; ?>, label: 'Entregues'},
+            {value: <?php echo $board->decimal_failed / $board->response_counter; ?>, label: 'Não entregues'},
+        ],
+        backgroundColor: '#ccc',
+        labelColor: '#f79129',
+        colors: [
+            '#a4ce3f',
+            '#c0358a',
+            '#67C69D',
+            '#95D7BB'
+        ],
+        formatter: function (x) {
+            return x + "%"
+        }
+    });
+    document.getElementById('ctPushs').innerHTML = '<b>Notificações analisadas:<?php echo $response_counter; ?></b>';
+</script>

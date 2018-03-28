@@ -112,7 +112,7 @@ function extra_user_profile_fields($user) {
             </td>
         </tr>
     </table>
-    <a name="twitter"/>
+   <!-- <a name="twitter"/>
     <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
 
     <ul>
@@ -171,7 +171,7 @@ function extra_user_profile_fields($user) {
                 <span class="description"><?php _e("Sua chave REST com 48 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
             </td>
         </tr>
-    </table>
+    </table>-->
     <?php
 }
 
@@ -435,6 +435,7 @@ function wpse_91693_register() {
             'app_guiafloripa_negocio', null, 1
     );
     add_submenu_page('app_guiafloripa_negocio', 'Edite seu Negócio', 'Adicionar', 'read', 'app_guiafloripa_negocio_add', 'app_guiafloripa_negocio_add');
+    add_submenu_page('app_guiafloripa_negocio', 'Atividades do negócio', 'Atividades', 'read', 'app_guiafloripa_activity', 'app_guiafloripa_activity');
     add_menu_page(
             'Meus Eventos', // page title
             'Eventos', // menu title
@@ -575,7 +576,9 @@ function app_guiafloripa_negocio_add() {
 function app_guiafloripa_eventos_cal() {
     include_once PLUGIN_ROOT_DIR . 'views/events_calendar.php';
 }
-
+function app_guiafloripa_activity(){
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/dashboard.php';
+}
 function app_guiafloripa_midia() {
     wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');

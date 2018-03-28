@@ -406,7 +406,7 @@ class TT_Example_List_Table extends WP_List_Table {
             $at = get_user_meta(get_current_user_id(), '_at', true);
             $ac = get_user_meta(get_current_user_id(), '_ac', true);
 
-            $twitterConn = new TwitterOAuth($ck, $cs, $at, $ac);
+         /*   $twitterConn = new TwitterOAuth($ck, $cs, $at, $ac);
             // var_dump($twitterConn);
             $myFollowers = $twitterConn->get("followers/list", ["count" => 200]);
             $myFollowers1 = $myFollowers;
@@ -425,7 +425,7 @@ class TT_Example_List_Table extends WP_List_Table {
             fclose($open);
             echo '<div class="notice notice-warning"> 
                     <p><strong>Contatos do twitter sincronizados.<br> O cache criado expira em 24 horas.</strong></p>
-                 </div>';
+                 </div>';*/
         }
 
         if (isset($myFollowers->errors)) {

@@ -322,12 +322,12 @@ if (isset($_GET['eventID'])) {
                         <input type="hidden" name="picDropzone" id="picCapaURL" value="<?php echo isset($business->meta['picDropzone']) ? $business->meta['picDropzone'][0] : ""; ?>"/>
                         <span class="dashicons dashicons-format-image"></span> Logotipo ou foto 100x100 px<br>
                         <a href="javascript:upload_new_img(this,'single')" class="button button-primary" style="margin: 15px">Anexar</a><br>
-                    <div id="logoPreview" onclick="upload_new_img(this,'single')" name="logoPreview" class="gallery page-title-action"><img style="max-width: 100px" src="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"></div>
+                    <div id="logoPreview" onclick="upload_new_img(this, 'single')" name="logoPreview" class="gallery page-title-action"><img style="max-width: 100px" src="<?php echo isset($business->meta['picLogoURL']) ? $business->meta['picLogoURL'][0] : ""; ?>"></div>
                     <span class="dashicons dashicons-images-alt2"></span> Galeria <br><br>
                     <a href="javascript:upload_new_img(this,'multiple')" class="button button-primary" style="margin: 15px">Anexar</a>
                   <!--  <span class="description">Total de até 10 imagens podem ser anexadas na galeria</span> -->
 
-                    <div id="gallPreview" onclick="upload_new_img(this,'multiple')" name="gallPreview" class="gallery page-title-action" ></div>
+                    <div id="gallPreview" onclick="upload_new_img(this, 'multiple')" name="gallPreview" class="gallery page-title-action" ></div>
 
                     </p>
                 </div>
@@ -375,6 +375,20 @@ if (isset($_GET['eventID'])) {
                 <label for="_ac"><?php _e("Access Token Secret"); ?></label>
                 <br>
                 <input value="<?php echo isset($business->meta['_ac']) ? $business->meta['_ac'][0] : ""; ?>" type="text" name="_ac" id="_ac" value="<?php echo esc_attr(get_the_author_meta('_ac', $user->ID)); ?>" class="regular-text" /><br />
+                <h2>Configurações do Onesignal (Notificações)</h2>
+                <p>
+                    Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2.
+                </p>
+                <label for="_onesignal_app_id"><?php _e("OneSignal APP ID"); ?></label><br>
+                <input value="<?php echo isset($business->meta['_onesignal_app_id']) ? $business->meta['_onesignal_app_id'][0] : ""; ?>" placeholder="c452ff74-3bc4-44ca-a015-bfdaf0812313" type="text" name="_onesignal_app_id" id="_onesignal_app_id" value="<?php echo esc_attr(get_the_author_meta('_onesignal_app_id', $user->ID)); ?>" class="regular-text" /><br />
+                <span class="description"><?php _e("Sua chave de identificação do app ID com 36 caracteres. "); ?></span>
+
+                <br>
+                <label for="_onesignal_rest_api_key"><?php _e("Access Token"); ?></label><br>
+                <input value="<?php echo isset($business->meta['_onesignal_rest_api_key']) ? $business->meta['_onesignal_rest_api_key'][0] : ""; ?>" type="text" name="_onesignal_rest_api_key" id="_onesignal_rest_api_key" value="<?php echo esc_attr(get_the_author_meta('_onesignal_rest_api_key', $user->ID)); ?>" class="regular-text" />
+                <br>
+                <span class="description"><?php _e("Sua chave REST com 48 caracteres."); ?></span>
+
                 </p>
             </div>
             <input type="button" onclick="submitNegocio()" name="btSaveCampaign" style="width: 99%" value="Salvar" class="page-title-action"/>

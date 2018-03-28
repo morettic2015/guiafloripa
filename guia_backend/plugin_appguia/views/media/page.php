@@ -4,14 +4,15 @@
         //var_dump($plano);
         echo esc_html(get_admin_page_title());
         if ($plano) {
-            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="javascript:downloadFiles()" title="Habilite os pop ups para fazer o download de imagens. Máximo 10 imagens por download" class="page-title-action">Download</a><a href="#" class="page-title-action">Excluir</a><?php } ?></h1>
+            ?><a href="javascript:upload_new_img(this)" class="page-title-action">Anexar</a><a href="javascript:downloadFiles()" title="Habilite os pop ups para fazer o download de imagens. Máximo 10 imagens por download" class="page-title-action">Download</a><a href="javascript:removeFiles()" class="page-title-action">Excluir</a><?php } ?></h1>
 
 
 
     <?php
     if (isset($_POST['selMedias'])) {
+        $filesDownload = explode(",", $_POST['selMedias']);
         if ($_POST['selMediasAct'] === "download") {
-            $filesDownload = explode(",", $_POST['selMedias']);
+
             //var_dump($filesDownload);
             echo "<script>";
             foreach ($filesDownload as $d) {
@@ -23,6 +24,22 @@
             }
             echo "</script>";
             //https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=downloadFileFromUrl&file=/2018/03/23-03-1815285020_207642943017773_4750800478043254071_n.png
+        } else if ($_POST['selMediasAct'] === "remove") {
+            //var_dump($_POST);
+            global $wpdb;
+            // echo "<pre>";
+            $totalRemove = 0;
+            foreach ($filesDownload as $d) {
+                $attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $d));
+                $remove = wp_delete_attachment($attachment[0]);
+                //var_dump($remove);
+                $totalRemove++;
+            }
+            echo '<div class="notice notice-info"> 
+                    <p>('.$totalRemove.') Imagens removidas com sucesso.</p>
+                </div>';
+            // echo "</pre>";
+            //return $attachment[0];
         }
     }
 
@@ -157,6 +174,7 @@
      * @Download images from URL
      * */
     function downloadFiles() {
+
         var total = 0;
         $('input.theclass[type=checkbox]').each(function () {
             var sThisVal = jQuery("#selMedias").val();
@@ -171,6 +189,29 @@
             }
         });
         jQuery("#selMediasAct").val("download");
+        document.act.submit();
+    }
+    /**
+     * @Download images from URL
+     * */
+    function removeFiles() {
+        if (!confirm("Confirma a exclusão das mídias selecionadas?")) {
+            return;
+        }
+        var total = 0;
+        $('input.theclass[type=checkbox]').each(function () {
+            var sThisVal = jQuery("#selMedias").val();
+            if (this.checked) {
+                sThisVal += "," + $(this).val();
+                total++;
+                jQuery("#selMedias").val(sThisVal);
+                if (total > 9) {
+                    jQuery("#selMediasAct").val("remove");
+                    document.act.submit();
+                }
+            }
+        });
+        jQuery("#selMediasAct").val("remove");
         document.act.submit();
     }
     jQuery("#checkAll").click(function () {

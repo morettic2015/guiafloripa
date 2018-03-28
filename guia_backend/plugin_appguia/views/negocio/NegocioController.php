@@ -152,6 +152,8 @@ class NegocioController extends stdClass {
             update_post_meta($post_id, '_at', $request['_at']); //Beacj region
             update_post_meta($post_id, '_cs', $request['_cs']); //Beacj region
             update_post_meta($post_id, '_ck', $request['_ck']); //Beacj region
+            update_post_meta($post_id, '_onesignal_rest_api_key', $request['_onesignal_rest_api_key']); //Beacj region
+            update_post_meta($post_id, '_onesignal_app_id', $request['_onesignal_app_id']); //Beacj region
 
             $this->updateTerms($request, $post_id);
 
