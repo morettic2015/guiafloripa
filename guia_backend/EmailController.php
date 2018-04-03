@@ -32,7 +32,7 @@ class EmailController {
         $str .= "<ul>";
         foreach ($eventos as $e) {
             //var_dump($e);die;
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/agenda" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . '</a></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . '</a></li>';
         }
         $str .= "</ul>";
         //  echo $str;

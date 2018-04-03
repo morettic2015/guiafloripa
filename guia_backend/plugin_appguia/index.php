@@ -112,66 +112,66 @@ function extra_user_profile_fields($user) {
             </td>
         </tr>
     </table>
-   <!-- <a name="twitter"/>
-    <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
+    <!-- <a name="twitter"/>
+     <h2><?php _e("Configurações do twitter", "blank"); ?><p><span class="description">Serviço integração com o Twitter **Opcional**</span></p></h2>
 
-    <ul>
-        <li>1) No <a href="https://apps.twitter.com/" target="_blank">Gerenciador de aplicativos do Twitter</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
-        <li>2) Na guia 'Permissões', selecione 'Ler, Escrever e acessar mensagens diretas' na área 'Acesso' e clique em 'Configurações de atualização'.</LI>
-        <li>3) Na guia 'Chave e toques de acesso', clique no botão 'Criar meu token de acesso'.</LI>
-        <li>4) Digite o nome de usuário do botão no respectivo campo abaixo.</LI>
-        <li>5) Na guia 'Chave e Acesso Tokens', copie a Chave do Consumidor, o Segredo do Consumidor, o Token de Acesso e o Token de Acesso segure e cole nos respectivos campos abaixo.</LI>
-    </ul>
+     <ul>
+         <li>1) No <a href="https://apps.twitter.com/" target="_blank">Gerenciador de aplicativos do Twitter</a>, clique em 'Criar nova aplicação' e preencha todos os campos.</LI>
+         <li>2) Na guia 'Permissões', selecione 'Ler, Escrever e acessar mensagens diretas' na área 'Acesso' e clique em 'Configurações de atualização'.</LI>
+         <li>3) Na guia 'Chave e toques de acesso', clique no botão 'Criar meu token de acesso'.</LI>
+         <li>4) Digite o nome de usuário do botão no respectivo campo abaixo.</LI>
+         <li>5) Na guia 'Chave e Acesso Tokens', copie a Chave do Consumidor, o Segredo do Consumidor, o Token de Acesso e o Token de Acesso segure e cole nos respectivos campos abaixo.</LI>
+     </ul>
 
 
-    <table class="form-table">
-        <tr>
-            <th><label for="_ck"><?php _e("Twitter API KEY"); ?></label></th>
-            <td>
-                <input type="text" name="_ck" id="_ck" value="<?php echo esc_attr(get_the_author_meta('_ck', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Esta chave de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="_cs"><?php _e("Twitter API Secret"); ?></label></th>
-            <td>
-                <input placeholder="" type="text" name="_cs" id="_cs" value="<?php echo esc_attr(get_the_author_meta('_cs', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Esta senha de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="_at"><?php _e("Access Token"); ?></label></th>
-            <td>
-                <input type="text" name="_at" id="_at" value="<?php echo esc_attr(get_the_author_meta('_at', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Este Token de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="_ac"><?php _e("Access Token Secret"); ?></label></th>
-            <td>
-                <input type="text" name="_ac" id="_ac" value="<?php echo esc_attr(get_the_author_meta('_ac', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Este token pode ser usada para fazer chamadas da API em sua conta."); ?></span>
-            </td>
-        </tr>
-    </table>
-    <h2><?php _e("Configurações do OneSignal", "blank"); ?><p><span class="description">Serviço de notificações **Opcional**</span></p></h2>
+     <table class="form-table">
+         <tr>
+             <th><label for="_ck"><?php _e("Twitter API KEY"); ?></label></th>
+             <td>
+                 <input type="text" name="_ck" id="_ck" value="<?php echo esc_attr(get_the_author_meta('_ck', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Esta chave de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+             </td>
+         </tr>
+         <tr>
+             <th><label for="_cs"><?php _e("Twitter API Secret"); ?></label></th>
+             <td>
+                 <input placeholder="" type="text" name="_cs" id="_cs" value="<?php echo esc_attr(get_the_author_meta('_cs', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Esta senha de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+             </td>
+         </tr>
+         <tr>
+             <th><label for="_at"><?php _e("Access Token"); ?></label></th>
+             <td>
+                 <input type="text" name="_at" id="_at" value="<?php echo esc_attr(get_the_author_meta('_at', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Este Token de acesso pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+             </td>
+         </tr>
+         <tr>
+             <th><label for="_ac"><?php _e("Access Token Secret"); ?></label></th>
+             <td>
+                 <input type="text" name="_ac" id="_ac" value="<?php echo esc_attr(get_the_author_meta('_ac', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Este token pode ser usada para fazer chamadas da API em sua conta."); ?></span>
+             </td>
+         </tr>
+     </table>
+     <h2><?php _e("Configurações do OneSignal", "blank"); ?><p><span class="description">Serviço de notificações **Opcional**</span></p></h2>
 
-    <table class="form-table">
-        <tr>
-            <th><label for="_onesignal_app_id"><?php _e("OneSignal APP ID"); ?></label></th>
-            <td>
-                <input placeholder="c452ff74-3bc4-44ca-a015-bfdaf0812313" type="text" name="_onesignal_app_id" id="_onesignal_app_id" value="<?php echo esc_attr(get_the_author_meta('_onesignal_app_id', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Sua chave de identificação do app ID com 36 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
-            </td>
-        </tr>
-        <tr>
-            <th><label for="_onesignal_rest_api_key"><?php _e("Access Token"); ?></label></th>
-            <td>
-                <input type="text" name="_onesignal_rest_api_key" id="_onesignal_rest_api_key" value="<?php echo esc_attr(get_the_author_meta('_onesignal_rest_api_key', $user->ID)); ?>" class="regular-text" /><br />
-                <span class="description"><?php _e("Sua chave REST com 48 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
-            </td>
-        </tr>
-    </table>-->
+     <table class="form-table">
+         <tr>
+             <th><label for="_onesignal_app_id"><?php _e("OneSignal APP ID"); ?></label></th>
+             <td>
+                 <input placeholder="c452ff74-3bc4-44ca-a015-bfdaf0812313" type="text" name="_onesignal_app_id" id="_onesignal_app_id" value="<?php echo esc_attr(get_the_author_meta('_onesignal_app_id', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Sua chave de identificação do app ID com 36 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
+             </td>
+         </tr>
+         <tr>
+             <th><label for="_onesignal_rest_api_key"><?php _e("Access Token"); ?></label></th>
+             <td>
+                 <input type="text" name="_onesignal_rest_api_key" id="_onesignal_rest_api_key" value="<?php echo esc_attr(get_the_author_meta('_onesignal_rest_api_key', $user->ID)); ?>" class="regular-text" /><br />
+                 <span class="description"><?php _e("Sua chave REST com 48 caracteres. Localize em sua conta OneSignal em Setup > OneSignal Keys > Step 2."); ?></span>
+             </td>
+         </tr>
+     </table>-->
     <?php
 }
 
@@ -419,126 +419,22 @@ function get_bugs() {
     }
 }
 
-function wpse_91693_register() {
-    add_menu_page(
-            'Integração de dados APP', // page title
-            'Sincronização', // menu title
-            'manage_options', // capability
-            'app_guiafloripa_manager_backend', // menu slug
-            'wpse_91693_render', null, 6
-    );
-    add_menu_page(
-            'Meus Negócios', // page title
-            'Negócios', // menu title
-            'read', // capability
-            'app_guiafloripa_negocio', // menu slug
-            'app_guiafloripa_negocio', null, 1
-    );
-    add_submenu_page('app_guiafloripa_negocio', 'Edite seu Negócio', 'Adicionar', 'read', 'app_guiafloripa_negocio_add', 'app_guiafloripa_negocio_add');
-    add_submenu_page('app_guiafloripa_negocio', 'Atividades do negócio', 'Atividades', 'read', 'app_guiafloripa_activity', 'app_guiafloripa_activity');
-    add_menu_page(
-            'Meus Eventos', // page title
-            'Eventos', // menu title
-            'read', // capability
-            'app_guiafloripa_eventos', // menu slug
-            'wpse_91693_events', null, 1
-    );
-    add_submenu_page('app_guiafloripa_eventos', 'Calendário de Eventos', 'Calendário', 'read', 'app_guiafloripa_eventos_cal', 'app_guiafloripa_eventos_cal');
-    add_submenu_page('app_guiafloripa_eventos', 'Adicione seu Evento', 'Adicionar', 'read', 'app_guiafloripa_eventos_add', 'app_guiafloripa_eventos_add');
-    add_submenu_page('app_guiafloripa_eventos', 'Importar Eventos do Facebook', 'Importar', 'read', 'app_guiafloripa_eventos_imp', 'app_guiafloripa_eventos_imp');
-    //add_submenu_page('app_guiafloripa_eventos', 'Estabelecimentos cadastrados', 'Estabelecimentos', 'read', 'app_guiafloripa_eventos_place', 'app_guiafloripa_eventos_place');
+function viewControllerMnu() {
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::initMenus();
+}
 
-    add_menu_page(
-            'Meus Contatos', // page title
-            'Contatos', // menu title
-            'read', // capability
-            'app_guiafloripa_leads', // menu slug
-            'app_guiafloripa_leads', null, 2
-    );
-    add_submenu_page('app_guiafloripa_leads', 'Adicionar Contato', 'Adicionar', 'read', 'app_guiafloripa_leads_add', 'app_guiafloripa_leads_add');
-    add_submenu_page('app_guiafloripa_leads', 'Importar Contatos', 'Importar', 'read', 'app_guiafloripa_leads_imp', 'app_guiafloripa_leads_imp');
-
-    /*   add_menu_page(
-      'Mensagens', // page title
-      'Mensagens', // menu title
-      'read', // capability
-      'app_guiafloripa_msg', // menu slug
-      'asd', null, 6
-      ); */
-    add_menu_page(
-            'Minhas Notificações', // page title
-            'Notificações', // menu title
-            'read', // capability
-            'app_guiafloripa_push', // menu slug
-            'wpse_91693_push', null, 5
-    );
-    add_submenu_page('app_guiafloripa_push', 'Dispositivos Ativos', 'Dispositivos Ativos', 'read', 'app_guiafloripa_push', 'wpse_91693_push', 2);
-    add_submenu_page('app_guiafloripa_push', 'Minhas notificações', 'Minhas notificações', 'read', 'app_guiafloripa_push_list', 'app_guiafloripa_push_list', 3);
-    add_submenu_page('app_guiafloripa_push', 'Criar notificação', 'Criar notificação', 'read', 'app_guiafloripa_push_add', 'app_guiafloripa_push_add', 1);
-    add_submenu_page('app_guiafloripa_push', 'Estatísticas e Geolocalização', 'Estatísticas', 'read', 'app_guiafloripa_push_map', 'app_guiafloripa_push_map', 3);
-    add_menu_page(
-            'Lista de Email Marketing', // page title
-            'Emails', // menu title
-            'read', // capability
-            'app_guiafloripa_mail', // menu slug
-            'app_guiafloripa_mail', null, 3
-    );
-    add_submenu_page('app_guiafloripa_mail', 'Criar um Email Marketing', 'Criar', 'read', 'app_guiafloripa_mail_add', 'app_guiafloripa_mail_add');
-    add_menu_page(
-            'Minhas Mídias', // page title
-            'Midias', // menu title
-            'read', // capability
-            'app_guiafloripa_midia', // menu slug
-            'app_guiafloripa_midia', null, 1
-    );
-    /*    add_menu_page(
-      'Chatbot', // page title
-      'Chatbot', // menu title
-      'read', // capability
-      'app_guiafloripa_chatbot', // menu slug
-      'asd', null, 6
-      ); */
-    add_menu_page(
-            'Plano', // page title
-            'Plano', // menu title
-            'read', // capability
-            'app_guiafloripa_money', // menu slug
-            'app_guiafloripa_money', null, 7
-    );
-    add_menu_page(
-            'Minhas Hashtags', // page title
-            'Twitter', // menu title
-            'read', // capability
-            'app_guiafloripa_twitter', // menu slug
-            'wpse_91693_twitter', null, 4
-    );
-    add_submenu_page('app_guiafloripa_twitter', 'Adicionar Hashtag de Busca', 'Adicionar', 'read', 'app_guiafloripa_twitter_add_term', 'app_guiafloripa_twitter_add_term');
-    add_submenu_page('app_guiafloripa_twitter', 'Minhas Hashtags', ' Hashtags', 'read', 'app_guiafloripa_twitter', 'wpse_91693_twitter');
-    add_submenu_page('app_guiafloripa_twitter', 'Meus Seguidores', 'Seguidores', 'read', 'app_guiafloripa_twitter_followers', 'app_guiafloripa_twitter_followers');
-    /*  add_menu_page(
-      'Facebook posts', // page title
-      'Facebook', // menu title
-      'read', // capability
-      'app_guiafloripa_facebook', // menu slug
-      'app_guiafloripa_facebook', null, 4
-      );
-      add_submenu_page('app_guiafloripa_facebook', 'Criar post', 'Criar', 'read', 'app_guiafloripa_facebook_add', 'app_guiafloripa_facebook_add');
-     */
-    add_menu_page(
-            'Minhas Campanhas', // page title
-            'Campanhas', // menu title
-            'read', // capability
-            'app_guiafloripa_campaigns', // menu slug
-            'wpse_91693_campaign', null, 6
-    );
-    add_submenu_page('app_guiafloripa_campaigns', 'Minhas campanhas', 'Campanhas', 'read', 'app_guiafloripa_campaigns', 'wpse_91693_campaign');
-    //add_submenu_page('app_guiafloripa_campaigns', 'Relatório das suas campanhas', 'Relatório', 'read', 'app_guiafloripa_campaigns_report', 'app_guiafloripa_push_map');
-    add_submenu_page('app_guiafloripa_campaigns', 'Criar uma Campanha', 'Criar', 'read', 'app_guiafloripa_campaigns_add', 'app_guiafloripa_campaigns_add');
-
-// add_submenu_page('app_guiafloripa_twitter', 'Nuvem de Hashtags', 'Nuvem de Hashtags', 'read', 'app_guiafloripa_twitter_cloud_tag', 'app_guiafloripa_twitter_cloud_tag');
-    //add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Sincronizar', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_render');
-    add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Estatisticas', 'manage_options', 'app_guiafloripa_manager_stats', 'wpse_91693_stats');
-    add_submenu_page('app_guiafloripa_manager_backend', 'Guia APP Admin', 'Bug Report', 'manage_options', 'app_guiafloripa_manager_bug', 'wpse_91693_bug');
+/**
+ * @Get Post from XML RPC
+ */
+function getPermalink() {
+    header("Content-type:application/json");
+    //echo "1";
+    include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+    $nc = new NegocioController();
+    $permalink = $nc->getPermalinkFromPost($_GET['idPost']);
+    echo json_encode($permalink);
+    wp_die();
 }
 
 function loadSubCategoryGuiaApp() {
@@ -576,9 +472,11 @@ function app_guiafloripa_negocio_add() {
 function app_guiafloripa_eventos_cal() {
     include_once PLUGIN_ROOT_DIR . 'views/events_calendar.php';
 }
-function app_guiafloripa_activity(){
+
+function app_guiafloripa_activity() {
     include_once PLUGIN_ROOT_DIR . 'views/negocio/dashboard.php';
 }
+
 function app_guiafloripa_midia() {
     wp_enqueue_media('media-upload');
     wp_enqueue_media('thickbox');
@@ -763,180 +661,40 @@ function wp_login($login, $pass) {
 }
 
 /**
- * Custom Widgets
+ * Init DashBoard
  */
-function add_email_dashboard_widgets() {
-    /* wp_add_dashboard_widget(
-      'wpemail_dashboard_widget', // Widget slug.
-      'Campanhas', // Title.
-      'email_dashboard_widget_content' // Display function.
-      ); */
-    wp_add_dashboard_widget(
-            'wpquota_dashboard_widget', // Widget slug.
-            'Estatísticas de uso', // Title.
-            'cota_dashboard_widget_content' // Display function.
-    );
-    wp_add_dashboard_widget(
-            'wpplano_dashboard_widget', // Widget slug.
-            'Seu Plano', // Title.
-            'plano_dashboard_widget_content' // Display function.
-    );
-    /*  wp_add_dashboard_widget(
-      'wptwitter_dashboard_widget', // Widget slug.
-      'Twitter', // Title.
-      'twitter_dashboard_widget_content' // Display function.
-      ); */
-    wp_add_dashboard_widget(
-            'wptips_dashboard_widget', // Widget slug.
-            'Dicas e tutorias', // Title.
-            'tips_dashboard_widget_content' // Display function.
-    ); /*
-      wp_add_dashboard_widget(
-      'wpleads_dashboard_widget', // Widget slug.
-      'Contatos', // Title.
-      'leads_dashboard_widget_content' // Display function.
-      ); */
-    wp_add_dashboard_widget(
-            'wpeventos_dashboard_widget', // Widget slug.
-            'Meus Eventos', // Title.
-            'events_dashboard_widget_content' // Display function.
-    );
+function dashboard_widgets() {
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::initDashboards();
 }
-
+/**
+ * @Dashboard Plano
+ */
 function plano_dashboard_widget_content() {
-    ?>
-    <center>
-        <div style="width: 95%;" class="page-title-action">
-
-            <?php
-            $plano = get_user_meta(get_current_user_id(), "_plano_type", true);
-            if ($plano === "1") {
-                echo "<br><span>Seu plano</span><br>MEGA<br><br>";
-            } else if ($plano === "2") {
-                echo "<br><span>Seu plano</span><br>GIGA<br><br>";
-            } else {
-                echo "<br><span>Seu plano</span><br>BYTE<br><br>";
-            }
-            //echo $plano;
-            ?>
-
-
-        </div>
-        Vencimento do plano em 17/04/2018      <input type="button" name="btMeuSaldo" value="Adicionar saldo" class="page-title-action"/>
-    </center>
-    <?php
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::dashboardPlano();
 }
-
+/**
+ * @Dashboard Help
+ */
 function tips_dashboard_widget_content() {
-    global $wpdb; //This is used only if making any database queries
-
-    $helpMe = $wpdb->get_results("SELECT * FROM wp_posts where post_type = 'ajuda_faq' and post_status = 'publish';");
-    //var_dump($helpMe);
-    echo "<ul>";
-    foreach ($helpMe as $help1) {
-        echo "<li><a href='#'>" . $help1->post_title . "</a></li>";
-    }
-    echo "</ul>";
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::dashboardTips();
 }
-
+/**
+ * @Dashboard Recursos
+ */
 function cota_dashboard_widget_content() {
-    include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
-    $ec = new NegocioController();
-    $stats = $ec->loadStats();
-    // echo"<pre>";
-    // var_dump($stats);
-    // echo"</pre>";
-    ?>
-    <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load("current", {packages: ["bar"]});
-        google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ["Recurso", "total", {role: "style"}],
-                ["Negócios", <?php echo $stats->business[0]->total; ?>, "#448AFF"],
-                ["Eventos", <?php echo $stats->events[0]->total; ?>, "#C2185B"],
-                // ["Email criados", 894, "#d500f9"],
-                // ["Email enviados", 894, "#311b92"],
-                // ["Push criadas", 1049, "#f4ff81"],
-                // ["Push enviadas", 1049, "#ff5722"],
-                //   ["Twitter", 1930, "#263238"],
-                ["Midias", <?php echo $stats->totalMedia; ?>, "#0097A7"],
-                ["Disco(MB)", <?php echo $stats->usage; ?>, "#E040FB"],
-                        //   ["Contatos", 2145, "#00e676"]
-            ]);
-
-            var view = new google.visualization.DataView(data);
-            view.setColumns([0, 1,
-                {calc: "stringify",
-                    sourceColumn: 1,
-                    type: "string",
-                    role: "annotation"},
-                2]);
-
-            var options = {
-                title: "Recursos em uso no sistema",
-                bar: {groupWidth: "30%"},
-                legend: {position: "none"},
-            };
-            var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-            chart.draw(view, options);
-        }
-    </script>
-
-
-    <?php
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::dashboardResources();
 }
-
+/**
+ * @Dashboard Events
+ */
 function events_dashboard_widget_content() {
-    include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
-    $ec = new EventControl();
-    $myEvents = $ec->eventsFullList();
-    //var_dump($myEvents);
-    $vet = array("draft" => 0, "trash" => 0, "publish" => 0);
-    foreach ($myEvents as $ev) {
-        if ($ev->post_status === "publish") {
-            $vet["publish"] ++;
-        } else if ($ev->post_status === "trash") {
-            $vet["trash"] ++;
-        } else {
-            $vet["draft"] ++;
-        }
-
-        //  echo $ev->post_status;
-    }
-    ?>
-
-    <div id="piechart" style="width: 100%;max-width: 400px; height: 300px;"></div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {'packages': ['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-
-            var data = google.visualization.arrayToDataTable([
-                ['Status dos eventos', 'Nº de Ocorrências'],
-                ['Publicados', <?php echo $vet["publish"]; ?>],
-                ['Rascunho', <?php echo $vet["draft"]; ?>],
-                ['Lixeira', <?php echo $vet["trash"]; ?>]
-            ]);
-
-            var options = {
-                title: 'Visão geral dos meus eventos'
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-            chart.draw(data, options);
-        }
-    </script>
-
-
-    <?php
+    include_once PLUGIN_ROOT_DIR . 'views/ViewController.php';
+    ViewController::dashboardEvents();
 }
-
 /**
  * Contacts imported
  */
@@ -996,10 +754,10 @@ function wc_login_redirect($redirect_to) {
 /**
  * Create the function to output the contents of your Dashboard Widget.
  */
-function share_dashboard_widget_content() {
-    // Display whatever it is you want to show.
-    echo "Hello there, I'm a Dashboard Widget. Edit me!";
-}
+/* function share_dashboard_widget_content() {
+  // Display whatever it is you want to show.
+  echo "Hello there, I'm a Dashboard Widget. Edit me!";
+  } */
 
 function wpb_sender_email($original_email_address) {
     return 'root@experienciasdigitais.com.br';
@@ -1010,28 +768,9 @@ function wpb_sender_name($original_email_from) {
     return 'Experiências Digitais';
 }
 
-function remove_dashboard_widgets() {
-    remove_meta_box('dashboard_activity', 'dashboard', 'normal');
-    remove_meta_box('e-dashboard-overview', 'dashboard', 'normal'); //rmove elementor
-    remove_meta_box('themeisle', 'dashboard', 'normal');
-}
-
 function header_options_guia_app() {
-    echo '<style type="text/css">#wpfooter {display:none;} </style>';
-    wp_enqueue_style('full-css', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.3/fullcalendar.min.css');
-    wp_register_script('js', 'https://code.jquery.com/jquery-1.7.min.js');
-    wp_register_script('moment-js', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js');
-    wp_register_script('ui-js', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"');
-    wp_register_script('full-js', 'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js');
-    wp_enqueue_script('js');
-    wp_enqueue_script('moment-js');
-    wp_enqueue_script('ui-js');
-    wp_enqueue_script('full-js');
-    wp_enqueue_script('suggest');
-    wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
-    wp_enqueue_style('wp-jquery-ui-dialog');
-    wp_enqueue_script('jquery-ui-datepicker');
-    wp_enqueue_style('wp-color-picker');
+    include_once PLUGIN_ROOT_DIR . 'views/ScriptsController.php';
+    ScriptsController::initHeaderScripts();
 }
 
 //Remove visit site menu
@@ -1240,10 +979,10 @@ add_filter('woocommerce_prevent_admin_access', '__return_false');
 add_filter('woocommerce_login_redirect', 'wc_login_redirect');
 add_action('init', 'create_event_post');
 add_action('rest_api_init', 'appguia_register_routes');
-add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
+//add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
 add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
-add_action('wp_dashboard_setup', 'add_email_dashboard_widgets');
-add_action('admin_menu', 'wpse_91693_register');
+add_action('wp_dashboard_setup', 'dashboard_widgets');
+add_action('admin_menu', 'viewControllerMnu');
 add_action('admin_head', 'header_options_guia_app');
 add_action('wp_ajax_mediaXmlRPCAjax', 'mediaXmlRPCAjax');
 add_action('wp_ajax_wpwines-dist-regions', 'findPlacesAjax');
@@ -1261,6 +1000,7 @@ add_action('wp_ajax_downloadFileFromUrl', 'downloadFileFromUrl');
 add_action('wp_ajax_importOutlook', 'importOutlook');
 add_action('wp_ajax_load_event_edit', 'loadEventEdit');
 add_action('wp_ajax_save_event_place', 'saveEventPlace');
+add_action('wp_ajax_get_permalink_post', 'getPermalink');
 add_action('wp_ajax_sub_cat_guia', 'loadSubCategoryGuiaApp');
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');

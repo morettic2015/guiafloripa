@@ -19,6 +19,20 @@ const _GIGA = 10;
 const _TERA = 50;
 
 class NegocioController extends stdClass {
+    /**
+     * Get post from XML RPC
+     * https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=get_permalink_post&idPost=62082
+     */
+    public function getPermalinkFromPost(&$postID) {
+        include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+        include_once( ABSPATH . WPINC . '/class-IXR.php' );
+        include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );
+        $client = new WP_HTTP_IXR_CLIENT(WP_GUIA_XMLR);
+        $client->debug = false;
+        $res = $client->query('wp.getPost', 1,WP_GUIA_USER, WP_GUIA_PASS, $postID);
+        $clientResponse = $client->getResponse();
+        return $clientResponse;
+    }
 
     public function getMaxBusiness() {
         global $wpdb;
