@@ -151,7 +151,7 @@ class GuiaController extends stdClass {
     }
 
     public static final function updatePrimaryCategory() {
-        DB::debugMode();
+        //DB::debugMode();
         $conn = new MysqlDB();
         $conn->execute("SET group_concat_max_len = 256000");
         //Primarias Lazer
@@ -222,7 +222,7 @@ class GuiaController extends stdClass {
      * @Places images from Encoded String to Php Object reverse from Wordpress MANUAL
      */
     public static final function reverseImagesFromWordress() {
-        DB::debugMode();
+        //DB::debugMode();
         $conn = new MysqlDB();
 
         $places = DB::query("SELECT idPlace FROM Place");
@@ -543,7 +543,7 @@ class GuiaController extends stdClass {
     }
 
     public static function updateCinemaEvent($obj) {
-        DB::debugMode();
+        //DB::debugMode();
         try {
             // DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
             //Error record
@@ -960,7 +960,7 @@ class GuiaController extends stdClass {
 
         $pErrors = "";
 
-        DB::debugMode();
+        //DB::debugMode();
 
         //while ($row = $conn->hasNext()) {
         while ($row = $conn->hasNext()) {

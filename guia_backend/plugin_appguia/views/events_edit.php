@@ -17,6 +17,8 @@ $ec = new EventControl();
             <h3>Estabelecimento</h3>
             <input type="text" name="placeName" id="placeName" style="width: 60%"  placeholder="Digite o nome do estabelecimento" />
             <input class="button button-primary" type="button" value="Localizar" onclick="loadPlaces()"/>
+            <a href="https://app.guiafloripa.com.br/wp-admin/admin.php?page=app_guiafloripa_negocio_add" class="button button-primary">Adicionar</a>
+           
             <select size="12" id="pResult" name="pResult" style="width: 100%;height: 250px">
                 <?php
                 if (count($mPlace) > 0) {

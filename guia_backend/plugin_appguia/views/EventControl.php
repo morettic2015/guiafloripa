@@ -477,13 +477,13 @@ class EventControl extends stdClass {
     public function savePlaceImport($eventID, $eventName) {
         @session_start();
         $ne = json_decode($_SESSION['place']);
-        //var_dump($ne);
+       // var_dump($ne);
         $place = new stdClass();
         foreach ($ne as $n) {
             //var_dump($n);
-            //echo $eventName === $n->placeName;
-            // echo $n->placeName;
-            if ($n->placeName === $eventName) {
+           // echo $eventName;
+            //echo $n->placeName;
+            if (str_replace(" ","",strtoupper($n->placeName)) === str_replace(" ","",strtoupper($eventName))) {
                 $place->id = $n->placeID;
                 $place->name = $eventName;
                 break;
@@ -686,11 +686,14 @@ class EventControl extends stdClass {
      */
     public function loadMyPlace($request) {
         $data = wp_cache_get('loadMyPlace');
+        //echo $data;
         if (false === $data) {
             $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
             // var_dump($app_db);
-            $query = "select id,post_title from wp_posts where id = (select meta_value from wp_postmeta where meta_key = 'vevent_location' and post_id=" . $request['id'] . ");";
+            $query = "select id,post_title from wp_posts where id = (select meta_value from wp_postmeta where meta_key = 'vevent_location' and post_id=" . $request['id'] . " order by meta_id DESC limit 1 );";
+           // echo $query;
             $data = $app_db->get_results($query);
+            //var_dump($data);
             wp_cache_set('loadMyPlace', $data);
             $app_db->close();
         }

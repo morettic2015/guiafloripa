@@ -19,6 +19,7 @@ const _GIGA = 10;
 const _TERA = 50;
 
 class NegocioController extends stdClass {
+
     /**
      * Get post from XML RPC
      * https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=get_permalink_post&idPost=62082
@@ -29,7 +30,7 @@ class NegocioController extends stdClass {
         include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );
         $client = new WP_HTTP_IXR_CLIENT(WP_GUIA_XMLR);
         $client->debug = false;
-        $res = $client->query('wp.getPost', 1,WP_GUIA_USER, WP_GUIA_PASS, $postID);
+        $res = $client->query('wp.getPost', 1, WP_GUIA_USER, WP_GUIA_PASS, $postID);
         $clientResponse = $client->getResponse();
         return $clientResponse;
     }
@@ -86,7 +87,14 @@ class NegocioController extends stdClass {
         $headers[] = 'Cc: cesar_floripa@hotmail.com';
         $headers[] = 'Bcc: malacma@gmail.com';
 // Mail it
-        mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, "Negócio atualizado na base do Guiafloripa. Aguardando publicação....", implode("\r\n", $headers));
+        $current_user = wp_get_current_user();
+        $contentMessage = "Negócio atualizado na base do Guiafloripa. Aguardando publicação....<br>";
+        $contentMessage .= 'Username: ' . $current_user->user_login . '<br>';
+        $contentMessage .= 'Email: ' . $current_user->user_email . '<br>';
+        $contentMessage .= 'Nome: ' . $current_user->user_firstname . '<br>';
+        $contentMessage .= 'Sobrenome: ' . $current_user->user_lastname . '<br>';
+        $contentMessage .= 'User ID: ' . $current_user->ID . '<br>';
+        mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, $contentMessage, implode("\r\n", $headers));
     }
 
     //put your code here

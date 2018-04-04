@@ -145,8 +145,8 @@ class ViewController {
                 }
                 ?>
             </div>
-           <!-- Vencimento do plano em 17/04/2018      
-            <input type="button" name="btMeuSaldo" value="Adicionar saldo" class="page-title-action"/> -->
+            <!-- Vencimento do plano em 17/04/2018      
+             <input type="button" name="btMeuSaldo" value="Adicionar saldo" class="page-title-action"/> -->
         </center>
         <?php
     }
@@ -170,44 +170,46 @@ class ViewController {
      * @Dashboard Events
      */
     public static function dashboardEvents() {
-        // wp_enqueue_script('form-contato', 'https://www.gstatic.com/charts/loader.js', false);
         include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
         $ec = new EventControl();
         $myEvents = $ec->eventsFullList();
-        //var_dump($myEvents);
         $vet = array("draft" => 0, "trash" => 0, "publish" => 0);
-        foreach ($myEvents as $ev) {
-            if ($ev->post_status === "publish") {
-                $vet["publish"] ++;
-            } else if ($ev->post_status === "trash") {
-                $vet["trash"] ++;
-            } else {
-                $vet["draft"] ++;
+        if (count($myEvents) > 0) {
+            foreach ($myEvents as $ev) {
+                if ($ev->post_status === "publish") {
+                    $vet["publish"] ++;
+                } else if ($ev->post_status === "trash") {
+                    $vet["trash"] ++;
+                } else {
+                    $vet["draft"] ++;
+                }
             }
-        }
-        ?>
+            ?>
 
-        <div id="piechart" style="width: 100%;max-width: 400px; height: 300px;"></div>
-        <script type="text/javascript">
-            jQuery(function ($) {
-                google.charts.load('current', {'packages': ['corechart']});
-                google.charts.setOnLoadCallback(drawChart1);
-            });
-            function drawChart1() {
-                var data = google.visualization.arrayToDataTable([
-                    ['Status dos eventos', 'Nº de Ocorrências'],
-                    ['Publicados', <?php echo $vet["publish"]; ?>],
-                    ['Rascunho', <?php echo $vet["draft"]; ?>],
-                    ['Lixeira', <?php echo $vet["trash"]; ?>]
-                ]);
-                var options = {
-                    title: 'Visão geral dos meus eventos'
-                };
-                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-                chart.draw(data, options);
-            }
-        </script>
-        <?php
+            <div id="piechart" style="width: 100%;max-width: 400px; height: 300px;"></div>
+            <script type="text/javascript">
+                jQuery(function ($) {
+                    google.charts.load('current', {'packages': ['corechart']});
+                    google.charts.setOnLoadCallback(drawChart1);
+                });
+                function drawChart1() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Status dos eventos', 'Nº de Ocorrências'],
+                        ['Publicados', <?php echo $vet["publish"]; ?>],
+                        ['Rascunho', <?php echo $vet["draft"]; ?>],
+                        ['Lixeira', <?php echo $vet["trash"]; ?>]
+                    ]);
+                    var options = {
+                        title: 'Visão geral dos meus eventos'
+                    };
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                    chart.draw(data, options);
+                }
+            </script>
+            <?php
+        } else {
+            echo "<strong><span class=\"dashicons dashicons-dismiss\"></span>Nenhum evento cadastrado</strong>";
+        }
     }
 
     /**
@@ -217,45 +219,49 @@ class ViewController {
         include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
         $ec = new NegocioController();
         $stats = $ec->loadStats();
-        ?>
-        <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
-        <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
-        <script type="text/javascript">
-            jQuery(function ($) {
-                google.charts.load("current", {packages: ["bar"]});
-                google.charts.setOnLoadCallback(drawChart);
-            });
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable([
-                    ["Recurso", "total", {role: "style"}],
-                    ["Negócios", <?php echo $stats->business[0]->total; ?>, "#448AFF"],
-                    ["Eventos", <?php echo $stats->events[0]->total; ?>, "#C2185B"],
-                    // ["Email criados", 894, "#d500f9"],
-                    // ["Email enviados", 894, "#311b92"],
-                    // ["Push criadas", 1049, "#f4ff81"],
-                    // ["Push enviadas", 1049, "#ff5722"],
-                    //   ["Twitter", 1930, "#263238"],
-                    ["Midias", <?php echo $stats->totalMedia; ?>, "#0097A7"],
-                    ["Disco(MB)", <?php echo $stats->usage; ?>, "#E040FB"],
-                            //   ["Contatos", 2145, "#00e676"]
-                ]);
-                var view = new google.visualization.DataView(data);
-                view.setColumns([0, 1,
-                    {calc: "stringify",
-                        sourceColumn: 1,
-                        type: "string",
-                        role: "annotation"},
-                    2]);
-                var options = {
-                    title: "Recursos em uso no sistema",
-                    bar: {groupWidth: "30%"},
-                    legend: {position: "none"},
-                };
-                var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
-                chart.draw(view, options);
-            }
-        </script>
-        <?php
+        if ($stats->business[0]->total > 0 OR $stats->events[0]->total > 0 OR $stats->totalMedia > 0 OR $stats->usage > 0) {
+            ?>
+            <div id="barchart_values" style="width: 100%;max-width: 400px; height: 300px;"></div>
+            <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+            <script type="text/javascript">
+                jQuery(function ($) {
+                    google.charts.load("current", {packages: ["bar"]});
+                    google.charts.setOnLoadCallback(drawChart);
+                });
+                function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ["Recurso", "total", {role: "style"}],
+                        ["Negócios", <?php echo $stats->business[0]->total; ?>, "#448AFF"],
+                        ["Eventos", <?php echo $stats->events[0]->total; ?>, "#C2185B"],
+                        // ["Email criados", 894, "#d500f9"],
+                        // ["Email enviados", 894, "#311b92"],
+                        // ["Push criadas", 1049, "#f4ff81"],
+                        // ["Push enviadas", 1049, "#ff5722"],
+                        //   ["Twitter", 1930, "#263238"],
+                        ["Midias", <?php echo $stats->totalMedia; ?>, "#0097A7"],
+                        ["Disco(MB)", <?php echo $stats->usage; ?>, "#E040FB"],
+                                //   ["Contatos", 2145, "#00e676"]
+                    ]);
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns([0, 1,
+                        {calc: "stringify",
+                            sourceColumn: 1,
+                            type: "string",
+                            role: "annotation"},
+                        2]);
+                    var options = {
+                        title: "Recursos em uso no sistema",
+                        bar: {groupWidth: "30%"},
+                        legend: {position: "none"},
+                    };
+                    var chart = new google.visualization.BarChart(document.getElementById("barchart_values"));
+                    chart.draw(view, options);
+                }
+            </script>
+            <?php
+        }else{
+            echo "<strong><span class=\"dashicons dashicons-dismiss\"></span>Nenhum recurso em uso no sistema</strong>";
+        }
     }
 
     /**
@@ -466,4 +472,5 @@ class ViewController {
                 'app_guiafloripa_midia', null, 1
         );
     }
+
 }

@@ -1,7 +1,3 @@
-<?php
-var_dump($globalWidgetPermissions);
-?>
-
 <div id="lrgawidget_wrap" class="wrap"><!-- /.wrap -->
     <div class="lrga_bs" ><!-- /.class -->
         <div class="lrga_bs lrgawidget"><!-- /.id -->
@@ -19,56 +15,62 @@ var_dump($globalWidgetPermissions);
                 <div id="lrgawidget_body" class="box-body">
                     <div class="nav-tabs-custom" id="lrgawidget_main">
                         <ul class="nav nav-tabs">
-                            <?php if (in_array("lrgawidget_perm_admin", $globalWidgetPermissions)) { ?>
-                                      <!--  <li><a data-toggle="tab" data-target="#lrgawidget_settings_tab" href="#lrgawidget_settings_tab"><i class="fa fa-cog fa-fw"></i><span class="hidden-xs hidden-sm"> Settings</span></a></li> -->
-
                             <?php
+                            if (in_array("lrgawidget_perm_admin", $globalWidgetPermissions)) {
+                                if (current_user_can('administrator')) {
+                                    ?>
+                                    <li><a data-toggle="tab" data-target="#lrgawidget_settings_tab" href="#lrgawidget_settings_tab"><i class="fa fa-cog fa-fw"></i><span class="hidden-xs hidden-sm"> Settings</span></a></li>
+
+                                    <?php
+                                }
                             } if (in_array("lrgawidget_perm_sessions", $globalWidgetPermissions)) {
-                                $actLrgaTabs[] = "lrgawidget_sessions_tab";
-                                ?>
-                                <li><a data-toggle="tab" data-target="#lrgawidget_sessions_tab" href="#lrgawidget_sessions_tab"><i class="fa fa-users fa-fw"></i><span class="hidden-xs hidden-sm"> Sessões</span></a></li>
+                                if (current_user_can('administrator')) {
+                                    $actLrgaTabs[] = "lrgawidget_sessions_tab";
+                                    ?>
+                                    <li><a data-toggle="tab" data-target="#lrgawidget_sessions_tab" href="#lrgawidget_sessions_tab"><i class="fa fa-users fa-fw"></i><span class="hidden-xs hidden-sm"> Sessões</span></a></li>
 
-                            <?php
+                                    <?php
+                                }
                             } if (in_array("lrgawidget_perm_pages", $globalWidgetPermissions)) {
                                 $actLrgaTabs[] = "lrgawidget_pages_tab";
                                 ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_pages_tab" href="#lrgawidget_pages_tab"><i class="fa fa-file-o fa-fw"></i><span class="hidden-xs hidden-sm"> Páginas</span></a></li>			
 
-                            <?php
+                                <?php
                             } if (in_array("lrgawidget_perm_browsers", $globalWidgetPermissions)) {
                                 $actLrgaTabs[] = "lrgawidget_browsers_tab";
                                 ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_browsers_tab" href="#lrgawidget_browsers_tab"><i class="fa fa-list-alt fa-fw"></i><span class="hidden-xs hidden-sm"> Navegadores</span></a></li>
 
-<?php
-} if (in_array("lrgawidget_perm_languages", $globalWidgetPermissions)) {
-    $actLrgaTabs[] = "lrgawidget_languages_tab";
-    ?>
+                                <?php
+                            } if (in_array("lrgawidget_perm_languages", $globalWidgetPermissions)) {
+                                $actLrgaTabs[] = "lrgawidget_languages_tab";
+                                ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_languages_tab" href="#lrgawidget_languages_tab"><i class="fa fa-font fa-fw"></i><span class="hidden-xs hidden-sm"> Lingua</span></a></li>
 
-                            <?php
+                                <?php
                             } if (in_array("lrgawidget_perm_os", $globalWidgetPermissions)) {
                                 $actLrgaTabs[] = "lrgawidget_os_tab";
                                 ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_os_tab" href="#lrgawidget_os_tab"><i class="fa fa-desktop fa-fw"></i><span class="hidden-xs hidden-sm"> Sistemas Operacionais</span></a></li>
 
-                            <?php
+                                <?php
                             } if (in_array("lrgawidget_perm_devices", $globalWidgetPermissions)) {
                                 $actLrgaTabs[] = "lrgawidget_devices_tab";
                                 ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_devices_tab" href="#lrgawidget_devices_tab"><i class="fa fa-tablet fa-fw"></i><span class="hidden-xs hidden-sm"> Dispositivos</span></a></li>
 
-<?php
-} if (in_array("lrgawidget_perm_screenres", $globalWidgetPermissions)) {
-    $actLrgaTabs[] = "lrgawidget_screenres_tab";
-    ?>
+                                <?php
+                            } if (in_array("lrgawidget_perm_screenres", $globalWidgetPermissions)) {
+                                $actLrgaTabs[] = "lrgawidget_screenres_tab";
+                                ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_screenres_tab" href="#lrgawidget_screenres_tab"><i class="fa fa-arrows-alt fa-fw"></i><span class="hidden-xs hidden-sm"> Resolução de tela</span></a></li>
-<?php } ?>
-             <!--       <li><a data-toggle="tab" data-target="#lrgawidget_gopro_tab" href="#lrgawidget_gopro_tab"><i class="fa fa-unlock fa-fw"></i><span class="hidden-xs hidden-sm"> Go Premium ! </span></a></li> 	-->	    
+                            <?php } ?>
+     <!--       <li><a data-toggle="tab" data-target="#lrgawidget_gopro_tab" href="#lrgawidget_gopro_tab"><i class="fa fa-unlock fa-fw"></i><span class="hidden-xs hidden-sm"> Go Premium ! </span></a></li> 	-->	    
                         </ul>
                         <div class="tab-content">
                             <div class="alert alert-danger hidden" id="lrgawidget_error"></div>
-<?php if (in_array("lrgawidget_perm_admin", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_admin", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane " id="lrgawidget_settings_tab">
                                     <div class="fuelux">
                                         <div class="wizard" data-initialize="wizard" id="lrga-wizard" style="background-color: #FFF;">
@@ -284,10 +286,10 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div><!-- /.tab-pane -->
-<?php } ?>
+                            <?php } ?>
 
 
-<?php if (in_array("lrgawidget_perm_sessions", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_sessions", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_sessions_tab">
                                     <div id="lrgawidget_sessions_chartDiv" style="height: 350px; width: 100%;">
                                         <div class="overlay" id="lrgawidget_loading_big">
@@ -350,9 +352,9 @@ var_dump($globalWidgetPermissions);
                                         </div><!-- /.row -->
                                     </div>
                                 </div>			<!-- /.tab-pane -->
-<?php } ?>
+                            <?php } ?>
 
-<?php if (in_array("lrgawidget_perm_pages", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_pages", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_pages_tab">
                                     <div class="row" >
                                         <div class="col-md-6">
@@ -369,9 +371,9 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>			
+                            <?php } ?>			
 
-<?php if (in_array("lrgawidget_perm_browsers", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_browsers", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_browsers_tab">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -388,10 +390,10 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>
+                            <?php } ?>
 
 
-<?php if (in_array("lrgawidget_perm_languages", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_languages", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_languages_tab">
                                     <div class="row" >
                                         <div class="col-md-6">
@@ -408,10 +410,10 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>
+                            <?php } ?>
 
 
-<?php if (in_array("lrgawidget_perm_os", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_os", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_os_tab">
                                     <div class="row" >
                                         <div class="col-md-6">
@@ -428,9 +430,9 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>
+                            <?php } ?>
 
-<?php if (in_array("lrgawidget_perm_devices", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_devices", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_devices_tab">
                                     <div class="row" >
                                         <div class="col-md-6">
@@ -447,9 +449,9 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>			
+                            <?php } ?>			
 
-<?php if (in_array("lrgawidget_perm_screenres", $globalWidgetPermissions)) { ?>
+                            <?php if (in_array("lrgawidget_perm_screenres", $globalWidgetPermissions)) { ?>
                                 <div class="tab-pane" id="lrgawidget_screenres_tab">
                                     <div class="row" >
                                         <div class="col-md-6">
@@ -466,7 +468,7 @@ var_dump($globalWidgetPermissions);
                                         </div>
                                     </div>
                                 </div>
-<?php } ?>
+                            <?php } ?>
                             <style>
 
                                 #lrgawidget_gopro_tab .lrga_gpro_clr1 {	color: #eaeaea }

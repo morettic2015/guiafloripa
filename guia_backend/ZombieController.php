@@ -42,7 +42,7 @@ class ZombieController {
 
         $mdb->closeConn(); //Clon origin connection
 
-        DB::debugMode();
+       // DB::debugMode();
 
         DB::query("UPDATE guiafloripa_app.Event set statusKO = 'OFF' where idEvent not in $str and idType in (2,6,7,4,9)");
 
