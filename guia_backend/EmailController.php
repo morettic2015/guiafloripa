@@ -23,8 +23,8 @@ class EmailController {
         }
         $str .= "</ul>";
         $str .= '<div style="text-align: center;"><strong>Eventos</strong></div>';
-
-        $queryEvento = "select *,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1 from view_random_events limit 10;";
+        //Consulta os eventos total 16 da view
+        $queryEvento = "select *,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1 from view_random_events;";
 
         //echo $queryEvento;
 

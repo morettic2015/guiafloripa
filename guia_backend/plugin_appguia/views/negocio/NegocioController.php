@@ -1,5 +1,8 @@
 <?php
 
+include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
+include_once( ABSPATH . WPINC . '/class-IXR.php' );
+include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );
 require_once( ABSPATH . 'wp-admin/includes/file.php' );
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,18 +24,44 @@ const _TERA = 50;
 class NegocioController extends stdClass {
 
     /**
+     * @Insert link    
+     * * 
+     */
+    public function insertLink($linkname, $linkurl, $linkid) {
+
+        $linkdata = array(
+            'link_name' => $linkname,
+            'link_url' => $linkurl,
+            'link_owner' => get_current_user_id(),
+            'link_notes' => '_link_' . $linkid
+        );
+        return wp_insert_link($linkdata);
+    }
+
+    /**
      * Get post from XML RPC
      * https://app.guiafloripa.com.br/wp-admin/admin-ajax.php?action=get_permalink_post&idPost=62082
      */
     public function getPermalinkFromPost(&$postID) {
-        include_once PLUGIN_ROOT_DIR . 'views/EventControl.php';
-        include_once( ABSPATH . WPINC . '/class-IXR.php' );
-        include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );
-        $client = new WP_HTTP_IXR_CLIENT(WP_GUIA_XMLR);
-        $client->debug = false;
-        $res = $client->query('wp.getPost', 1, WP_GUIA_USER, WP_GUIA_PASS, $postID);
-        $clientResponse = $client->getResponse();
-        return $clientResponse;
+        global $wpdb;
+
+        $query = "SELECT link_url as t from wp_links where link_notes = '_link_" . $postID . "'";
+        // echo $query;
+        $linkMeta = $wpdb->get_results($query);
+        // var_dump($linkMeta);
+        if (count($linkMeta) > 0) {
+            $guids[] = str_replace("http://www.guiafloripa.com.br", "", $linkMeta[0]->t);
+        } else {//Dont have wp_links so get permalink from remote only if published
+            $client = new WP_HTTP_IXR_CLIENT(WP_GUIA_XMLR);
+            $client->debug = false;
+            $client->query('wp.getPost', 1, WP_GUIA_USER, WP_GUIA_PASS, $postID);
+            $clientResponse = $client->getResponse();
+            //  var_dump($clientResponse);
+            $this->insertLink($clientResponse['post_title'], $clientResponse['link'], $postID);
+            $guids[] = str_replace("http://www.guiafloripa.com.br", "", $clientResponse['link']);
+        }
+
+        return $guids;
     }
 
     public function getMaxBusiness() {
@@ -78,7 +107,7 @@ class NegocioController extends stdClass {
     }
 
     public function logMail($negocio) {
-        $headers[] = 'MIME-Version: 1.0';
+      /*  $headers[] = 'MIME-Version: 1.0';
         $headers[] = 'Content-type: text/html; charset=iso-8859-1';
 
 // Additional headers
@@ -94,7 +123,7 @@ class NegocioController extends stdClass {
         $contentMessage .= 'Nome: ' . $current_user->user_firstname . '<br>';
         $contentMessage .= 'Sobrenome: ' . $current_user->user_lastname . '<br>';
         $contentMessage .= 'User ID: ' . $current_user->ID . '<br>';
-        mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, $contentMessage, implode("\r\n", $headers));
+  */      mail("comercial@guiafloripa.com.br", "Atualização de negócio:" . $negocio, $contentMessage, implode("\r\n", $headers));
     }
 
     //put your code here

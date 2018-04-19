@@ -15,7 +15,7 @@
 class MysqlDB {
 
 // Nas linhas abaixo você poderá colocar as informações do Banco de Dados.
-    var $host = "guiafloripa.com.br"; // Nome ou IP do Servidor
+    var $host = "149.56.231.243"; // Nome ou IP do Servidor
     var $user = "appguia"; // Usuário do Servidor MySQL
     var $senha = "#4ppgu14Fl0r1p4!"; // Senha do Usuário MySQL
     var $dbase = "guiafloripa"; // Nome do seu Banco de Dados

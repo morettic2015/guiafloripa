@@ -19,7 +19,7 @@ const APP_PASS = 'Gu14Fl0r1p@';
 const APP_DBNM = 'guiafloripa_app';
 const APP_HOST = 'localhost';
 const APP_PORT = '3306';
-const GUIA_host = "guiafloripa.com.br"; // Nome ou IP do Servidor
+const GUIA_host = "149.56.231.243"; // Nome ou IP do Servidor
 const GUIA_user = "appguia"; // Usuário do Servidor MySQL
 const GUIA_senha = "#4ppgu14Fl0r1p4!"; // Senha do Usuário MySQL
 const GUIA_dbase = "guiafloripa"; // Nome do seu Banco de Dados
@@ -646,7 +646,7 @@ function post_url($url, $fields) {
 
     return $result;
 }
-
+/*
 function wp_login($login, $pass) {
     $creds = array(
         'user_login' => $login,
@@ -659,7 +659,7 @@ function wp_login($login, $pass) {
 
     return $user;
 }
-
+*/
 /**
  * Init DashBoard
  */

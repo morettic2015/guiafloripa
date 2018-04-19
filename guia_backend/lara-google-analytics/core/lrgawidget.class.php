@@ -152,8 +152,8 @@ class lrgawidget {
         $this->params = array('metrics' => 'ga:pageviews', 'dimensions' => 'ga:pagePath,ga:pageTitle', 'sort' => '-ga:pageviews');
         $this->calculateTotalsFor = "ga:pageviews";
         $this->doCall(false);
-        var_dump($this->results['rows'][0]);
-        die;
+       // var_dump($this->results['rows'][0]);
+       // die;
         //GET POSTS IDS
         //GET URL FOR EACH ONE
         //Filter if (in array.....FROM $this->results['rows']}

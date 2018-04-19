@@ -219,8 +219,10 @@ class EventControl extends stdClass {
                 $sts = "<center><span class=\"dashicons dashicons-minus\"></span> <br><small>Rascunho</small></center>";
             } else if ($e1->post_status == "trash") {
                 $sts = "<center><span class=\"dashicons dashicons-no\"></span> <br><small>Excluido</small></center>";
-            } else {
+            } else {//Only for published events create permalink table
                 $sts = "<center><span class=\"dashicons dashicons-yes\"></span> <br><small>Publicado</small></center>";
+                $nc = new NegocioController();
+                $nc->getPermalinkFromPost($e1->ID);
             }
             $vet[] = array(
                 'ID' => $e1->ID,
@@ -399,7 +401,8 @@ class EventControl extends stdClass {
 
         $curl = curl_init();
 // Set some options - we are passing in a useragent too here
-        $url = "https://graph.facebook.com/v2.11/" . $request['facebook_event_ids'] . "?fields=id,place,owner,category,description,start_time,cover,end_time,event_times,scheduled_publish_time,is_canceled,is_draft,interested_count,name,maybe_count,ticket_uri,ticketing_privacy_uri,guest_list_enabled,timezone,type,is_page_owned,parent_group,admins{name,pic_large,link}&access_token=1405126029586258|tAryq_gM91gczqnQmKD5PwIu2ho";
+        $url = "https://graph.facebook.com/v2.12/" . $request['facebook_event_ids'] . "?fields=id,place,owner,category,description,start_time,cover,end_time,event_times,scheduled_publish_time,is_canceled,is_draft,interested_count,name,maybe_count,ticket_uri,ticketing_privacy_uri,guest_list_enabled,timezone,type,is_page_owned,parent_group,admins{name,pic_large,link}&access_token=1405126029586258|tAryq_gM91gczqnQmKD5PwIu2ho";
+        echo $url;
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
@@ -477,13 +480,13 @@ class EventControl extends stdClass {
     public function savePlaceImport($eventID, $eventName) {
         @session_start();
         $ne = json_decode($_SESSION['place']);
-       // var_dump($ne);
+        // var_dump($ne);
         $place = new stdClass();
         foreach ($ne as $n) {
             //var_dump($n);
-           // echo $eventName;
+            // echo $eventName;
             //echo $n->placeName;
-            if (str_replace(" ","",strtoupper($n->placeName)) === str_replace(" ","",strtoupper($eventName))) {
+            if (str_replace(" ", "", strtoupper($n->placeName)) === str_replace(" ", "", strtoupper($eventName))) {
                 $place->id = $n->placeID;
                 $place->name = $eventName;
                 break;
@@ -691,7 +694,7 @@ class EventControl extends stdClass {
             $app_db = new wpdb(GUIA_user, GUIA_senha, GUIA_dbase, GUIA_host);
             // var_dump($app_db);
             $query = "select id,post_title from wp_posts where id = (select meta_value from wp_postmeta where meta_key = 'vevent_location' and post_id=" . $request['id'] . " order by meta_id DESC limit 1 );";
-           // echo $query;
+            // echo $query;
             $data = $app_db->get_results($query);
             //var_dump($data);
             wp_cache_set('loadMyPlace', $data);

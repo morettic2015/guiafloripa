@@ -66,7 +66,6 @@
                                 ?>
                                 <li><a data-toggle="tab" data-target="#lrgawidget_screenres_tab" href="#lrgawidget_screenres_tab"><i class="fa fa-arrows-alt fa-fw"></i><span class="hidden-xs hidden-sm"> Resolução de tela</span></a></li>
                             <?php } ?>
-     <!--       <li><a data-toggle="tab" data-target="#lrgawidget_gopro_tab" href="#lrgawidget_gopro_tab"><i class="fa fa-unlock fa-fw"></i><span class="hidden-xs hidden-sm"> Go Premium ! </span></a></li> 	-->	    
                         </ul>
                         <div class="tab-content">
                             <div class="alert alert-danger hidden" id="lrgawidget_error"></div>
@@ -297,7 +296,6 @@
                                         </div>
                                     </div>
                                     <div id="lrga-legendholder"></div>
-                                  <!--  <div id="lrga-xologoholder" class="hidden-xs"><a href="https://www.xtraorbit.com/wordpress-google-analytics-dashboard-widget/?utm_source=InApp&utm_medium=Main_Screen" target="_blank"><img src="<?php echo lrgawidget_plugin_dist_dir . '/img/xo_small_transp.png'; ?>"></a></div> -->
                                     <div class="box-footer hidden-xs hidden-sm" id="lrgawidget_sb-main">
                                         <div class="row">
                                             <div class="col-sm-3 col-xs-6 lrgawidget_seven-cols" id="lrgawidget_sb_sessions" data-lrgawidget-plot="sessions">

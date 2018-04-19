@@ -1,40 +1,15 @@
 <?php
 
-//995044427162-3i20lnkl1r4tp72hpqh7gcgb5tu9g5co.apps.googleusercontent.com
-//995044427162-frej7i577t6b40581cifugpssvdkhjkk.apps.googleusercontent.com
-//6QdxlcMCFfzcPRKG4ajFAJL8
+include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
+
 /**
  * WP List Table Example class
  *
- * @package   WPListTableExample
- * @author    Matt van Andel
- * @copyright 2016 Matthew van Andel
- * @license   GPL-2.0+
+ * @package   Controle de NEgocios
+ * @author    Luis Augusto Machado Moretto<malacma@gmail.com>
+ * @copyright 2018 Morettic Experiencias DIgitais
+ * @license   Paypal
  */
-
-/**
- * Example List Table Child Class
- *
- * Create a new list table package that extends the core WP_List_Table class.
- * WP_List_Table contains most of the framework for generating the table, but we
- * need to define and override some methods so that our data can be displayed
- * exactly the way we need it to be.
- *
- * To display this example on a page, you will first need to instantiate the class,
- * then call $yourInstance->prepare_items() to handle any data manipulation, then
- * finally call $yourInstance->display() to render the table to the page.
- *
- * Our topic for this list table is going to be movies.
- *
- * @package WPListTableExample
- * @author  Matt van Andel
- */
-/* wp_enqueue_media('media-upload');
-  wp_enqueue_media('thickbox');
-  wp_register_script('my-upload', get_stylesheet_directory_uri() . '/js/metabox.js', array('jquery', 'media-upload', 'thickbox'));
-  wp_enqueue_media('my-upload');
-  wp_enqueue_style('thickbox'); */
-
 class NegocioGrid extends WP_List_Table {
 
     public function insertUpdateEmail($request) {
@@ -256,7 +231,7 @@ class NegocioGrid extends WP_List_Table {
             $query = "delete FROM wp_postmeta where post_id in ($campaign)";
             $cp = $wpdb->get_results($query);
             echo '<div class="notice notice-success is-dismissible"> 
-                    <p><strong>Sucesso. O(s) negócio(s) selecionado(s) foram excluida(s).</strong></p>
+                    <p><strong>Sucesso. O(s) negócio(s) selecionado(s) foram excluido(s).</strong></p>
                  </div>';
         } else if ('publish' === $this->current_action()) {
             include_once PLUGIN_ROOT_DIR . 'views/negocio/NegocioController.php';
@@ -326,21 +301,17 @@ class NegocioGrid extends WP_List_Table {
         /*
          * GET THE DATA!
          * 
-         * Instead of querying a database, we're going to fetch the example data
-         * property we created for use in this plugin. This makes this example
-         * package slightly different than one you might build on your own. In
-         * this example, we'll be using array manipulation to sort and paginate
-         * our dummy data.
-         * 
-         * In a real-world situation, this is probably where you would want to 
-         * make your actual database query. Likewise, you will probably want to
-         * use any posted sort or pagination data to build a custom query instead, 
-         * as you'll then be able to use the returned query data immediately.
-         *
-         * For information on making queries in WordPress, see this Codex entry:
-         * http://codex.wordpress.org/Class_Reference/wpdb
          */
-
+        //Atualiza o pErmalink
+        $nc = new NegocioController();
+        //Pega todos os posts que foram publicados no guia floripa
+        $query = "SELECT meta_value FROM app_guiafloripa_com_br.wp_postmeta  where meta_key = '_id_app_guia_' and post_id in (select id from wp_posts where post_author = " . get_current_user_id() . ")";
+        $cp = $wpdb->get_results($query);
+        foreach ($cp as $published) {
+            $postID = $published->meta_value;
+            $x= $nc->getPermalinkFromPost($postID);
+      //      var_dump($x);
+        }
 
 
         $query = "SELECT * FROM wp_posts where post_type = 'business' and post_author = " . get_current_user_id();   // var_dump($wpdb);
