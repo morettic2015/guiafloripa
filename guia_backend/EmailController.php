@@ -9,6 +9,17 @@ class EmailController {
 
     //put your code here
 
+    public static function getNeighById($postID){
+        $query = "select post_title as bairro from wp_posts where id = (select (meta_value) from wp_postmeta where post_id = $postID and meta_key = 'bairros');";
+        $conn = new MysqlDB();
+        $conn->execute($query); 
+        if($row = $conn->hasNext()){
+            return $row['bairro'];
+        }else{
+            return "";
+        }
+    }
+    
     public static function createWeekNews() {
         $query = "select titulo,from_unixtime((select dtstart+86400 from wp_cn_filme_post where id_wp_cn_filme = a.id limit 1),'%d-%m') as dt from wp_cn_filme as a  where id in (select id_wp_cn_filme from wp_cn_filme_post  where estreia = 2 and FROM_UNIXTIME(dtend)>now()) order by dt desc;";
         $conn = new MysqlDB();
@@ -31,8 +42,9 @@ class EmailController {
         $eventos = DB::query($queryEvento); // misspelled 
         $str .= "<ul>";
         foreach ($eventos as $e) {
+            $bairro = EmailController::getNeighById($e['idEvent']);
             //var_dump($e);die;
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . '</a></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . ' - '.$bairro.'</a></li>';
         }
         $str .= "</ul>";
         //  echo $str;
@@ -52,7 +64,7 @@ class EmailController {
                         $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa", "Redação Guia Floripa", $data->template, "", 23, ""
         );
         //echo $data->response['email']['id'];die;
-        sleep(0.5);//Sleeps before
+        sleep(0.3);//Sleeps before
         $data->sent = LeadController::sendEmail($data->response['email']['id']);
         //var_dump($data->response);
         //$conn->closeConn();
