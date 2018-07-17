@@ -420,9 +420,11 @@ $app->get('/issues/', function (Request $request, Response $response) use ($app)
 //////////////////////////////////////////////////////////////////////////////
 $app->get('/daily_tweet/', function (Request $request, Response $response) use ($app) {
     $tb = new TwitterBOT();
-    $tb->connectTwitter();
-    $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
-    $tb->searchTweetsReply("#floripa");
+   
+    $tweet = $tb->singleTweet();
+     return $response->withJson($tweet, 201);
+   /// $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
+   /// $tb->searchTweetsReply("#floripa");
 });
 $app->get('/follow_tweet/', function (Request $request, Response $response) use ($app) {
     //echo CinemaController::countMovieTheaters();

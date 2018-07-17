@@ -30,21 +30,22 @@ class EmailController {
         $str = '<div style="text-align: center;"><strong>Estreias nos Cinemas</strong></div>';
         $str .= "<ul>";
         while ($row = $conn->hasNext()) {
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/cinema" style="font-size: 12px;">' . $row['dt'] . ' - ' . $row['titulo'] . '</a></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/cinema" style="font-size: 14px;">' /*. $row['dt'] . ' - '*/ . $row['titulo'] . '</a></li>';
         }
         $str .= "</ul>";
         $str .= '<div style="text-align: center;"><strong>Eventos</strong></div>';
         //Consulta os eventos total 16 da view
-        $queryEvento = "select *,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1 from view_random_events;";
+        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval order by dtFrom asc";
+//        $queryEvento = "select *,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1 from view_random_events;";
 
         //echo $queryEvento;
 
-        $eventos = DB::query($queryEvento); // misspelled 
+        $eventos = DB::query($query2); // misspelled 
         $str .= "<ul>";
         foreach ($eventos as $e) {
             $bairro = EmailController::getNeighById($e['idEvent']);
             //var_dump($e);die;
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 12px;">' . $e['deEvent'] . ' - ' . $e['nmPlace'] . ' - '.$bairro.'</a></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 14px;margin-top:15px">' . ucwords($e['deEvent']) . '</a><br><span style="font-size: 11px;margin-top:15px;margin-bottom:10px">' . ucwords($e['nmPlace']) . ' - '.$bairro.'</span></li>';
         }
         $str .= "</ul>";
         //  echo $str;
@@ -67,7 +68,7 @@ class EmailController {
         sleep(0.3);//Sleeps before
         $data->sent = LeadController::sendEmail($data->response['email']['id']);
         //var_dump($data->response);
-        //$conn->closeConn();
+        $conn->closeConn();
 
 
 

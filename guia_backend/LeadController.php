@@ -33,6 +33,32 @@ class LeadController extends stdClass {
         return $response;
     }
 
+    /**
+     * @Cria um template te de email para enviar .
+     */
+    public static function createEmailTemplate($id, $titulo, $name, $fromName, $subject, $customHtml, $description, $plainText, $reply) {
+        $data = array(
+            'title' => $titulo,
+            'name' => $name,
+            'fromName' => $fromName,
+            'subject' => $subject,
+            'customHtml' => $customHtml,
+            'description' => $description,
+            'plainText' => $plainText,
+            'replyToAddress' => $reply,
+            'isPublished' => 0
+        );
+        $email = [];
+        $con = LeadController::connectMautic();
+        $emailApi = $con->api->newApi("emails", $con->auth, MAUTIC_INSTANCE_API);
+        if (empty($id) || is_null($id)) {
+            $email = $emailApi->create($data);
+        } else {
+            $email = $emailApi->edit($id, $data, true);
+        }
+        return $email;
+    }
+
     public static function createEmail($titulo, $description, $subject, $fromName, $customHtml, $plainText, $list, $id = NULL) {
         $name = "Template_Guia_" . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10 / strlen($x)))), 1, 10);
         $data = array(
