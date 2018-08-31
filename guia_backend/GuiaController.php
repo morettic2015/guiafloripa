@@ -66,8 +66,6 @@ class GuiaController extends stdClass {
      * select titulo,from_unixtime((select dtstart+86400 from wp_cn_filme_post where id_wp_cn_filme = a.id limit 1),'%d %m %Y %h:%i:%s') as dt from wp_cn_filme as a  where id in (select id_wp_cn_filme from wp_cn_filme_post  where estreia = 2 and FROM_UNIXTIME(dtend)>now()) order by dt;
      */
 
-    
-
     public static function getEventosDeHoje() {
         //Set Charset
         $dayOfWeek = date("D");
@@ -135,7 +133,7 @@ class GuiaController extends stdClass {
     public static function updateImages() {
         echo "<pre>";
         $conn = new MysqlDB();
-        $query = "select ID,guid,post_parent,post_id,meta_key,meta_value from wp_posts join wp_postmeta on ID = post_id where post_type = 'attachment' and guid is not null and guid like '%http%' and guid like '%.%' limit 300";
+        $query = "select ID,guid,post_parent,post_id,meta_key,meta_value from wp_posts join wp_postmeta on ID = post_id where post_type = 'attachment' and guid is not null and guid like '%http%' and guid like '%.%' order by ID DESC limit 2000";
         echo $query;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
@@ -159,7 +157,6 @@ class GuiaController extends stdClass {
                 . " where meta_key = '_category_permalink'"
                 . " and meta_value in (9,10,200,419,418,276,99)";
         $conn->execute($queryLazer);
-        echo "<pre>";
         if ($row = $conn->hasNext()) {
             //var_dump($row);
             $q = "update Event set idType = 7 where idEvent in (" . $row['cols'] . ")";
@@ -373,22 +370,15 @@ class GuiaController extends stdClass {
     public static function cronEventCategory($type, $id) {
         $yesterday = strtotime("-1 week");
         $timestamp = strtotime('+1 week');
-
         $conn = new MysqlDB();
-
-        $query = "select * from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday and event_dtend  and  a.event_id in ( select object_id from $type) ";
-        //echo $query;die;
+        $query = "select *,(select guid from wp_posts where id = (select meta_value from wp_postmeta where post_id = event_id and meta_key = '_thumbnail_id')) as img_event from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday and event_dtend  and  a.event_id in ( select object_id from $type) order by ID DESC";
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
-        //echo "Init List ";
-        /* echo "<pre>";
-          echo "" . $query; */
         $lEventos = Array();
-        //Set error = Empty
         $pErrors = "";
         while ($row = $conn->hasNext()) {
-            //var_dump($row);
             try {
+               // $logoFromThumbnail = GuiaController::getLogoDe($conn, $row['event_id']);
                 $eventRow = new stdClass();
                 $eventRow->event_id = $row['event_id'];
                 $eventRow->event_tit = $row['event_tit'];
@@ -406,9 +396,9 @@ class GuiaController extends stdClass {
                 $eventRow->telefone = $row['telefone'];
                 $eventRow->cidade = $row['cidade'];
                 $eventRow->email = $row['email'];
-                //var_dump($eventRow);die;
-                GuiaController::insertUpdateEvent($eventRow, $id);
+                GuiaController::insertUpdateEvent($eventRow, $id, $row['img_event']);
             } catch (Exception $e) {
+                $pErrors = "";
                 $pErrors .= "<p>";
                 $pErrors .= "FILE";
                 $pErrors .= $e->getFile();
@@ -419,15 +409,11 @@ class GuiaController extends stdClass {
                 $pErrors .= "<br>JSON";
                 $pErrors .= json_encode($e);
                 $pErrors .= "<hr></p>";
+                echo $pErrors;
             }
         }
         DB::disconnect();
         $conn->closeConn();
-
-        if (!empty($pErrors)) {
-            //echo $pErrors;
-            BugTracker::addIssueBugTracker(10, BACKEND, "cronEventCategory($type, $id) ", "EVENT SYNC ERROR" . $pErrors);
-        }
     }
 
     public static function testCinemas() {
@@ -641,24 +627,12 @@ class GuiaController extends stdClass {
     /**
      * Insert or update Places and Events
      * */
-    public static function insertUpdateEvent($obj, $id) {
-
-
-        // DB::debugMode();
-
+    public static function insertUpdateEvent($obj, $id, $logoFromSchema) {
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-
         $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->ID;
-
         $number_accounts = DB::queryFirstField($query);
-        //var_dump($number_accounts);
-//echo $number_accounts === "1";die;
-//  echo "Cinema exists?" . $number_accounts;
 
         if ($number_accounts < 1) {
-            echo "Não EX!";
-            var_dump($obj);
-            //echo time() . "*********************************************\n";
             $obj->geo = GeocoderController::geocodeQuery($obj->endereco . ", " . $obj->cidade);
 
             if (is_null($obj->geo) || is_null($obj->geo->lat)) {
@@ -666,11 +640,9 @@ class GuiaController extends stdClass {
             }
             $cep = "88000-000";
             $cepvet = explode(",", $obj->geo->formatted_address);
-//$vSize = count($cepvet);
             $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
             $cep = empty($cep1) ? $cep : $cep1;
 
-//Insert Update Place
             DB::insertUpdate(
                     'Place', array(
                 'idPlace' => $obj->ID, //primary key
@@ -688,11 +660,12 @@ class GuiaController extends stdClass {
             ));
             DB::commit();
         }
-//Insert update Event
         $dtFrom = date("Y-m-d H:i:s", $obj->event_dtstart);
         $dtUntil = date("Y-m-d H:i:s", $obj->event_dtend);
-
+        //$logoFromSchema['guid']
+        
         //Update Event
+        DB::debugMode(true);
         DB::insertUpdate(
                 'Event', array(
             'idEvent' => $obj->event_id, //primary key
@@ -700,12 +673,12 @@ class GuiaController extends stdClass {
             'deDetail' => ($obj->event_info) . "<br>" . $obj->vevent_price_label . ' ' . $obj->vevent_price . '<br>' . $obj->event_moreinfo,
             'dtFrom' => $dtFrom,
             'dtUntil' => $dtUntil,
+            'deImg' => $logoFromSchema,
             'idPlaceOwner' => $obj->ID,
             'nrEdition' => '1',
             'idType' => $id
         ));
         DB::commit();
-
         //Subcategory
         DB::insertUpdate(
                 'SubCategory', array(
@@ -796,6 +769,13 @@ class GuiaController extends stdClass {
 //Close Connection
         DB::disconnect();
         return $stdGuia;
+    }
+
+    public static final function getLogoDe(&$conn, $idEvent) {
+        $query = "select guid from wp_posts where ID = (select meta_value from wp_postmeta where post_id = $idEvent and meta_key = '_thumbnail_id')";
+        $conn->execute($query); // misspelled SELECT
+        $row = $conn->hasNext();
+        return $row;
     }
 
     /**
@@ -961,7 +941,6 @@ class GuiaController extends stdClass {
         $pErrors = "";
 
         //DB::debugMode();
-
         //while ($row = $conn->hasNext()) {
         while ($row = $conn->hasNext()) {
             //  var_dump($row);
