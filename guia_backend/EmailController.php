@@ -60,75 +60,78 @@ class EmailController {
           </tr>
           </tbody>
           </table>'; */
-        $content = '<br><table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="0">
-	<tbody>
-		<tr>
-			<td class="mobile-block" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;">
+         $content = '<br><table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="0">
+          <tbody>
+          <tr>
+          <td class="mobile-block" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;">
 
-				<table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="100%">
-					<tbody>
-						<tr>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[0]['idEvent'] . '">
-                                                                <img src="' . $result[0]['deImg'] . '" alt="' . $result[0]['nmPlace'] . '"  title="' . $result[0]['nmPlace'] .' '.$result[0]['dtFrom1'].' '.$result[0]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                             </a>
-                                                        </td>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[1]['idEvent'] . '">
-                                                                <img src="' . $result[1]['deImg'] . '" alt="' . $result[1]['nmPlace'] . '"  title="' . $result[1]['nmPlace'] .' '.$result[1]['dtFrom1'].' '.$result[1]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                            </a>
-                                                        </td>
-                                                </tr>
-						<tr>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[2]['idEvent'] . '">
-                                                                <img src="' . $result[2]['deImg'] . '" alt="' . $result[2]['nmPlace'] . '"  title="' . $result[2]['nmPlace'] .' '.$result[2]['dtFrom1'].' '.$result[2]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                            </a>
-                                                        </td>
-                                                    	<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[3]['idEvent'] . '">
-                                                                <img src="' . $result[3]['deImg'] . '" alt="' . $result[3]['nmPlace'] . '"  title="' . $result[3]['nmPlace'] .' '.$result[3]['dtFrom1'].' '.$result[3]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                            </a>
-                                                        </td>
-						</tr>
-					</tbody>
-				</table>
-			</td>
-			<td class="mobile-block" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;">
+          <table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="100%">
+          <tbody>
+          <tr>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[0]['idEvent'] . '">
+          <img src="' . $result[0]['deImg'] . '" alt="' . $result[0]['nmPlace'] . '"  title="' . $result[0]['nmPlace'] .' '.$result[0]['dtFrom1'].' '.$result[0]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[1]['idEvent'] . '">
+          <img src="' . $result[1]['deImg'] . '" alt="' . $result[1]['nmPlace'] . '"  title="' . $result[1]['nmPlace'] .' '.$result[1]['dtFrom1'].' '.$result[1]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          </tr>
+          <tr>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[2]['idEvent'] . '">
+          <img src="' . $result[2]['deImg'] . '" alt="' . $result[2]['nmPlace'] . '"  title="' . $result[2]['nmPlace'] .' '.$result[2]['dtFrom1'].' '.$result[2]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[3]['idEvent'] . '">
+          <img src="' . $result[3]['deImg'] . '" alt="' . $result[3]['nmPlace'] . '"  title="' . $result[3]['nmPlace'] .' '.$result[3]['dtFrom1'].' '.$result[3]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          </tr>
+          </tbody>
+          </table>
+          </td>
+          <td class="mobile-block" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;">
 
-				<table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="100%">
-					<tbody>
-	<tr>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[4]['idEvent'] . '">
-                                                                <img src="' . $result[4]['deImg'] . '" alt="' . $result[4]['nmPlace'] . '"  title="' . $result[4]['nmPlace'] .' '.$result[4]['dtFrom1'].' '.$result[4]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                             </a>
-                                                        </td>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[5]['idEvent'] . '">
-                                                                <img src="' . $result[5]['deImg'] . '" alt="' . $result[5]['nmPlace'] . '"  title="' . $result[5]['nmPlace'] .' '.$result[5]['dtFrom1'].' '.$result[5]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                            </a>
-                                                        </td>
-                                                </tr>
-						<tr>
-							<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[6]['idEvent'] . '">
-                                                                <img src="' . $result[6]['deImg'] . '" alt="' . $result[6]['nmPlace'] . '"  title="' . $result[6]['nmPlace'] .' '.$result[6]['dtFrom1'].' '.$result[6]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                           </a>
-                                                        </td>
-                                                    	<td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
-                                                            <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[7]['idEvent'] . '">
-                                                                <img src="' . $result[7]['deImg'] . '" alt="' . $result[7]['nmPlace'] . '"  title="' . $result[7]['nmPlace'] .' '.$result[7]['dtFrom1'].' '.$result[7]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
-                                                            </a>
-                                                        </td>
-						</tr>
-                                    </tbody>
-				</table>
-			</td>
-		</tr>
-	</tbody>
-</table>
-';
+          <table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="100%">
+          <tbody>
+          <tr>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[4]['idEvent'] . '">
+          <img src="' . $result[4]['deImg'] . '" alt="' . $result[4]['nmPlace'] . '"  title="' . $result[4]['nmPlace'] .' '.$result[4]['dtFrom1'].' '.$result[4]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[5]['idEvent'] . '">
+          <img src="' . $result[5]['deImg'] . '" alt="' . $result[5]['nmPlace'] . '"  title="' . $result[5]['nmPlace'] .' '.$result[5]['dtFrom1'].' '.$result[5]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          </tr>
+          <tr>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[6]['idEvent'] . '">
+          <img src="' . $result[6]['deImg'] . '" alt="' . $result[6]['nmPlace'] . '"  title="' . $result[6]['nmPlace'] .' '.$result[6]['dtFrom1'].' '.$result[6]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
+          <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[7]['idEvent'] . '">
+          <img src="' . $result[7]['deImg'] . '" alt="' . $result[7]['nmPlace'] . '"  title="' . $result[7]['nmPlace'] .' '.$result[7]['dtFrom1'].' '.$result[7]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          </a>
+          </td>
+          </tr>
+          </tbody>
+          </table>
+          </td>
+          </tr>
+          </tbody>
+          </table>
+          '; 
+
+       
+
         return $content;
     }
 
@@ -152,20 +155,28 @@ class EmailController {
         $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics  limit 8;");
         $str .= self::makeTableStar($pics);
         //Consulta os eventos total 16 da view
-        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval where deImg is null or deImg not like '%http%' order by dtFrom asc limit 12;";
+        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval where deImg is null or deImg not like '%http%' order by dtUntil asc";
 
         $eventos = DB::query($query2); // misspelled 
         $str .= "<ul>";
+        $i = 0;
+        $strTitle = "";
         foreach ($eventos as $e) {
             $bairro = EmailController::getNeighById($e['idEvent']);
             //var_dump($e);die;
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 14px;margin-top:15px">' . ucwords($e['deEvent']) . '</a><br><span style="font-size: 11px;margin-top:15px;margin-bottom:10px">' . ucwords($e['nmPlace']) . ' - ' . $bairro . '</span></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $e['idEvent'] . '" style="font-size: 14px;margin-top:15px">' . ucfirst($e['deEvent']) . '</a><br><span style="font-size: 11px;margin-top:15px;margin-bottom:10px">' . ucwords($e['nmPlace']) . ' - ' . $bairro . '</span></li>';
+            if ($i < 2) {
+                $strTitle .= " | " . ucfirst($e['deEvent']);
+                $i++;
+            }
         }
+        $strTitle .= " e mais!";
         $str .= "</ul>";
         //  echo $str;
         // die;
         $template = new Template('./template/template1.html');
-        $template->set('{subject}', "Agenda Guia Floripa");
+        $template->set('{subject}', "Agenda Guia Floripa $strTitle");
+        $template->set('{subject_title}', "Agenda Guia Floripa");
         $template->set('{html_src}', $str);
         $template->set('{call_src}', "Você está recebendo algumas dicas de agendas do Guia Floripa para o fim de semana. Divirta-se!");
         $template->set('{twitter}', "#");
@@ -176,7 +187,7 @@ class EmailController {
         $data->template = $template->render();
         //var_dump($data);die;
         $data->response = LeadController::createEmail(
-                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa", "Redação Guia Floripa", $data->template, "", /* 100 */ 23, ""
+                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa " . ($strTitle), "Redação Guia Floripa", $data->template, "", /* 100 */ 23, ""
         );
         //echo $data->response['email']['id'];die;
         // sleep(0.3);//Sleeps before
