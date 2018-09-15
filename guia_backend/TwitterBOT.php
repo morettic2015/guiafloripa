@@ -132,6 +132,35 @@ class TwitterBOT {
         return $statues;
     }
 
+    public function tweetChannel() {
+        $unparsed_json = file_get_contents("https://experienciasdigitais.com.br/wp-json/twitterbot/v1/channel");
+
+        $tweets = json_decode($unparsed_json);
+        $ret = [];
+        $this->connectTwitter('DVFvG6KpEi4zL2NfB0ZhqW3ud','m9swe9HmW0FnHBs7LbFk9qVtgdcn0L4AY1OsQwTRwqi45I0hRF','1017585216683237381-C0EOsi72f085Bnqv8FDDKKM5QfdvwN','rNEXa3lcPSQ41TEoPbGkTAsRibGR8UKz65K2scrIWHCZ7');
+        foreach ($tweets as $t) {
+            $hashtag = json_decode($t->hashtag);
+          
+            //var_dump($image);
+            $path = '/var/www/guiafloripa.morettic.com.br/img/image_'.$t->campaign_ID.'.jpg';
+            copy($t->logo, $path);
+            $tweetMsg = $t->campaign_name. ' '.$t->campaign_description. ' '. $hashtag->hashtag. ' '. $t->link;
+            
+            $media1 = $this->connection->upload('media/upload', ['media' => $path]);
+            $statues = $this->connection->post("statuses/update", [
+                "status" => $tweetMsg ,
+                'media_ids' => implode(',', [$media1->media_id_string])
+            ]);
+            $ret[] = $statues;
+        }
+
+        return $ret;
+        //
+        //
+        //
+        //
+    }
+
     public function singleTweet() {
         $query = "SELECT * FROM view_single_tweet_guia";
         $tweet = DB::query($query);
@@ -140,7 +169,7 @@ class TwitterBOT {
         $std = new stdClass();
         $std->tweet = $tweet[0];
         $this->connectTwitter();
-        $msgTwt = $tweet[0]['tweet']. ' - '.$tweet[0]['link'];
+        $msgTwt = $tweet[0]['tweet'] . ' - ' . $tweet[0]['link'];
         $std->response = $this->tweetMediaLatLon($msgTwt, $tweet[0]['nrLat'], $tweet[0]['nrLng']);
         return $std;
     }

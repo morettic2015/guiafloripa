@@ -152,7 +152,7 @@ class EmailController {
         /**
          * @Query for payed ones :P
          */
-        $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics  limit 8;");
+        $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics order by RAND() limit 8;");
         $str .= self::makeTableStar($pics);
         //Consulta os eventos total 16 da view
         $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval where deImg is null or deImg not like '%http%' order by dtUntil asc";

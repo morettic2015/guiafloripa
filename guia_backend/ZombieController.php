@@ -50,10 +50,10 @@ class ZombieController {
 
         $results = DB::query($query);
         echo "<pre>";
-
+/*
         foreach ($results as $r) {
             echo $r['deEvent'] . '-' . $r['idEvent'] . '/n<br>';
-        }
+        }*/
 
         DB::disconnect();
 

@@ -426,6 +426,15 @@ $app->get('/daily_tweet/', function (Request $request, Response $response) use (
    /// $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
    /// $tb->searchTweetsReply("#floripa");
 });
+
+$app->get('/channel_tweet/', function (Request $request, Response $response) use ($app) {
+    $tb = new TwitterBOT();
+   
+    $tweet = $tb->tweetChannel();
+     return $response->withJson($tweet, 201);
+   /// $tb->dailyNewsTweet('./img/moto-x.png', './img/playstore.png');
+   /// $tb->searchTweetsReply("#floripa");
+});
 $app->get('/follow_tweet/', function (Request $request, Response $response) use ($app) {
     //echo CinemaController::countMovieTheaters();
     //GuiaController::reverseImagesFromWordress(8948);
