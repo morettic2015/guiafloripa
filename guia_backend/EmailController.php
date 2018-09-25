@@ -20,6 +20,9 @@ class EmailController {
         }
     }
 
+    /**
+     * @Deprecated 
+     */
     private static function makeTableStar($result) {
         /*
           $content = '<table cellpadding="0" cellspacing="0" style="border-collapse:separate;vertical-align: text-bottom;" width="100">
@@ -60,7 +63,7 @@ class EmailController {
           </tr>
           </tbody>
           </table>'; */
-         $content = '<br><table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="0">
+        $content = '<br><table cellpadding="0" cellspacing="0" style="border-collapse:separate;" width="0">
           <tbody>
           <tr>
           <td class="mobile-block" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;">
@@ -70,24 +73,24 @@ class EmailController {
           <tr>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[0]['idEvent'] . '">
-          <img src="' . $result[0]['deImg'] . '" alt="' . $result[0]['nmPlace'] . '"  title="' . $result[0]['nmPlace'] .' '.$result[0]['dtFrom1'].' '.$result[0]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[0]['deImg'] . '" alt="' . $result[0]['nmPlace'] . '"  title="' . $result[0]['nmPlace'] . ' ' . $result[0]['dtFrom1'] . ' ' . $result[0]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[1]['idEvent'] . '">
-          <img src="' . $result[1]['deImg'] . '" alt="' . $result[1]['nmPlace'] . '"  title="' . $result[1]['nmPlace'] .' '.$result[1]['dtFrom1'].' '.$result[1]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[1]['deImg'] . '" alt="' . $result[1]['nmPlace'] . '"  title="' . $result[1]['nmPlace'] . ' ' . $result[1]['dtFrom1'] . ' ' . $result[1]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           </tr>
           <tr>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[2]['idEvent'] . '">
-          <img src="' . $result[2]['deImg'] . '" alt="' . $result[2]['nmPlace'] . '"  title="' . $result[2]['nmPlace'] .' '.$result[2]['dtFrom1'].' '.$result[2]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[2]['deImg'] . '" alt="' . $result[2]['nmPlace'] . '"  title="' . $result[2]['nmPlace'] . ' ' . $result[2]['dtFrom1'] . ' ' . $result[2]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[3]['idEvent'] . '">
-          <img src="' . $result[3]['deImg'] . '" alt="' . $result[3]['nmPlace'] . '"  title="' . $result[3]['nmPlace'] .' '.$result[3]['dtFrom1'].' '.$result[3]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[3]['deImg'] . '" alt="' . $result[3]['nmPlace'] . '"  title="' . $result[3]['nmPlace'] . ' ' . $result[3]['dtFrom1'] . ' ' . $result[3]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           </tr>
@@ -101,24 +104,24 @@ class EmailController {
           <tr>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[4]['idEvent'] . '">
-          <img src="' . $result[4]['deImg'] . '" alt="' . $result[4]['nmPlace'] . '"  title="' . $result[4]['nmPlace'] .' '.$result[4]['dtFrom1'].' '.$result[4]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[4]['deImg'] . '" alt="' . $result[4]['nmPlace'] . '"  title="' . $result[4]['nmPlace'] . ' ' . $result[4]['dtFrom1'] . ' ' . $result[4]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[5]['idEvent'] . '">
-          <img src="' . $result[5]['deImg'] . '" alt="' . $result[5]['nmPlace'] . '"  title="' . $result[5]['nmPlace'] .' '.$result[5]['dtFrom1'].' '.$result[5]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[5]['deImg'] . '" alt="' . $result[5]['nmPlace'] . '"  title="' . $result[5]['nmPlace'] . ' ' . $result[5]['dtFrom1'] . ' ' . $result[5]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           </tr>
           <tr>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[6]['idEvent'] . '">
-          <img src="' . $result[6]['deImg'] . '" alt="' . $result[6]['nmPlace'] . '"  title="' . $result[6]['nmPlace'] .' '.$result[6]['dtFrom1'].' '.$result[6]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[6]['deImg'] . '" alt="' . $result[6]['nmPlace'] . '"  title="' . $result[6]['nmPlace'] . ' ' . $result[6]['dtFrom1'] . ' ' . $result[6]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           <td class="mini-img" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px;color: #777777;text-align: center;line-height: 21px;border-collapse: collapse;padding: 3px;width: 130px;">
           <a href="http://www.guiafloripa.com.br/guiafloripa-app-redirect/?key=' . $result[7]['idEvent'] . '">
-          <img src="' . $result[7]['deImg'] . '" alt="' . $result[7]['nmPlace'] . '"  title="' . $result[7]['nmPlace'] .' '.$result[7]['dtFrom1'].' '.$result[7]['deEvent']. '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
+          <img src="' . $result[7]['deImg'] . '" alt="' . $result[7]['nmPlace'] . '"  title="' . $result[7]['nmPlace'] . ' ' . $result[7]['dtFrom1'] . ' ' . $result[7]['deEvent'] . '" style="max-width: 100px; outline: none; text-decoration: none; border-radius: 3px; width: 100px;" width="100" class="fr-fic fr-dii">
           </a>
           </td>
           </tr>
@@ -128,9 +131,9 @@ class EmailController {
           </tr>
           </tbody>
           </table>
-          '; 
+          ';
 
-       
+
 
         return $content;
     }
@@ -152,10 +155,10 @@ class EmailController {
         /**
          * @Query for payed ones :P
          */
-        $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics order by RAND() limit 8;");
-        $str .= self::makeTableStar($pics);
+        // $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics order by RAND() limit 8;");
+        // $str .= self::makeTableStar($pics);
         //Consulta os eventos total 16 da view
-        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval where deImg is null or deImg not like '%http%' order by dtUntil asc";
+        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d/%m/%Y') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval order by dtUntil asc limit 15";
 
         $eventos = DB::query($query2); // misspelled 
         $str .= "<ul>";
@@ -178,6 +181,7 @@ class EmailController {
         $template->set('{subject}', "Agenda Guia Floripa $strTitle");
         $template->set('{subject_title}', "Agenda Guia Floripa");
         $template->set('{html_src}', $str);
+        $template->set('{apoiadores}', self::makeApoiadores());
         $template->set('{call_src}', "Você está recebendo algumas dicas de agendas do Guia Floripa para o fim de semana. Divirta-se!");
         $template->set('{twitter}', "#");
         $template->set('{facebook}', "https://www.facebook.com/Guiafloripa/");
@@ -199,6 +203,43 @@ class EmailController {
 
 
         return $data;
+    }
+
+    private static function makeApoiadores() {
+        $url = "https://experienciasdigitais.com.br/wp-json/mailbot/v1/channel";
+        $content = file_get_contents($url);
+        $json = json_decode($content);
+      //  var_dump($json);
+      //  die;
+        if (count($json) > 0) {
+            $html = '<tr>
+                     <td class="mobile-padding ui-sortable" data-slot-container="1">
+                     <center><strong>Apoiadores</h3></center>
+                     </td>
+                     </tr>
+                     <tr>
+                     <td class="mobile-padding ui-sortable" data-slot-container="1">
+                     <table style="margin-right: calc(35%); width:100%;">
+                     <tbody>';
+            foreach($json as $sponsor){
+                $html.= "<tr>";
+                $html.= "<td style=\"width: 105px\">";
+                $html.= '<img src="'.$sponsor->logo.'" alt="'.$sponsor->campaign_description.'" height="40" class="fr-view fr-fic fr-dii">';
+                $html.= '</td>';
+                $html.= '<td><strong>'.$sponsor->campaign_name.'</strong>';
+                $html.= '<div style="text-align: justify;">';
+                $html.= $sponsor->campaign_description;
+                $html.= '</div>';
+                $html.= '<a href="'.$sponsor->link.'">visite</a>';
+                $html.= '</td>';
+                $html.= '</tr>';
+            }
+            $html.='</tbody></table></td></tr>';
+
+            return $html;
+        } else {
+            return "<!-- no sponsor -->";
+        }
     }
 
 }
