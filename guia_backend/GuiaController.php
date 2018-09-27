@@ -16,6 +16,18 @@ const WP_CONTENT = "http://www.guiafloripa.com.br/wp-content/uploads/";
 
 class GuiaController extends stdClass {
 
+    public static final function getEventsDayRange($days){
+        $query = "SELECT "
+                . " * "
+                . "FROM "
+                . " guiafloripa_app.viewEventPlaceType "
+                . " where "
+                . " date_format(dtUntil,'%Y-%m-%d') = date_format(now()+interval $days day,'%Y-%m-%d')  "
+                . " order by dtUntil asc ";
+        $rangeEvents = DB::query($query);
+        DB::disconnect();
+        return $rangeEvents;
+    }
     public static final function getPlaceById($id) {
         $query = "SELECT * FROM guiafloripa_app.Place where idPlace = " . $id;
         $place = DB::query($query);

@@ -93,7 +93,7 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     return $newResponse->withJson($data, 201);
 });
 //LeadController::sendEmail($data->response['email']['id']);
-$app->get('/week_news/', function (Request $request, Response $response) use ($app) {
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],'/week_news/{vet}', function (Request $request, Response $response) use ($app) {
     //Content Type JSON Cross Domain JSON
     //Cache 24 hours
     $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
@@ -102,9 +102,8 @@ $app->get('/week_news/', function (Request $request, Response $response) use ($a
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     //Return Eventos for today
-    $data = new stdClass();
-    $data->types = $request->getAttribute('types');
-    $data = EmailController::createWeekNews();
+    $array = $request->getAttribute('vet');
+    $data = EmailController::createWeekNews($array);
     logActions("week_news");
     //Response Busca Hoje
     return $newResponse->withJson($data, 201);
@@ -183,6 +182,24 @@ $app->get('/place/{id}', function (Request $request, Response $response) use ($a
     $data = GuiaController::getPlaceById($data->id);
     logActions("estabelecimentos");
     //Response Busca Hoje
+    return $newResponse->withJson($data, 201);
+});
+
+/**
+ * @get A Place by id
+ */
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCCH'],'/events_day_range/{days}', function (Request $request, Response $response) use ($app) {
+    //Content Type JSON Cross Domain JSON
+    //Cache 100 days
+    $newResponse = $this->cache
+            ->withExpires($response, time() + 3600 * 24 * 100)
+            ->withHeader('Content-type', 'application/json')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+
+    $data = GuiaController::getEventsDayRange($request->getAttribute('days'));
+
     return $newResponse->withJson($data, 201);
 });
 /**

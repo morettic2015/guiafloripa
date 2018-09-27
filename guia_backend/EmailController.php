@@ -10,8 +10,10 @@ class EmailController {
     //put your code here
 
     public static function getNeighById($postID) {
+
         $query = "select post_title as bairro from wp_posts where id = (select (meta_value) from wp_postmeta where post_id = $postID and meta_key = 'bairros');";
         $conn = new MysqlDB();
+        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query);
         if ($row = $conn->hasNext()) {
             return $row['bairro'];
@@ -138,7 +140,7 @@ class EmailController {
         return $content;
     }
 
-    public static function createWeekNews() {
+    private static function getCinemaBlockMailing() {
         $query = "select titulo,from_unixtime((select dtstart+86400 from wp_cn_filme_post where id_wp_cn_filme = a.id limit 1),'%d-%m') as dt from wp_cn_filme as a  where id in (select id_wp_cn_filme from wp_cn_filme_post  where estreia = 2 and FROM_UNIXTIME(dtend)>now()) order by dt desc;";
         $conn = new MysqlDB();
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
@@ -152,15 +154,14 @@ class EmailController {
         }
         $str .= "</ul>";
         $str .= '<div style="text-align: center;"><strong>Eventos</strong></div>';
-        /**
-         * @Query for payed ones :P
-         */
-        // $pics = DB::query("SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d-%m') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil,deImg FROM guiafloripa_app.view_email_events_pics order by RAND() limit 8;");
-        // $str .= self::makeTableStar($pics);
-        //Consulta os eventos total 16 da view
-        $query2 = "select idEvent,DATE_FORMAT(dtFrom,'%d/%m/%Y') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil from view_random_large_interval order by dtUntil asc limit 15";
+        $conn->closeConn();
+        return $str;
+    }
 
+    private static function getEventsFromSelection($array) {
+        $query2 = "SELECT distinct idEvent,DATE_FORMAT(dtFrom,'%d/%m/%Y') as dtFrom1,ucfirst(nmPlace) as nmPlace,deEvent,dtFrom,dtUntil  FROM guiafloripa_app.viewEventPlaceType where idEvent in($array)  order by dtUntil asc";
         $eventos = DB::query($query2); // misspelled 
+        // echo($query2);
         $str .= "<ul>";
         $i = 0;
         $strTitle = "";
@@ -173,12 +174,26 @@ class EmailController {
                 $i++;
             }
         }
-        $strTitle .= " e mais!";
         $str .= "</ul>";
-        //  echo $str;
-        // die;
+        $std = new stdClass();
+        $strTitle .= " e mais!";
+
+        // echo mb_detect_encoding($strTitle);die;
+        $std->title = $strTitle;
+        $std->str = $str;
+        //  $std->title = mb_convert_encoding($strTitle, "UTF-8", "ASCII");
+        //  $std->str = mb_convert_encoding($str, "UTF-8", "ASCII");
+        return $std;
+    }
+
+    public static function createWeekNews($array) {
+        $infoEvents = self::getEventsFromSelection($array);
+        $str = self::getCinemaBlockMailing(); //Get cinema block
+        $str .= $infoEvents->str;
+
+        //var_dump($infoEvents);die;
         $template = new Template('./template/template1.html');
-        $template->set('{subject}', "Agenda Guia Floripa $strTitle");
+        $template->set('{subject}', "Agenda Guia Floripa " . $infoEvents->title);
         $template->set('{subject_title}', "Agenda Guia Floripa");
         $template->set('{html_src}', $str);
         $template->set('{apoiadores}', self::makeApoiadores());
@@ -191,17 +206,8 @@ class EmailController {
         $data->template = $template->render();
         //var_dump($data);die;
         $data->response = LeadController::createEmail(
-                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa " . ($strTitle), "Redação Guia Floripa", $data->template, "", /* 100 */ 23, ""
+                        $data->titulo, "Email Semanal Automatico", "Agenda Guia Floripa " . ($infoEvents->title), "Redação Guia Floripa", $data->template, "", /* 100 */ 23, ""
         );
-        //echo $data->response['email']['id'];die;
-        // sleep(0.3);//Sleeps before
-        // $data->sent = LeadController::sendEmail($data->response['email']['id']);
-        //var_dump($data->response);
-        $conn->closeConn();
-
-
-
-
         return $data;
     }
 
@@ -209,8 +215,8 @@ class EmailController {
         $url = "https://experienciasdigitais.com.br/wp-json/mailbot/v1/channel";
         $content = file_get_contents($url);
         $json = json_decode($content);
-      //  var_dump($json);
-      //  die;
+        //  var_dump($json);
+        //  die;
         if (count($json) > 0) {
             $html = '<tr>
                      <td class="mobile-padding ui-sortable" data-slot-container="1">
@@ -221,20 +227,20 @@ class EmailController {
                      <td class="mobile-padding ui-sortable" data-slot-container="1">
                      <table style="margin-right: calc(35%); width:100%;">
                      <tbody>';
-            foreach($json as $sponsor){
-                $html.= "<tr>";
-                $html.= "<td style=\"width: 105px\">";
-                $html.= '<img src="'.$sponsor->logo.'" alt="'.$sponsor->campaign_description.'" height="40" class="fr-view fr-fic fr-dii">';
-                $html.= '</td>';
-                $html.= '<td><strong>'.$sponsor->campaign_name.'</strong>';
-                $html.= '<div style="text-align: justify;">';
-                $html.= $sponsor->campaign_description;
-                $html.= '</div>';
-                $html.= '<a href="'.$sponsor->link.'">visite</a>';
-                $html.= '</td>';
-                $html.= '</tr>';
+            foreach ($json as $sponsor) {
+                $html .= "<tr>";
+                $html .= "<td style=\"width: 105px\">";
+                $html .= '<img src="' . $sponsor->logo . '" alt="' . $sponsor->campaign_description . '" height="40" class="fr-view fr-fic fr-dii">';
+                $html .= '</td>';
+                $html .= '<td><strong>' . $sponsor->campaign_name . '</strong>';
+                $html .= '<div style="text-align: justify;">';
+                $html .= $sponsor->campaign_description;
+                $html .= '</div>';
+                $html .= '<a href="' . $sponsor->link . '">visite</a>';
+                $html .= '</td>';
+                $html .= '</tr>';
             }
-            $html.='</tbody></table></td></tr>';
+            $html .= '</tbody></table></td></tr>';
 
             return $html;
         } else {
