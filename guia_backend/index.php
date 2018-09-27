@@ -93,7 +93,7 @@ $app->get('/estabelecimentos/{types}', function (Request $request, Response $res
     return $newResponse->withJson($data, 201);
 });
 //LeadController::sendEmail($data->response['email']['id']);
-$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],'/week_news/{vet}', function (Request $request, Response $response) use ($app) {
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],'/week_news/{pat}/{vet}', function (Request $request, Response $response) use ($app) {
     //Content Type JSON Cross Domain JSON
     //Cache 24 hours
     $resWithExpires = $this->cache->withExpires($response, time() + 3600 * 24 * 3);
@@ -103,7 +103,8 @@ $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],'/week_news/{vet}', function
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     //Return Eventos for today
     $array = $request->getAttribute('vet');
-    $data = EmailController::createWeekNews($array);
+    $pat = $request->getAttribute('pat');
+    $data = EmailController::createWeekNews($array,$pat);
     logActions("week_news");
     //Response Busca Hoje
     return $newResponse->withJson($data, 201);

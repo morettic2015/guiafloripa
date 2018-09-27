@@ -186,17 +186,20 @@ class EmailController {
         return $std;
     }
 
-    public static function createWeekNews($array) {
+    public static function createWeekNews($array,$pat) {
         $infoEvents = self::getEventsFromSelection($array);
         $str = self::getCinemaBlockMailing(); //Get cinema block
         $str .= $infoEvents->str;
-
+        $apoiadores = "";
+        if(intval($pat)>0){//Apenas se for patrocinado
+            $apoiadores = self::makeApoiadores();//Make sponsors
+        }
         //var_dump($infoEvents);die;
         $template = new Template('./template/template1.html');
         $template->set('{subject}', "Agenda Guia Floripa " . $infoEvents->title);
         $template->set('{subject_title}', "Agenda Guia Floripa");
         $template->set('{html_src}', $str);
-        $template->set('{apoiadores}', self::makeApoiadores());
+        $template->set('{apoiadores}', $apoiadores);
         $template->set('{call_src}', "{contactfield=firstname}, você está recebendo algumas dicas de programação do Guia Floripa. Divirta-se!");
         $template->set('{twitter}', "#");
         $template->set('{facebook}', "https://www.facebook.com/Guiafloripa/");
