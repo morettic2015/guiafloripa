@@ -197,7 +197,7 @@ class EmailController {
         $template->set('{subject_title}', "Agenda Guia Floripa");
         $template->set('{html_src}', $str);
         $template->set('{apoiadores}', self::makeApoiadores());
-        $template->set('{call_src}', "Você está recebendo algumas dicas de agendas do Guia Floripa para o fim de semana. Divirta-se!");
+        $template->set('{call_src}', "{contactfield=firstname}, você está recebendo algumas dicas de programação do Guia Floripa. Divirta-se!");
         $template->set('{twitter}', "#");
         $template->set('{facebook}', "https://www.facebook.com/Guiafloripa/");
         $template->set('{button_text}', "Visite nosso site");
