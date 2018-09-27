@@ -232,9 +232,9 @@ class EmailController {
                      <tbody>';
             foreach ($json as $sponsor) {
                 $html .= "<tr>";
-                $html .= "<td style=\"width: 105px\">";
+                $html .= "<td style=\"width: 105px\"><center>";
                 $html .= '<img src="' . $sponsor->logo . '" alt="' . $sponsor->campaign_description . '" height="40" class="fr-view fr-fic fr-dii">';
-                $html .= '</td>';
+                $html .= '</center></td>';
                 $html .= '<td><strong>' . $sponsor->campaign_name . '</strong>';
                 $html .= '<div style="text-align: justify;">';
                 $html .= $sponsor->campaign_description;
