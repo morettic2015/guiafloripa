@@ -137,7 +137,7 @@ class TwitterBOT {
 
         $tweets = json_decode($unparsed_json);
         $ret = [];
-        $this->connectTwitter('DVFvG6KpEi4zL2NfB0ZhqW3ud','m9swe9HmW0FnHBs7LbFk9qVtgdcn0L4AY1OsQwTRwqi45I0hRF','1017585216683237381-C0EOsi72f085Bnqv8FDDKKM5QfdvwN','rNEXa3lcPSQ41TEoPbGkTAsRibGR8UKz65K2scrIWHCZ7');
+        $this->connectTwitter();
         foreach ($tweets as $t) {
             $hashtag = json_decode($t->hashtag);
           
