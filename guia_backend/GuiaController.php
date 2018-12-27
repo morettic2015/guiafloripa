@@ -400,13 +400,13 @@ class GuiaController extends stdClass {
                 $eventRow->event_id_place = $row['event_id_place'];
                 $eventRow->vevent_price_label = $row['vevent_price_label']; //@Todo Adicionar na concatenação
                 $eventRow->vevent_price = $row['vevent_price']; //@Todo Adicionar na concatenação
-                $eventRow->event_moreinfo = $row['event_moreinfo']; //@Todo Adicionar na concatenação
+                $eventRow->event_moreinfo = strip_tags($row['event_moreinfo']); //@Todo Adicionar na concatenação
                 $eventRow->ID = $row['ID'];
-                $eventRow->tit = $row['tit'];
-                $eventRow->info = $row['info'];
-                $eventRow->endereco = $row['endereco'];
-                $eventRow->telefone = $row['telefone'];
-                $eventRow->cidade = $row['cidade'];
+                $eventRow->tit = strip_tags($row['tit']);
+                $eventRow->info = strip_tags($row['info']);
+                $eventRow->endereco = strip_tags($row['endereco']);
+                $eventRow->telefone = strip_tags($row['telefone']);
+                $eventRow->cidade = strip_tags($row['cidade']);
                 $eventRow->email = $row['email'];
                 GuiaController::insertUpdateEvent($eventRow, $id, $row['img_event']);
             } catch (Exception $e) {
@@ -677,7 +677,7 @@ class GuiaController extends stdClass {
         //$logoFromSchema['guid']
         
         //Update Event
-        DB::debugMode(true);
+        //DB::debugMode(true);
         DB::insertUpdate(
                 'Event', array(
             'idEvent' => $obj->event_id, //primary key
