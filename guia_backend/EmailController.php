@@ -150,7 +150,7 @@ class EmailController {
         $str = '<div style="text-align: center;"><strong>Estreias nos Cinemas</strong></div>';
         $str .= "<ul>";
         while ($row = $conn->hasNext()) {
-            $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/cinema" style="font-size: 14px;">' /* . $row['dt'] . ' - ' */ . $row['titulo'] . '</a></li>';
+            $str .= '<li style="text-align: left;"><a target="_blank" href="http://guiafloripa.com.br/cinema-todos" style="font-size: 14px;">' /* . $row['dt'] . ' - ' */ . $row['titulo'] . '</a></li>';
         }
         $str .= "</ul>";
         $str .= '<div style="text-align: center;"><strong>Eventos</strong></div>';
