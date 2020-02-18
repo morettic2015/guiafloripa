@@ -5,210 +5,84 @@
  @ Guiafloripa.com.br
  @ Genimo.com.br
  */
-var map;
-var lat;
-var lng;
-var mapUtils;
-var lEventos;
-var markers = new Array();
+
 var app = {
     // Application Constructor
-    initialize: function() {
+    initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+
+    },
+    //OnDevice Offline
+    isOffline: function () {
+        //navigator.splashscreen.show();
+        //alert('OFFLINE');
+        var networkState = navigator.connection.type;
+        //alert(networkState);
+        if (networkState === Connection.NONE) {
+            window.location.href = "offline.html";
+        }
     },
     // deviceready Event Handler
     //
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
-    onDeviceReady: function() {
+    onDeviceReady: function () {
         this.receivedEvent('deviceready');
+        //document.addEventListener("offline", this.onOffline(), false);
 
+        this.isOffline();
         //Init Map Utils
         mapUtils = new MapUtils();
-
-
-        navigator.geolocation.getCurrentPosition(function(position) {
-
+        //INit map Slider
+        mapUtils.initSliderMenu();
+        //Init Ads
+        mapUtils.initAds();
+        //Init Geolocation
+        navigator.geolocation.getCurrentPosition(function (position) {
             //Init Show info;
             mapUtils.showWelcome();
-
             //Loads Map
             mapUtils.sucessLoad(position);
-        }, function(e) {
-            //No GPS or WIFI!
-            mapUtils.showNoGPS();
-        }, {timeout: 5000})
-
-
+            //Loader for Actions
+            myLoader = new Loader();
+        }, function (e) {
+            //Old Location
+            if (localStorage.getItem("lat") !== null) {
+                mapUtils.showMessage("Sem GPS...", "#FF0000");
+                var pOld = {'coords':
+                                {'latitude':localStorage.getItem("lat"),
+                                 'longitude':localStorage.getItem("lon")}
+                            }
+                mapUtils.sucessLoad(pOld);
+                navigator.splashscreen.hide();//Hide Splash
+               // window.plugins.AdMob.createInterstitialView();	//get the interstitials ready to be shown
+               // window.plugins.AdMob.requestInterstitialAd();
+            } else {
+                //No GPS or WIFI!
+                navigator.splashscreen.hide();//Hide Splash
+                mapUtils.showNoGPS();
+            }
+        }, { timeout: 5000 });
+        //Init Push
+        mapUtils.initPush();
+        //Init profile data
+        profileUtil.initProfile();
     },
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
+    receivedEvent: function (id) {
         var parentElement = document.getElementById(id);
-
-
         console.log('Received Event: ' + id);
     }
 
 };
 
 app.initialize();
-
-/**
- * @Classe Utilitiaria do APP
- * @Morettic.com.br
- */
-var MapUtils = function() {
-
-    this.getIcon = function(id) {
-        icon = null;
-        mId = parseInt(id);
-        switch (mId) {
-            case 1:
-                icon = "./img/pin_5.png";
-                break;
-            case 2:
-                icon = "./img/pin_7.png";
-                break;
-            case 3:
-                icon = "./img/pin_3.png";
-                break;
-            case 4:
-                icon = "./img/pin_2.png";
-                break;
-            case 5:
-                icon = "./img/pin_8.png";
-                break;
-            case 6:
-                icon = "./img/pin_4.png";
-                break;
-            case 7:
-                icon = "./img/pin_1.png";
-                break;
-            case 8:
-                icon = "./img/pin_6.png";
-                break;
-        }
-        return icon;
-    }
-
-    this.sucessLoad = function(position) {
-        lat = position.coords.latitude;
-        lng = position.coords.longitude;
-        var myLatlng = new google.maps.LatLng(lat, lng);
-        var mapOptions = {
-            zoom: 14,
-            center: myLatlng,
-            styles: this.getMapStyle(),
-            mapTypeControl: false,
-            disableDefaultUI: true
-        }
-        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-        //Requisição ao server side
-        $.get("https://guiafloripa.morettic.com.br/busca/", function(data, status) {
-            //alert("Data: " + data + "\nStatus: " + status);
-            //Lista de eventos
-            lEventos = data.e;
-
-            infowindow = new google.maps.InfoWindow({
-                content: "holding..."
-            });
-            for (i = 0; i < lEventos.length; i++) {
-                icon = null;
-
-                markers[i] = new google.maps.Marker({
-                    //alert()
-                    position: new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
-                    map: map,
-                    title: "Hello World!",
-                    indice: i,
-                    animation: google.maps.Animation.BOUNCE,
-                    icon: {
-                        url: mapUtils.getIcon(lEventos[i].idType),
-                        size: new google.maps.Size(63, 96), // size
-                        origin: new google.maps.Point(0, 0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
-                    },
-                });
-                /*lEventos[i].distance = google.maps.geometry.spherical.computeDistanceBetween(
-                 new google.maps.LatLng(lEventos[i].nrLat, lEventos[i].nrLng),
-                 new google.maps.LatLng(lat, lng));*/
-                google.maps.event.addListener(markers[i], 'click', function() {
-                    // this.setMap(null);
-                    this.animation = null;
-                    this.setMap(map);
-                    var dist = mapUtils.calculateDistance(lEventos[this.indice].nrLat, lEventos[this.indice].nrLng, lat, lng);
-                    infowindow.setContent("<img width='60' src='"
-                            + lEventos[this.indice].deLogo
-                            + "'/>"
-                            + lEventos[this.indice].deDetail
-                            + "<br>"
-                            + dist);
-                    infowindow.open(map, this);
-                });
-
-            }
-
-        });
-    }
-
-    this.calculateDistance = function(lat1, long1, lat2, long2) {
-
-        //radians
-        lat1 = (lat1 * 2.0 * Math.PI) / 60.0 / 360.0;
-        long1 = (long1 * 2.0 * Math.PI) / 60.0 / 360.0;
-        lat2 = (lat2 * 2.0 * Math.PI) / 60.0 / 360.0;
-        long2 = (long2 * 2.0 * Math.PI) / 60.0 / 360.0;
-
-
-        // use to different earth axis length
-        var a = 6378137.0;        // Earth Major Axis (WGS84)
-        var b = 6356752.3142;     // Minor Axis
-        var f = (a - b) / a;        // "Flattening"
-        var e = 2.0 * f - f * f;      // "Eccentricity"
-
-        var beta = (a / Math.sqrt(1.0 - e * Math.sin(lat1) * Math.sin(lat1)));
-        var cos = Math.cos(lat1);
-        var x = beta * cos * Math.cos(long1);
-        var y = beta * cos * Math.sin(long1);
-        var z = beta * (1 - e) * Math.sin(lat1);
-
-        beta = (a / Math.sqrt(1.0 - e * Math.sin(lat2) * Math.sin(lat2)));
-        cos = Math.cos(lat2);
-        x -= (beta * cos * Math.cos(long2));
-        y -= (beta * cos * Math.sin(long2));
-        z -= (beta * (1 - e) * Math.sin(lat2));
-
-        return (Math.sqrt((x * x) + (y * y) + (z * z)) / 10) + " KM";
-    }
-
-    this.getMapStyle = function() {
-        return [{"featureType": "all", "elementType": "all", "stylers": [{"saturation": -100}, {"lightness": -30}, {"hue": "#ff0000"}]}, {"featureType": "all", "elementType": "labels.text.fill", "stylers": [{"color": "#ffffff"}]}, {"featureType": "all", "elementType": "labels.text.stroke", "stylers": [{"color": "#353535"}]}, {"featureType": "landscape", "elementType": "geometry", "stylers": [{"color": "#656565"}]}, {"featureType": "poi", "elementType": "geometry.fill", "stylers": [{"color": "#505050"}]}, {"featureType": "poi", "elementType": "geometry.stroke", "stylers": [{"color": "#808080"}]}, {"featureType": "road", "elementType": "geometry", "stylers": [{"color": "#454545"}]}, {"featureType": "transit", "elementType": "labels", "stylers": [{"hue": "#007bff"}, {"saturation": 100}, {"lightness": -40}, {"invert_lightness": true}, {"gamma": 1.5}]}, {"featureType": "water", "elementType": "geometry.fill", "stylers": [{"color": "#647f9c"}]}];
-    }
-    this.showWelcome = function() {
-        this.showMessage("Bem vindo ao APP do Guiafloripa. Pesquise os eventos perto de você!", "#454545");
-    }
-
-    this.showNoGPS = function() {
-        this.showMessage("Por favor ative sua WIFI/4G e GPS para visualizar o mapa!", "#FF00FF");
-        setTimeout(cordova.plugins.diagnostic.switchToLocationSettings(), 3000);
-    }
-
-
-    this.showMessage = function(msg, corDialog) {
-        window.plugins.toast.showWithOptions({
-            message: msg,
-            duration: 6000, // 2000 ms
-            position: "center",
-            styling: {
-                opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
-                backgroundColor: corDialog, // make sure you use #RRGGBB. Default #333333
-                textColor: '#FFFF00', // Ditto. Default #FFFFFF
-                textSize: 20.5, // Default is approx. 13.
-                cornerRadius: 16, // minimum is 0 (square). iOS default 20, Android default 100
-                horizontalPadding: 20, // iOS default 16, Android default 50
-                verticalPadding: 16 // iOS default 12, Android default 30
-            }
-        });
-    }
+var exceptHandler = new ExceptionHandler();
+//Exception handler and report
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    exceptHandler.report(device, msg, url, lineNo, columnNo, error);
+    //window.location.href = "erro.html";
 }
+/**
+ * Window loader controller
+ * */

@@ -1,34 +1,63 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-admob-simple": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
     },
-    "config_munge": {
-        "files": {}
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
     },
-    "installed_plugins": {
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        },
-        "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        },
-        "cordova-plugin-googlemaps": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        },
-        "cordova-plugin-x-toast": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        },
-        "cordova.plugins.diagnostic": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        }
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
     },
-    "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
-        }
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova.plugins.diagnostic": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-facebook4": {
+      "APP_ID": "1405126029586258",
+      "APP_NAME": "guiafloripaapp",
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-x-socialsharing": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "onesignal-cordova-plugin": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-googlemaps": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
     }
+  },
+  "dependent_plugins": {
+    "cordova-admob-sdklibs": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "cordova-support-google-services": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    },
+    "es6-promise-plugin": {
+      "PACKAGE_NAME": "br.com.morettic.guiafloripa.CityWatch"
+    }
+  }
 }

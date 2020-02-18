@@ -26,33 +26,33 @@
 
 /* un-checked */
 .ui-checkbox label.ui-checkbox-off {
-    background: #647f9c !important;
+    background: #f1f1f1 !important;
     border: 0px;;
     margin: 0px;
 }
 .ui-checkbox-off:after {
-    background-color: #647f9c !important;
-    border: 0px;
-    margin: 0px;
+    background-color: #f1f1f1 !important;
+    border: 1px;
+    margin: 1px;
 
 }
 
 .ui-checkbox-on:after {
-    background-color: #454545 !important;
+    background-color: #9b9b9b !important;
     border: 1px;
-    margin: 0px;
-    border-radius: 25px;
+    margin: 1px;
 }
 /* checked */
 .ui-checkbox label.ui-checkbox-on {
-    background: #454545 !important;
+    background: #9b9b9b !important;
     border: 1px;
-    margin: 0px;
-    border-radius: 25px;
+    margin: 1px;
 }
 
 
-#map-page, #map-canvas { width: 100%; height: 300px; padding: 0; vertical-align:baseline; top:0; bottom:0;  max-width:none; }
+#map-page, #map-canvas { width: 100%; height: 69vh; padding: 0; vertical-align:baseline; top:0; bottom:0;  max-width:none; overflow: -moz-scrollbars-vertical;
+                         overflow-x: hidden;
+                         overflow-y: hidden;}
 /*.ui-checkbox {
     width:33% !important;
 }*/
@@ -174,4 +174,96 @@ h1 {
 .blink {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
+}
+.txtTitT{
+    text-transform:  uppercase!important;
+}
+.txtCinema{    
+    padding: 0px 0px 0px 0px;
+    background: transparent;
+    outline: none;
+    border: none;
+    font-size: 11.0pt;
+    width: 98%;
+    /* overflow: hidden;*/
+    /* resize: none; */
+    display: inline-block;
+    min-height: 10vh;
+    max-height: 250vh;
+    margin-bottom:80px;
+    /** overflow-y: auto; **/
+    text-transform:  lowercase!important;
+    line-height: 140% !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+}
+.blankButtons{
+    background: transparent !important;
+    border: none !important;
+}
+.buttonTitle{
+    font-size: 10pt !important;
+}
+#flexiselDemo1{
+    background: transparent !important;
+}
+.nbs-flexisel-inner {
+    background:transparent!important;
+}
+#titCineWin .h2{
+    font-size: 10pt !important;
+    margin-top: 10px  !important;
+    margin-bottom: 10px  !important;
+    word-break: break-all !important;
+}
+#fotterToolTip{
+    height: 68px;
+    margin-bottom: 50px;
+    
+}
+
+.hideMeNow{
+    display: none;
+    visibility: hidden;
+}
+
+.footerMainWin{
+    height: 25% !important;
+    margin: 0px !important; 
+    background: #f1f1f1 !important;
+}
+.whiteBkHeader{
+    background: white !important;
+}
+
+.containerImagem{
+
+    max-width:100%;
+    position: relative;
+
+    /* max-width:400px;*/
+    align-items: center;
+    overflow:hidden;
+}
+.imgPopUp {
+    border: #000 2px solid;
+    margin-top: 10px;
+    /* position: absolute;
+     left: 0;
+     top: 0%;
+     height: 100%;
+     -webkit-transform: translateY(-50%); */
+}
+
+.controlgroup-textinput {
+    padding-top:.22em;
+    padding-bottom:.22em;
+}
+
+.facebook{
+    background: #3b5998 !important;
+    color: #ffffff !important;
+}
+.detailGridList{
+    font-size: 8px !important;
 }

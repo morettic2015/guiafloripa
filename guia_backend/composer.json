@@ -1,0 +1,23 @@
+{
+    "require": {
+        "slim/slim": "^3.0",
+        "sergeytsalkov/meekrodb": "*",
+        "monolog/monolog":"*",
+        "mautic/api-library": "*",
+        "php-http/guzzle6-adapter": "^1.1",
+        "php-http/message": "^1.6",
+        "slim/http-cache": "^0.3.0",
+        "php-http/cache-plugin": "^1.4",
+        "mantishub/mantis-php-client":"*",
+        "geocoder-php/google-maps-provider": "^4.1",
+        "geocoder-php/arcgis-online-provider": "dev-master",
+        "geocoder-php/geonames-provider": "dev-master",
+        "geocoder-php/bing-maps-provider": "^4.0",
+        "geocoder-php/locationiq-provider": "dev-master",
+        "google/apiclient": "v2.2.1",
+        "paulao-dev/chat-bot-php-facebook": "dev-master"
+    },
+    "require-dev": {
+        "abraham/twitteroauth": "0.7.4"
+    }
+}
