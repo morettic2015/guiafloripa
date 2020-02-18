@@ -15,10 +15,10 @@
 class MysqlDB {
 
 // Nas linhas abaixo você poderá colocar as informações do Banco de Dados.
-    var $host = "149.56.231.243"; // Nome ou IP do Servidor
+    var $host = "10.138.235.108"; // Nome ou IP do Servidor
     var $user = "appguia"; // Usuário do Servidor MySQL
     var $senha = "#4ppgu14Fl0r1p4!"; // Senha do Usuário MySQL
-    var $dbase = "guiafloripa"; // Nome do seu Banco de Dados
+    var $dbase = "guia_dev"; // Nome do seu Banco de Dados
 // Criaremos as variáveis que Utilizaremos no script
     var $query;
     var $link;
@@ -27,7 +27,7 @@ class MysqlDB {
 
 // Instancia o Objeto para podermos usar
     function MySQL() {
-// $this->conecta();
+        //$this->connect();
     }
 
     function hasNext() {
@@ -52,10 +52,10 @@ class MysqlDB {
 // Cria a função para "query" no Banco de Dados
     function execute($query) {
         $this->connect();
-        //var_dump($this->link);
+       // var_dump($this->link);
         $this->stmt = $this->link->query($query);
-        //var_dump($this->stmt);
-      //  echo $query;
+       // var_dump($this->stmt);
+       //   echo $query;
         /*  $this->connect();
           $this->resultado = mysqli_query($this->link, $query);
           return$this->resultado; */

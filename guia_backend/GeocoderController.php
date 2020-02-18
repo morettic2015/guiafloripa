@@ -90,7 +90,7 @@ class GeocoderController extends stdClass {
         $geo->lat = $obj->getCoordinates()->getLatitude();
         $geo->lng = $obj->getCoordinates()->getLongitude();
         $geo->cep = $obj->getPostalCode();
-        //var_dump($geo);
+      //  var_dump($geo); die;
         return $geo;
     }
 

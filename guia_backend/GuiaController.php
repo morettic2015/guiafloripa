@@ -16,7 +16,7 @@ const WP_CONTENT = "http://www.guiafloripa.com.br/wp-content/uploads/";
 
 class GuiaController extends stdClass {
 
-    public static final function getEventsDayRange($days){
+    public static final function getEventsDayRange($days) {
         $query = "SELECT "
                 . " * "
                 . "FROM "
@@ -25,9 +25,11 @@ class GuiaController extends stdClass {
                 . " date_format(dtUntil,'%Y-%m-%d') = date_format(now()+interval $days day,'%Y-%m-%d')  "
                 . " order by dtUntil asc ";
         $rangeEvents = DB::query($query);
+
         DB::disconnect();
         return $rangeEvents;
     }
+
     public static final function getPlaceById($id) {
         $query = "SELECT * FROM guiafloripa_app.Place where idPlace = " . $id;
         $place = DB::query($query);
@@ -379,28 +381,32 @@ class GuiaController extends stdClass {
         return $std;
     }
 
-    public static function cronEventCategory($type, $id) {
-        $yesterday = strtotime("-1 week");
-        $timestamp = strtotime('+1 week');
+    public static function cronEventCategory($type, $id) {echo "<pre>";
+        DB::debugMode();
+        $yesterday = strtotime("-3 week");
+        $timestamp = strtotime('+2 week');
         $conn = new MysqlDB();
-        $query = "select *,(select guid from wp_posts where id = (select meta_value from wp_postmeta where post_id = event_id and meta_key = '_thumbnail_id')) as img_event from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday and event_dtend  and  a.event_id in ( select object_id from $type) order by ID DESC";
-        $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        $query = "select *,(select guid from wp_posts where id = (select meta_value from wp_postmeta where post_id = event_id and meta_key = '_thumbnail_id' limit 1) limit 1) as img_event from view_events as a left join view_places as b on a.event_id_place = b.ID where event_dtstart >= $yesterday and  a.event_id in ( select object_id from $type) order by ID DESC";
+       // $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+
+        echo $query;
         $conn->execute($query); // misspelled SELECT
-        $lEventos = Array();
+        //   $lEventos = Array();
         $pErrors = "";
         while ($row = $conn->hasNext()) {
             try {
-               // $logoFromThumbnail = GuiaController::getLogoDe($conn, $row['event_id']);
+               // var_dump($row);
+                // $logoFromThumbnail = GuiaController::getLogoDe($conn, $row['event_id']);
                 $eventRow = new stdClass();
                 $eventRow->event_id = $row['event_id'];
-                $eventRow->event_tit = $row['event_tit'];
-                $eventRow->event_info = $row['event_info'];
+                $eventRow->event_tit = utf8_encode($row['event_tit']);
+                $eventRow->event_info = strip_tags ($row['event_info']);
                 $eventRow->event_dtend = $row['event_dtend'];
                 $eventRow->event_dtstart = $row['event_dtstart'];
                 $eventRow->event_id_place = $row['event_id_place'];
                 $eventRow->vevent_price_label = $row['vevent_price_label']; //@Todo Adicionar na concatenação
                 $eventRow->vevent_price = $row['vevent_price']; //@Todo Adicionar na concatenação
-                $eventRow->event_moreinfo = strip_tags($row['event_moreinfo']); //@Todo Adicionar na concatenação
+                $eventRow->event_moreinfo = strip_tags (utf8_encode(strip_tags($row['event_moreinfo']))); //@Todo Adicionar na concatenação
                 $eventRow->ID = $row['ID'];
                 $eventRow->tit = strip_tags($row['tit']);
                 $eventRow->info = strip_tags($row['info']);
@@ -470,7 +476,9 @@ class GuiaController extends stdClass {
     public static function cronCinemas() {
         define('CHARSET', 'ISO-8859-1');
         $pErrors = "";
-
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
         /* $yesterday = strtotime("-8 week");
           $timestamp = strtotime('+4 week');
 
@@ -480,25 +488,25 @@ class GuiaController extends stdClass {
         $query = " select *, CONVERT(titulo USING utf8) as titulo, CONVERT(titulo_original USING utf8) as titulo_original, CONVERT(post_content using utf8) as post_content from view_cinema where id_cn_filme is not null order by dtstart,dtend DESC";
         echo $query;
         $mdb = new MysqlDB();
-        $mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
+        //$mdb->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $mdb->execute($query); // misspelled SELECT
         // echo "<pre>";
         $i = 0;
         while ($row = $mdb->hasNext()) {
             $eventRow = new stdClass();
-            //var_dump($row); //die;
+            var_dump($row); //die;
             echo "|" . $i++;
             $dtStart = ($row['dtstart'] === "" ? time() : $row['dtstart']);
             //Data Fim nao pode ser vazia.....
             if ($row['dtend'] === "") {
-                echo "DATA FIM NAO INFORMADA.....<br>" . imap_utf7_decode($row['titulo']);
+                echo "DATA FIM NAO INFORMADA.....<br>" . ($row['titulo']);
                 continue;
             }
             echo "<br>";
             //var_dump($row);die;
             $titulo = $row['titulo'];
             //$titulo
-            $titulo_original = @imap_utf7_decode($row['titulo_original']) === "" ? $row['titulo_original'] : @imap_utf7_decode($row['titulo_original']);
+            $titulo_original = ($row['titulo_original']) === "" ? $row['titulo_original'] : ($row['titulo_original']);
 
             echo $titulo . '-' . $titulo_original . "<br>";
 
@@ -516,10 +524,10 @@ class GuiaController extends stdClass {
             $eventRow->id_cn_filme_post = $row['id_cn_filme_post'];
             $eventRow->id_cn_filme = $row['id_cn_filme'];
             $eventRow->id_wp_post = $row['id_wp_post'];
-            $eventRow->post_title = @imap_utf7_decode($row['post_title']);
+            $eventRow->post_title = ($row['post_title']);
             $eventRow->state = $row['state'];
             $eventRow->city = $row['city'];
-            $eventRow->addressID = @imap_utf7_decode($row['address']);
+            $eventRow->addressID = ($row['address']);
             $eventRow->post_content = $row['post_content'];
             $eventRow->outras_informacoes_clean = strip_tags($row['outras_informacoes']);
             $eventRow->outras_informacoes_html = $row['outras_informacoes'];
@@ -643,6 +651,7 @@ class GuiaController extends stdClass {
         DB::query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $query = "SELECT count(idPlace) FROM Place where idPlace = " . $obj->ID;
         $number_accounts = DB::queryFirstField($query);
+        echo "TOTAL $number_accounts";
 
         if ($number_accounts < 1) {
             $obj->geo = GeocoderController::geocodeQuery($obj->endereco . ", " . $obj->cidade);
@@ -655,8 +664,7 @@ class GuiaController extends stdClass {
             $cep1 = preg_replace('/[^0-9]/', '', $cepvet[3]);
             $cep = empty($cep1) ? $cep : $cep1;
 
-            DB::insertUpdate(
-                    'Place', array(
+            $place =  array(
                 'idPlace' => $obj->ID, //primary key
                 'nmPlace' => ($obj->tit),
                 'nrPhone' => $obj->telefone,
@@ -669,13 +677,14 @@ class GuiaController extends stdClass {
                 'nrLng' => $obj->geo->lng,
                 'nrCep' => $cep,
                 'idPlaceBranch' => null
-            ));
+            );
+            
+            DB::insertUpdate('Place',$place);
             DB::commit();
         }
         $dtFrom = date("Y-m-d H:i:s", $obj->event_dtstart);
         $dtUntil = date("Y-m-d H:i:s", $obj->event_dtend);
         //$logoFromSchema['guid']
-        
         //Update Event
         //DB::debugMode(true);
         DB::insertUpdate(
@@ -798,17 +807,18 @@ class GuiaController extends stdClass {
         //DB::debugMode();
         $conn = new MysqlDB();
         $query = "select * from $view where endereco is not null order by ID desc";
-        // echo $query;die;
         $conn->execute("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
         $conn->execute($query); // misspelled SELECT
         $i = 0;
-
+        echo "<pre>";
+        DB::debugMode();
         $pErrors = "";
         //while ($row = $conn->hasNext()) {
         while ($row = $conn->hasNext()) {
+            // var_dump($row);
             try {
-                $obj = GeocoderController::geocodeQuery(utf8_encode($row['endereco'] . ',' . $row['cidade']));
 
+                $obj = GeocoderController::geocodeQuery("Rua general bittencourt 397 centro florianopolis");
                 if (is_null($obj->lat) || !($obj instanceof stdClass)) {
                     continue;
                 }
@@ -819,15 +829,13 @@ class GuiaController extends stdClass {
                 $dePlace = $row['post_excerpt'];
                 $nmPlace = $row['post_title'];
                 $email = strlen($row['email']) < 2 ? NULL : $row['email'];
-
-                //Insert Update Place
-                DB::insertUpdate(
-                        'Place', array(
+                
+                $place = array(
                     'idPlace' => $row['ID'], //primary key
                     'nmPlace' => mb_convert_encoding($nmPlace, "utf8"),
                     'nrPhone' => $row['telefone'],
                     'deWebsite' => null,
-                    'deAddress' => ($obj->formatted_address),
+                    'deAddress' => $obj->formatted_address,
                     'deLogo' => $row['logo'],
                     'dePlace' => $dePlace,
                     'deEmail' => $email,
@@ -835,13 +843,18 @@ class GuiaController extends stdClass {
                     'nrLng' => $obj->lng,
                     'nrCep' => $cep,
                     'idPlaceBranch' => null
-                ));
+                );
+                
+                //Insert Update Place
+                DB::insertUpdate('Place', $place);
 
                 //Associate place with a given type
                 $query = "insert into PlaceType values($typeID," . $row['ID'] . ",now()) on duplicate key update lastUpdate = now();";
                 DB::query($query);
                 DB::affectedRows();
                 DB::commit();
+                var_dump($place);
+
             } catch (Exception $e) {
                 $pErrors = "";
                 $pErrors .= "<p>";
@@ -862,9 +875,6 @@ class GuiaController extends stdClass {
         DB::disconnect();
         $conn->closeConn();
         //Send log to Mantis
-        if (!empty($pErrors)) {
-            BugTracker::addIssueBugTracker(10, BACKEND, "updatePlacesByCategory($view, $typeID)", $pErrors);
-        }
     }
 
     /**
